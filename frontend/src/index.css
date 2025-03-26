@@ -1,0 +1,123 @@
+:root{
+  --primary: #1FA7F1;
+   --primary-light: #4fbaf4 ; 
+  /*--primary-dark: #2b93a1 ; */
+  --primary-content: #EEEEEE;
+  --secondary-content: #CCCCCC;
+  /* --secondary: #c94736;
+  --secondary-light: #d46c5e;
+  --secondary-dark: #a1392b; */
+
+  --background: #1E1E1E;
+  --foreground: #393939 ;
+  --success: #36c936 ;
+  --error: #c93636 ;
+}
+
+* {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  color: var(--primary-content);
+  box-sizing: border-box;
+}
+
+body{
+  background-color: var(--background);
+}
+
+/* inputs */
+
+/* buttons */
+
+.primary--button{
+  
+  border-radius: 0.75rem;
+  padding: calc((8px + 1.171875vw)/2) calc((8px + 0.78125vw));
+  font-size: 1.125rem;
+  font-weight: 500;
+  transition: .2s ease-in;
+
+  border: none;
+  background-color: var(--primary);
+  color: var(--primary-content);
+}
+
+.primary--button:hover{
+  background-color: var(--primary-light);
+  cursor: pointer;
+}
+
+.outline--button{
+
+  border-radius: 0.75rem;
+  padding: calc((5px + 1.171875vw)/2) calc((5px + 0.78125vw));
+  font-size: 1.125rem;
+  font-weight: 500;
+  transition: .2s ease-in;
+
+  border: 3px solid var(--primary-content);
+
+  background-color: transparent;
+  color: var(--primary-content);
+  box-sizing: border-box;
+
+}
+
+.outline--button:hover{
+
+  color: var(--background);
+  background-color: var(--primary-content);
+  cursor: pointer;
+}
+
+.transparent--button{
+  background-color: transparent;
+  border: none;
+  color: var(--primary-content);
+  cursor: pointer;
+
+  font-size: 2.5rem;
+  padding: 0;
+}
+
+/* dropdown */
+
+.dark--dropdown{
+  
+  background-color: var(--foreground);
+  color: var(--primary-content);
+
+  border: none;
+  border-radius: 1rem;
+  font-size: 1.125rem;
+  padding: calc((8px + 0.5*1.171875vw)/2) calc((8px + 0.2*0.3125vw));
+}
+
+.dark--option{
+  color: var(--primary-content);
+  border: none;
+}
+
+textarea{
+  resize: none;
+}
+
+input,textarea,select,option{
+  color: black;
+  font-family: 'Inter', sans-serif;
+}
+
+.center{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+a{
+  text-decoration: none;
+}
+
+fieldset{
+  border: none;
+}

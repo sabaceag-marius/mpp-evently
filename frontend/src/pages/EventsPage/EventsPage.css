@@ -1,0 +1,60 @@
+
+.main--container{
+    display: flex;
+    flex-direction: column;
+}
+
+
+.main--container main{
+    display: flex;
+    
+    /* min-height: 100vh; */
+    width: 100%;
+}
+
+.filter--section{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 25%; /* 25% of the screen */
+    /* background-color: lightblue; */
+}
+
+.events--section{
+    flex: 1; /*Takes the remaining space */
+    /* background-color: lightcoral; */
+}
+
+
+.events--list--view{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4rem;
+}
+
+.subheader{
+    display: flex;
+
+    align-items: center;
+    justify-content: space-around;
+
+    margin: 2.5rem 0;
+}
+
+.date--selector{
+    display: flex;
+    align-items: center;
+}
+
+/* Forms */
+
+.filter--form{
+    display: flex;
+    flex-direction: column;
+}
+
+.filter--fieldset{
+    display: flex;
+    flex-direction: column;
+}
+

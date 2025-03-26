@@ -1,0 +1,51 @@
+.modal{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 1.25rem;
+    background-color: var(--foreground);
+    width: min(320px,70%);
+    padding-top: 1rem;
+}
+
+.modalHeader{
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+    justify-content: center;
+    position: relative;
+}
+
+.modalForm{
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    margin: .25rem 0;
+}
+
+.modalForm label{
+
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.modalForm input{
+    color: black;
+}
+
+.modalForm textarea{
+    color: black;
+}
+
+.modalForm.primary--button{
+	align-self: center;
+    margin-top: .5rem;
+}
+
+.error{
+    color: var(--error);
+    font-weight: 600;
+}
