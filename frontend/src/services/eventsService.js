@@ -33,7 +33,7 @@ const data = [
   
   ];  
 
-export async function getEventsAPI(queryData, categories) {
+export async function getEventsAPI(queryData, currentPage, PAGE_SIZE) {
     
     // console.log(queryData,categories);
 
@@ -54,6 +54,9 @@ export async function getEventsAPI(queryData, categories) {
     //                         moment(queryData.date).dayOfYear <= moment(event.endDate).dayOfYear
     // ).sort((a,b) => moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1);
     // .slice(start,end);
+    
+    const start = (currentPage - 1)*PAGE_SIZE;
+    const end = currentPage * PAGE_SIZE;
 
     const startTimeInterval = queryData.dateMoment.clone().startOf(queryData.dateInterval);
     const endTimeInterval = queryData.dateMoment.clone().endOf(queryData.dateInterval);
@@ -64,7 +67,7 @@ export async function getEventsAPI(queryData, categories) {
         queryData.categories.includes(event.categoryName)
     )   
     
-    const result = response.sort((a,b) => moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1);
+    const result = response.slice(start,end).sort((a,b) => moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1);
 
 
     // console.log(result);
@@ -142,6 +145,19 @@ function addLengthStatistics(events){
 
 export async function getEventAPI(id) {
     return data.filter(e => e.id === id)[0];
+}
+
+export async function getEventsCountAPI(queryData) {
+    const startTimeInterval = queryData.dateMoment.clone().startOf(queryData.dateInterval);
+    const endTimeInterval = queryData.dateMoment.clone().endOf(queryData.dateInterval);
+    
+    let response = data.filter(event =>
+        startTimeInterval <= moment(event.startDate) &&
+        moment(event.startDate) <= endTimeInterval &&
+        queryData.categories.includes(event.categoryName)
+    );
+
+    return response.length;
 }
 
 export async function addEventAPI(event){

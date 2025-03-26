@@ -2,11 +2,12 @@ import React, { useEffect, useState } from 'react';
 import './EventsPage.css';
 import EventCard from '../../components/EventCard/EventCard';
 import CreateEventModal from '../../components/CreateEventModal/CreateEventModal';
-import { getEventsAPI } from '../../services/eventsService';
+import { getEventsAPI, getEventsCountAPI } from '../../services/eventsService';
 import moment from 'moment';
 import Checkbox from '../../components/Checkbox/Checkbox';
 import { toDateTimeInputString, toDateInputString } from '../../utils/momentUtils';
 import { arraysEqual } from '../../utils/arrayUtils';
+import PageSelector from '../../components/PageSelector/PageSelector';
 
 function EventsPage() {
 
@@ -119,17 +120,60 @@ function EventsPage() {
     }
     // endregion
     
+    // region Pagination
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageCount, setPageCount] = useState(0);
+    const PAGE_SIZE = 8;
+
+    // endregion
 
     // region FetchData
 
-    useEffect(() =>{
-        getEventsAPI(queryData,categories)
-        .then(result => setEvents(result));
-    },[queryData]);
+    // useEffect(() =>{
+    //     getEventsAPI(queryData,categories)
+    //     .then(result => setEvents(result));
+    // },[queryData]);
     
+    useEffect(() => {
+        getEventsAPI(queryData, currentPage, PAGE_SIZE).then(result =>{
+            
+            if(result === undefined) return;
+            
+            setEvents(result);
+        });
+
+    }, [currentPage]);
+
+    // When we submit a query with different filters - fetch the pageCount and the transactions for the first page
+    useEffect(() => {
+        console.log("Fetch page count and transactions for 1st page");
+        getEventsCountAPI(queryData).then(result =>{
+
+            if(result === undefined) return;
+
+            setPageCount(Math.ceil(result / PAGE_SIZE));
+        });
+
+        // When we change the current page we fetch the transactions for that page
+        // so we check before what is the current page to prevent fetching the data twice
+
+        if(currentPage !== 1) {
+            setCurrentPage(1);
+        }
+        else {
+            getEventsAPI(queryData, currentPage, PAGE_SIZE).then(result =>{
+            
+                if(result === undefined) return;
+                
+                setEvents(result);
+            });
+        }
+
+    }, [queryData]);
 
     // endregion
-    
+
     const [events, setEvents] = useState([]);
     const eventsElements = events.map(e => <EventCard event={e} key={e.id} />);
     const checkboxElements = categories.map
@@ -190,15 +234,17 @@ function EventsPage() {
                         </fieldset>
                     </form>
                 </div>
+                
+                {events.length == 0 ? <p className='events--section'>There are no events!</p>:
+                    <div className='events--section'>
+                        <div className='events--list--view'>
+                            {eventsElements}
+                        </div>
 
-                <div className='events--section'>
-                    
-                    <div className='events--list--view'>
-                        {eventsElements}
-                    </div>
-
-                </div>
-
+                        <PageSelector pageCount={pageCount} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
+                        
+                    </div>  
+                }
             </main>
 
         </div>
