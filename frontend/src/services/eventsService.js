@@ -65,10 +65,79 @@ export async function getEventsAPI(queryData, categories) {
     )   
     
     const result = response.sort((a,b) => moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1);
+
+
     // console.log(result);
-    return result;
+    return addLengthStatistics(result);
 }
 
+function addLengthStatistics(events){
+
+    const lengths = events.map(event => ({
+        'id' : event.id,
+        'length' : Math.abs(moment.duration(moment(event.startDate).diff(moment(event.endDate))).asMinutes()) //Math.abs(moment(event.startDate).diff(moment(event.endDate), 'minutes', true))
+    }))
+    .sort((a,b) => - a.length + b.length);
+
+    const num = 2;
+    const topN = lengths.slice(0, num).map(e => e.id);
+    const average = lengths.length > 1 ? lengths.slice(lengths.length/2,lengths.length/2+1).map(e => e.id) : lengths.map(e => e.id);
+    const bottomN = lengths.slice(-num).map(e => e.id);
+    
+    // console.log("top",topN);
+    // console.log("average",average);
+    // console.log("bottom",bottomN);
+    
+    events.forEach(element => {
+        if(element.id in topN){
+            element = {
+                ...element,
+                tag : "top"
+            }
+        }
+        if(element.id in bottomN){
+            element = {
+                ...element,
+                tag : "bottom"
+            }
+        }
+        if(element.id in average){
+            element = {
+                ...element,
+                tag: "average"
+            }
+        }
+    });
+
+    for(let i = 0; i < events.length; i++){
+
+        if(topN.filter(e => e === events[i].id) > 0){
+            
+            events[i] = {
+                ...events[i],
+                tag : "top"
+            }
+        }
+
+        if(bottomN.filter(e => e === events[i].id) > 0){
+
+            events[i] = {
+                ...events[i],
+                tag : "bottom"
+            }
+        }
+
+        if(average.filter(e => e === events[i].id) > 0){
+
+            events[i] = {
+                ...events[i],
+                tag : "average"
+            }
+        }
+    }
+
+    return events;
+}
 
 
 export async function getEventAPI(id) {
@@ -249,4 +318,4 @@ function testFilters(){
     console.log('tests passed!');
 }
 
-testFilters();
+// testFilters();

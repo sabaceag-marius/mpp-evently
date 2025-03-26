@@ -29,14 +29,20 @@ function EventCard({event}) {
     'borderTop' : `2rem solid ${categoryColors[event.categoryName]}`
   }
 
+  const statisticsColors = {
+    'top' : '#32a852',
+    'average' : '#c4c932',
+    'bottom' : '#ad1d0a'
+  }
 
   return (
 
     <Link to={`/events/${event.id}`}>
       <div style={borderStyle} className={card.container}>
         <div>
-          <h3 className={card.title}>{event.name}</h3>
+          <h3 style={event.tag === null || {color : statisticsColors[event.tag]}} className={card.title}>{event.name}</h3>
           <p className={card.username}>{event.userName}</p>
+          {event.tag === null || <p>{event.tag}</p>}
         </div>
         {timeComponent}
       </div>
