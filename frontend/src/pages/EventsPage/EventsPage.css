@@ -27,10 +27,18 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
 
 
 .events--list--view{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4rem;
+}
+
+.charts--section{
     display: flex;
     flex-wrap: wrap;
     justify-content: center;

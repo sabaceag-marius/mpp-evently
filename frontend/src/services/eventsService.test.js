@@ -1,6 +1,5 @@
 import moment from "moment";
 import { 
-    data,
     getEventsAPI, 
     getEventAPI, 
     getEventsCountAPI, 
@@ -9,6 +8,8 @@ import {
     deleteEventAPI,
     validateEvent 
 } from "./eventsService";
+
+import {data} from './data';
 
 describe("Events API", () => {
     const PAGE_SIZE = 5;

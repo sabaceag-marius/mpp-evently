@@ -8,6 +8,10 @@ import Checkbox from '../../components/Checkbox/Checkbox';
 import { toDateTimeInputString, toDateInputString } from '../../utils/momentUtils';
 import { arraysEqual } from '../../utils/arrayUtils';
 import PageSelector from '../../components/PageSelector/PageSelector';
+import { categoryData } from '../../services/eventsChartsService';
+import CategoryChart from '../../components/CategoryChart/CategoryChart';
+import EventsCountChart from '../../components/EventsCountChart/EventsCountChart';
+import CategoryHoursChart from '../../components/CategoryChart/CategoryHoursChart';
 
 function EventsPage() {
 
@@ -130,17 +134,14 @@ function EventsPage() {
 
     // region FetchData
 
-    // useEffect(() =>{
-    //     getEventsAPI(queryData,categories)
-    //     .then(result => setEvents(result));
-    // },[queryData]);
-    
     useEffect(() => {
         getEventsAPI(queryData, currentPage, PAGE_SIZE).then(result =>{
             
             if(result === undefined) return;
             
             setEvents(result);
+
+            categoryData(result);
         });
 
     }, [currentPage]);
@@ -167,6 +168,8 @@ function EventsPage() {
                 if(result === undefined) return;
                 
                 setEvents(result);
+
+                categoryData(result);
             });
         }
 
@@ -235,16 +238,25 @@ function EventsPage() {
                     </form>
                 </div>
                 
-                {events.length == 0 ? <p className='events--section'>There are no events!</p>:
-                    <div className='events--section'>
-                        <div className='events--list--view'>
-                            {eventsElements}
-                        </div>
+                <div className='events--section'>
+                    {
+                        events.length == 0 ? <p>There are no events!</p> : 
+                        <>
+                            <div className='events--list--view'>
+                                {eventsElements}
+                            </div>
 
-                        <PageSelector pageCount={pageCount} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
-                        
-                    </div>  
-                }
+                            <PageSelector pageCount={pageCount} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
+
+                            <div className='charts--section'>
+                                <CategoryChart data={events} />
+                                <EventsCountChart data={events} />
+                                <CategoryHoursChart data={events} />
+                            </div>
+                        </>
+                    }
+                    
+                </div>
             </main>
 
         </div>
