@@ -1,7 +1,6 @@
 // import {data} from "./data";
 import moment from "moment";
-import assert from "assert";
-const data = [
+export const data = [
     { id: 1, userName: "Mark", name: "Team Meeting", description: "Weekly team sync-up.", startDate: "2025-03-18T09:00:00Z", endDate: "2025-03-18T10:00:00Z", categoryName: "Work" },
     { id: 2, userName: "Mark", name: "Project Deadline", description: "Submit final project report.", startDate: "2025-03-18T15:00:00Z", endDate: "2025-03-18T17:00:00Z", categoryName: "School" },
     { id: 3, userName: "Mark", name: "Workout", description: "Gym session.", startDate: "2025-03-18T18:00:00Z", endDate: "2025-03-18T19:30:00Z", categoryName: "Personal" },
@@ -35,26 +34,6 @@ const data = [
 
 export async function getEventsAPI(queryData, currentPage, PAGE_SIZE) {
     
-    // console.log(queryData,categories);
-
-    // const DEFAULT_QUERY_DATA = {
-    //     dateMoment : moment(),
-    //     dateInterval : "day",
-    //     categories : categories
-    // }
-
-    // const pageNumber = 1;
-    // const pageSize = 8;
-    // const start = (pageNumber - 1)*pageSize;
-    // const end = pageNumber * pageSize;
-
-    // const response = data.filter(event => 
-    //                         // event.categoryName == queryData.categoryName && 
-    //                         moment(queryData.date).dayOfYear >= moment(event.startDate).dayOfYear && 
-    //                         moment(queryData.date).dayOfYear <= moment(event.endDate).dayOfYear
-    // ).sort((a,b) => moment(a.startDate).isBefore(moment(b.startDate)) ? -1 : 1);
-    // .slice(start,end);
-    
     const start = (currentPage - 1)*PAGE_SIZE;
     const end = currentPage * PAGE_SIZE;
 
@@ -86,10 +65,6 @@ function addLengthStatistics(events){
     const topN = lengths.slice(0, num).map(e => e.id);
     const average = lengths.length > 1 ? lengths.slice(lengths.length/2,lengths.length/2+1).map(e => e.id) : lengths.map(e => e.id);
     const bottomN = lengths.slice(-num).map(e => e.id);
-    
-    // console.log("top",topN);
-    // console.log("average",average);
-    // console.log("bottom",bottomN);
     
     events.forEach(element => {
         if(element.id in topN){
@@ -199,7 +174,7 @@ export async function deleteEventAPI(id) {
     data.splice(index,1);
 }
 
-function validateEvent(event){
+export function validateEvent(event){
     let errors = []
 
     if(event.name === "") errors.push('Name is required')
@@ -211,127 +186,3 @@ function validateEvent(event){
         errors.push('Category is required');
     return errors;
 }
-
-function validateEventDetailed(event){
-    let valid = true;
-
-    let errorObject = {
-        name : "",
-        description : "",
-        startDate : "",
-        endDate : "",
-        categoryName: "",
-    }
-
-    if(event.name === "") {
-        valid = false;
-        errorObject.name = 'Name is required';
-    }
-
-    if(moment(event.endDate).isBefore(moment(event.startDate))){
-        valid = false;
-         errorObject.endDate = 'End date must be after start date';
-    }
-
-    if(event.categoryName === "") {
-        valid = false;
-        errorObject.categoryName = 'Category is required';
-    }
-
-    if(!valid){
-        return errorObject;
-    }
-}
-
-function testFilters(){
-
-    const categories = ['Work', 'School', 'Personal'];
-
-    let queryData = {
-        "dateMoment": moment("2025-03-21T10:36:41.855Z"),
-        "dateInterval": "day",
-        "categories": [
-            "Work",
-            "School",
-            "Personal"
-        ]
-    };
-    let expectedResult = [
-        {
-            "id": 16,
-            "userName": "Mark",
-            "name": "Code Debugging",
-            "description": "Fixing project bugs.",
-            "startDate": "2025-03-21T10:00:00Z",
-            "endDate": "2025-03-23T11:30:00Z",
-            "categoryName": "Work"
-        },
-        {
-            "id": 17,
-            "userName": "Mark",
-            "name": "Presentation Prep",
-            "description": "Prepare slides for class.",
-            "startDate": "2025-03-21T14:00:00Z",
-            "endDate": "2025-03-21T15:30:00Z",
-            "categoryName": "School"
-        },
-        {
-            "id": 19,
-            "userName": "Mark",
-            "name": "Training Session",
-            "description": "Online workshop on skills.",
-            "startDate": "2025-03-21T16:00:00Z",
-            "endDate": "2025-03-21T17:30:00Z",
-            "categoryName": "Work"
-        },
-        {
-            "id": 18,
-            "userName": "Mark",
-            "name": "Movie Night",
-            "description": "Watch a new film.",
-            "startDate": "2025-03-21T19:00:00Z",
-            "endDate": "2025-03-21T21:30:00Z",
-            "categoryName": "Personal"
-        }
-    ];
-
-    getEventsAPI(queryData,categories).then(result =>
-        assert(result,expectedResult)
-    )
-    queryData = {
-        "dateMoment": moment("2025-03-21T11:17:01.668Z"),
-        "dateInterval": "day",
-        "categories": [
-            "Work"
-        ]
-    }
-
-    expectedResult = [
-        {
-            "id": 16,
-            "userName": "Mark",
-            "name": "Code Debugging",
-            "description": "Fixing project bugs.",
-            "startDate": "2025-03-21T10:00:00Z",
-            "endDate": "2025-03-23T11:30:00Z",
-            "categoryName": "Work"
-        },
-        {
-            "id": 19,
-            "userName": "Mark",
-            "name": "Training Session",
-            "description": "Online workshop on skills.",
-            "startDate": "2025-03-21T16:00:00Z",
-            "endDate": "2025-03-21T17:30:00Z",
-            "categoryName": "Work"
-        }
-    ];
-
-    getEventsAPI(queryData,categories).then(result =>
-        assert(result,expectedResult)
-    );
-
-    console.log('tests passed!');
-}
-
-// testFilters();
