@@ -5,7 +5,7 @@ import CreateEventModal from '../../components/CreateEventModal/CreateEventModal
 import { getEventsAPI, getEventsCountAPI } from '../../services/eventsService';
 import moment from 'moment';
 import Checkbox from '../../components/Checkbox/Checkbox';
-import { toDateTimeInputString, toDateInputString } from '../../utils/momentUtils';
+import { toDateTimeInputString, toDateInputString, getRandomTimeBetween } from '../../utils/momentUtils';
 import { arraysEqual } from '../../utils/arrayUtils';
 import PageSelector from '../../components/PageSelector/PageSelector';
 import { categoryData } from '../../services/eventsChartsService';
@@ -128,14 +128,20 @@ function EventsPage() {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [pageCount, setPageCount] = useState(0);
-    const PAGE_SIZE = 8;
+    const [pageSize, setPageSize] = useState(8);
+
+    function onChangePageSize(event){
+        const {value} = event.target;
+
+        setPageSize(parseInt(value));
+    }
 
     // endregion
 
     // region FetchData
 
     useEffect(() => {
-        getEventsAPI(queryData, currentPage, PAGE_SIZE).then(result =>{
+        getEventsAPI(queryData, currentPage, pageSize).then(result =>{
             
             if(result === undefined) return;
             
@@ -144,16 +150,15 @@ function EventsPage() {
             categoryData(result);
         });
 
-    }, [currentPage]);
+    }, [currentPage, pageSize]);
 
     // When we submit a query with different filters - fetch the pageCount and the transactions for the first page
     useEffect(() => {
-        console.log("Fetch page count and transactions for 1st page");
         getEventsCountAPI(queryData).then(result =>{
 
             if(result === undefined) return;
 
-            setPageCount(Math.ceil(result / PAGE_SIZE));
+            setPageCount(Math.ceil(result / pageSize));
         });
 
         // When we change the current page we fetch the transactions for that page
@@ -163,7 +168,7 @@ function EventsPage() {
             setCurrentPage(1);
         }
         else {
-            getEventsAPI(queryData, currentPage, PAGE_SIZE).then(result =>{
+            getEventsAPI(queryData, currentPage, pageSize).then(result =>{
             
                 if(result === undefined) return;
                 
@@ -177,8 +182,77 @@ function EventsPage() {
 
     // endregion
 
+    // region Charts
+    
+    let insertionInterval;
+
+    const [isInserting,setIsInserting] = useState(false);
+
+    function insertRandomRecord(){
+        
+        const startTimeInterval = toDateTimeInputString(queryData.dateMoment.clone().startOf(queryData.dateInterval));
+        const endTimeInterval = toDateTimeInputString(queryData.dateMoment.clone().endOf(queryData.dateInterval));
+        
+        let randomMoment = getRandomTimeBetween(startTimeInterval,endTimeInterval);
+
+        const hours = [1,2,3];
+        const hour = hours[Math.floor(Math.random()*hours.length)]
+
+        const categories = ['Work', 'School', 'Personal']
+        const event = {
+            id : -1,
+            userName: "Mark",
+            name : "Generated Event",
+            startDate : toDateTimeInputString(randomMoment),
+            endDate : toDateTimeInputString(randomMoment.add(hour,'hour')),
+            description : "",
+            categoryName : categories[Math.floor(Math.random()*categories.length)]
+        }
+
+        setEvents(prev => [...prev, event]);
+    }
+
+    function startRandomInsertions() {
+
+        const insertBatch = async () => {
+                const promises = [];
+                for (let i = 0; i < 2; i++) {
+                    promises.push(insertRandomRecord());
+                }
+            await Promise.all(promises);
+        };
+
+        insertionInterval = setInterval(() => {
+            insertBatch().catch(err => console.error('Random insertion error:', err));
+        }, 5000);
+    }
+
+    function stopRandomInsertions() {
+        clearInterval(insertionInterval);
+            insertionInterval = null;
+        
+        if (insertionInterval) {
+            clearInterval(insertionInterval);
+            insertionInterval = null;
+        }
+    }
+
+    function toggleInsertions(){
+
+        console.log(isInserting);
+        if (isInserting) {
+            stopRandomInsertions();
+        } else {
+            startRandomInsertions();
+        }
+        setIsInserting(!isInserting);
+    };
+    // endregion
+
     const [events, setEvents] = useState([]);
-    const eventsElements = events.map(e => <EventCard event={e} key={e.id} />);
+    const eventsElements = events
+    .filter(e => e.id !== -1)
+    .map(e => <EventCard event={e} key={e.id} />);
     const checkboxElements = categories.map
     (c => <Checkbox label={c} id={c.toLowerCase()} isChecked={queryData.categories.includes(c)} checkHandler={checkboxHandler} />)
     
@@ -235,12 +309,27 @@ function EventsPage() {
                             <Checkbox id='all' label='All' isChecked={arraysEqual(queryData.categories,categories)} checkHandler={checkboxAllHandler}/>
                             {checkboxElements}
                         </fieldset>
+
+                        <select
+                            className='dark--dropdown'
+                            id='pageSize'
+                            name='pageSize'
+                            onChange={onChangePageSize}
+                            value={pageSize}
+                        >
+                            <option className='dark--option' value="4" >4</option>
+                            <option className='dark--option' value="8" >8</option>
+                            <option className='dark--option' value="16" >16</option>
+                        </select>
                     </form>
+
+                    <button style={{'marginTop':'2rem'}} className='primary--button' onClick={toggleInsertions}>Toggle Insertions</button>
+
                 </div>
                 
                 <div className='events--section'>
                     {
-                        events.length == 0 ? <p>There are no events!</p> : 
+                        events.length === 0 ? <p>There are no events!</p> : 
                         <>
                             <div className='events--list--view'>
                                 {eventsElements}
