@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Services;
+using Services.DTOs.Event;
 using Services.Interfaces;
 
 namespace Presentation.Controllers
@@ -16,10 +18,19 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetFilteredEvents()
+        public async Task<IActionResult> GetFilteredEvents([FromQuery] FilterEventRequest filterRequest)
         {
-            var result = await _eventService.GetAllEvents();
-            return Ok(result);
+            var response = await _eventService.GetFilteredEvents(filterRequest);
+
+            if (response.IsError)
+            {
+                return new ObjectResult(response.ErrorMessage)
+                {
+                    StatusCode = response.ErrorStatusCode.ToStatusCode()
+                };
+            }
+
+            return Ok(response.Value);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Domain.Common.Specifications;
+using Domain.Entities;
 using Domain.Enums;
 using Domain.Interfaces;
 using System.Globalization;
@@ -50,12 +51,15 @@ public class EventMemoryRepository : IEventRepository
         data.Remove(e.Id);
     }
 
-    public async Task<IEnumerable<Event>> GetFilteredEventsAsync(int pageNumber, int pageSize)
+    public async Task<IEnumerable<Event>> GetFilteredEventsAsync(Specification<Event> filters, int pageNumber, int pageSize)
     {
-        throw new NotImplementedException();
+        return data.Values.Where(filters.Expr.Compile())
+            .OrderBy(e => e.StartDate)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize);
     }
 
-    public async Task<IEnumerable<Event>> GetFilteredEventsAsync()
+    public async Task<IEnumerable<Event>> GetFilteredEventsAsync(Specification<Event> filters)
     {
         throw new NotImplementedException();
     }
@@ -100,7 +104,7 @@ public class EventMemoryRepository : IEventRepository
                 Description = item.Description,
                 StartDate = DateTime.Parse(item.StartDate, null, DateTimeStyles.RoundtripKind),
                 EndDate = DateTime.Parse(item.EndDate, null, DateTimeStyles.RoundtripKind),
-                Category = Enum.TryParse<CategoryType>(item.Category, out var category) ? category : throw new Exception("Invalid category")
+                Category = item.Category.ToCategoryType()
             };
 
             data[newEvent.Id] = newEvent;
