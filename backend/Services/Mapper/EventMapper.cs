@@ -1,5 +1,6 @@
 ﻿using Domain.Common.Specifications;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Specifications.Events;
 using Services.DTOs.Event;
 
@@ -13,6 +14,7 @@ public static class EventMapper
         {
             Id = e.Id,
             Username = e.Username,
+            Name = e.Name,
             Description = e.Description,
             EndDate = e.EndDate,
             StartDate = e.StartDate,
@@ -31,5 +33,31 @@ public static class EventMapper
         specification = specification.And(new EventSpecificationCategoryInList(filterRequest.categoriesList));
 
         return specification;
+    }
+
+    public static Event ToEvent(this CreateEventRequest eventRequest)
+    {
+        return new Event
+        {
+            Id = Guid.NewGuid(),
+            Name = eventRequest.Name,
+            Description = eventRequest.Description,
+            StartDate = eventRequest.StartDate,
+            EndDate = eventRequest.EndDate,
+            Category = eventRequest.CategoryName.ToCategoryType()
+        };
+    }
+
+    public static Event ToEvent(this UpdateEventRequest eventRequest)
+    {
+        return new Event
+        {
+            Id = eventRequest.Id,
+            Name = eventRequest.Name,
+            Description = eventRequest.Description,
+            StartDate = eventRequest.StartDate,
+            EndDate = eventRequest.EndDate,
+            Category = eventRequest.CategoryName.ToCategoryType()
+        };
     }
 }

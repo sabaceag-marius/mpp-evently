@@ -22,14 +22,16 @@ public class EventMemoryRepository : IEventRepository
 
     public async Task<Event?> GetByIdAsync(Guid id)
     {
-        if (!data.TryGetValue(id, out var async)) return new Event();
+        if (!data.ContainsKey(id)) return new Event();
 
-        return async;
+        return data[id];
     }
 
     public async Task<Event?> GetByIdNoTracking(Guid id)
     {
-        throw new NotImplementedException();
+        if (!data.ContainsKey(id)) return new Event();
+
+        return data[id];
     }
 
     public Event? Add(Event e)

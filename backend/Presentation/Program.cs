@@ -12,7 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IEventRepository, EventMemoryRepository>();
+builder.Services.AddSingleton<IEventRepository, EventMemoryRepository>();
 builder.Services.AddScoped<IEventService, EventService>();
 
 

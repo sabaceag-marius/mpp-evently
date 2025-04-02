@@ -5,7 +5,14 @@ namespace Services.Interfaces;
 
 public interface IEventService
 {
-    Task<IEnumerable<Event>> GetAllEvents();
+    Task<Response<IEnumerable<EventResponse>>> GetAllEvents();
 
     Task<Response<IEnumerable<EventResponse>>> GetFilteredEvents(FilterEventRequest filterRequest);
+
+    Task<Response<EventResponse>> GetEvent(Guid eventId);
+
+    Task<Response<EventResponse>> CreateEvent(CreateEventRequest eventRequest);
+    Task<Response<EventResponse>> UpdateEvent(Guid eventId, UpdateEventRequest eventRequest);
+
+    Task<Response> DeleteEvent(Guid eventId);
 }
