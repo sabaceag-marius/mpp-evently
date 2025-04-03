@@ -30,7 +30,22 @@ public static class EventMapper
 
         specification = specification.And(new EventSpecificationEndDate(filterRequest.EndDate));
 
-        specification = specification.And(new EventSpecificationCategoryInList(filterRequest.categoriesList));
+        if (filterRequest.categoriesList != null)
+            specification = specification.And(new EventSpecificationCategoryInList(filterRequest.categoriesList));
+
+        return specification;
+    }
+
+    public static Specification<Event> ToSpecification(this FilterEventCountRequest filterRequest)
+    {
+        Specification<Event> specification = new AnySpecification<Event>();
+
+        specification = specification.And(new EventSpecificationStartDate(filterRequest.StartDate));
+
+        specification = specification.And(new EventSpecificationEndDate(filterRequest.EndDate));
+
+        if (filterRequest.categoriesList != null)
+            specification = specification.And(new EventSpecificationCategoryInList(filterRequest.categoriesList));
 
         return specification;
     }

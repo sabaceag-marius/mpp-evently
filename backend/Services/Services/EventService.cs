@@ -37,6 +37,19 @@ public class EventService : IEventService
         };
     }
 
+    public async Task<Response<int>> GetFilteredEventsCount(FilterEventCountRequest filterRequest)
+    {
+        var specification = filterRequest.ToSpecification();
+
+        var result = await
+            _eventRepository.GetFilteredEventsCountAsync(specification);
+
+        return new Response<int>
+        {
+            Value = result
+        };
+    }
+
     public async Task<Response<EventResponse>> GetEvent(Guid eventId)
     {
         var e = await _eventRepository.GetByIdAsync(eventId);

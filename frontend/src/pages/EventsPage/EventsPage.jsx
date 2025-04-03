@@ -248,11 +248,11 @@ function EventsPage() {
 
                             <PageSelector pageCount={pageCount} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
 
-                            <div className='charts--section'>
+                            {/* <div className='charts--section'>
                                 <CategoryChart data={events} />
                                 <EventsCountChart data={events} />
                                 <CategoryHoursChart data={events} />
-                            </div>
+                            </div> */}
                         </>
                     }
                     

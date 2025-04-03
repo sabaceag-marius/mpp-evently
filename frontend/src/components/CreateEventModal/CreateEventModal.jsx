@@ -36,9 +36,8 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
     
     const result = await addEventAPI(formData);
 
-    if(result !== undefined){
-      // console.log(result);
-      setErrors(result);
+    if(result.errorCode !== undefined){
+      setErrors(result.errorMessages);
       return;
     }
 

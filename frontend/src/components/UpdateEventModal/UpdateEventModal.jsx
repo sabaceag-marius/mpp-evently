@@ -33,18 +33,19 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
     
   }
 
-  async function onSubmit(event){
+  async function onSubmit(e){
         
-    event.preventDefault();
+    e.preventDefault();
     setErrors([]);
 
+    console.log(event);
     const result = await updateEventAPI(event.id, formData);
     
-    if(result !== undefined){
-      // console.log(result);
-      setErrors(result);
+    if(result.errorCode !== undefined){
+      setErrors(result.errorMessages);
       return;
     }
+
 
     setFormData(DEFAULT_FORM_DATA);
     setErrors([]);

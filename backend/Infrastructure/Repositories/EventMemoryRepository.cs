@@ -61,6 +61,13 @@ public class EventMemoryRepository : IEventRepository
             .Take(pageSize);
     }
 
+    public async Task<int> GetFilteredEventsCountAsync(Specification<Event> filters)
+    {
+        return data.Values.Where(filters.Expr.Compile())
+            .OrderBy(e => e.StartDate)
+            .Count();
+    }
+
     public async Task<IEnumerable<Event>> GetFilteredEventsAsync(Specification<Event> filters)
     {
         throw new NotImplementedException();

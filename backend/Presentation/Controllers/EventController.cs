@@ -20,9 +20,21 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        [Route("/all")]
+        [Route("all")]
         public async Task<IActionResult> GetAllEvents()
         {
+            if (!ModelState.IsValid)
+            {
+                var errorMessage = ModelState.Values
+                    .SelectMany(x => x.Errors)
+                    .Select(x => x.ErrorMessage)
+                    .Aggregate("", (current, next) => current + "\n" + next);
+                return new ObjectResult(new { errorMessage = errorMessage })
+                {
+                    StatusCode = ErrorStatusCodes.BadRequest.ToStatusCode(),
+                };
+            }
+
             var response = await _eventService.GetAllEvents();
 
             if (response.IsError)
@@ -39,6 +51,18 @@ namespace Presentation.Controllers
         [HttpGet]
         public async Task<IActionResult> GetFilteredEvents([FromQuery] FilterEventRequest filterRequest)
         {
+            if (!ModelState.IsValid)
+            {
+                var errorMessage = ModelState.Values
+                    .SelectMany(x => x.Errors)
+                    .Select(x => x.ErrorMessage)
+                    .Aggregate("", (current, next) => current + "\n" + next);
+                return new ObjectResult(new { errorMessage = errorMessage })
+                {
+                    StatusCode = ErrorStatusCodes.BadRequest.ToStatusCode(),
+                };
+            }
+
             var response = await _eventService.GetFilteredEvents(filterRequest);
 
             if (response.IsError)
@@ -56,6 +80,17 @@ namespace Presentation.Controllers
         [Route("{id}")]
         public async Task<IActionResult> GetEvent([FromRoute] Guid id)
         {
+            if (!ModelState.IsValid)
+            {
+                var errorMessage = ModelState.Values
+                    .SelectMany(x => x.Errors)
+                    .Select(x => x.ErrorMessage)
+                    .Aggregate("", (current, next) => current + "\n" + next);
+                return new ObjectResult(new { errorMessage = errorMessage })
+                {
+                    StatusCode = ErrorStatusCodes.BadRequest.ToStatusCode(),
+                };
+            }
             var response = await _eventService.GetEvent(id);
 
             if (response.IsError)
@@ -69,9 +104,51 @@ namespace Presentation.Controllers
             return Ok(response.Value);
         }
 
+        [HttpGet]
+        [Route("count")]
+        public async Task<IActionResult> GetFilteredEventsCount([FromQuery] FilterEventCountRequest filterRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errorMessage = ModelState.Values
+                    .SelectMany(x => x.Errors)
+                    .Select(x => x.ErrorMessage)
+                    .Aggregate("", (current, next) => current + "\n" + next);
+                return new ObjectResult(new { errorMessage = errorMessage })
+                {
+                    StatusCode = ErrorStatusCodes.BadRequest.ToStatusCode(),
+                };
+            }
+
+            var response = await _eventService.GetFilteredEventsCount(filterRequest);
+
+            if (response.IsError)
+            {
+                return new ObjectResult(response.ErrorMessage)
+                {
+                    StatusCode = response.ErrorStatusCode.ToStatusCode()
+                };
+            }
+
+            return Ok(response.Value);
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> CreateEvent([FromBody] CreateEventRequest eventRequest)
         {
+            if (!ModelState.IsValid)
+            {
+                var errorMessage = ModelState.Values
+                    .SelectMany(x => x.Errors)
+                    .Select(x => x.ErrorMessage)
+                    .Aggregate("", (current, next) => current + "\n" + next);
+                return new ObjectResult(new { errorMessage = errorMessage })
+                {
+                    StatusCode = ErrorStatusCodes.BadRequest.ToStatusCode(),
+                };
+            }
+
             var validate = EventValidator.ValidateEvent(eventRequest);
 
             if (validate.IsError)
@@ -100,6 +177,18 @@ namespace Presentation.Controllers
         [Route("{id}")]
         public async Task<IActionResult> DeleteEvent([FromRoute] Guid id)
         {
+            if (!ModelState.IsValid)
+            {
+                var errorMessage = ModelState.Values
+                    .SelectMany(x => x.Errors)
+                    .Select(x => x.ErrorMessage)
+                    .Aggregate("", (current, next) => current + "\n" + next);
+                return new ObjectResult(new { errorMessage = errorMessage })
+                {
+                    StatusCode = ErrorStatusCodes.BadRequest.ToStatusCode(),
+                };
+            }
+
             var response = await _eventService.DeleteEvent(id);
 
             if (response.IsError)
@@ -117,6 +206,18 @@ namespace Presentation.Controllers
         [Route("{id}")]
         public async Task<IActionResult> UpdateEvent([FromRoute] Guid id, [FromBody] UpdateEventRequest eventRequest)
         {
+            if (!ModelState.IsValid)
+            {
+                var errorMessage = ModelState.Values
+                    .SelectMany(x => x.Errors)
+                    .Select(x => x.ErrorMessage)
+                    .Aggregate("", (current, next) => current + "\n" + next);
+                return new ObjectResult(new { errorMessage = errorMessage })
+                {
+                    StatusCode = ErrorStatusCodes.BadRequest.ToStatusCode(),
+                };
+            }
+
             var validate = EventValidator.ValidateEvent(id, eventRequest);
 
             if (validate.IsError)
