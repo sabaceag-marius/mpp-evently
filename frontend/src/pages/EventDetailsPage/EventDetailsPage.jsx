@@ -9,11 +9,7 @@ function EventDetailsPage() {
     
     const params = useParams();
 
-    if(isNaN(Number(params.id))){
-        throw new Error();
-    }
-
-    const id = Number(params.id);
+    const id = params.id;
 
     const [event,setEvent] = useState(null);
 
@@ -23,7 +19,8 @@ function EventDetailsPage() {
 
         getEventAPI(id).then(result => {
             setEvent(result);
-        }).catch();
+        });
+        
     }, []);
 
     // Edit Modal

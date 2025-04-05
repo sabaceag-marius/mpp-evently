@@ -41,7 +41,7 @@ function EventCard({event}) {
       <div style={borderStyle} className={card.container}>
         <div>
           <h3 style={event.tag === null || {color : statisticsColors[event.tag]}} className={card.title}>{event.name}</h3>
-          <p className={card.username}>{event.userName}</p>
+          <p className={card.username}>{event.username}</p>
           {event.tag === null || <p>{event.tag}</p>}
         </div>
         {timeComponent}
