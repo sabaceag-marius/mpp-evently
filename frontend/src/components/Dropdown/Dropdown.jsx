@@ -1,19 +1,28 @@
-import { InputLabel, MenuItem, Select } from '@mui/material';
+import { InputLabel, MenuItem, outlinedInputClasses } from '@mui/material';
 import React from 'react';
 import { menuClasses } from "@mui/material/Menu";
+import Select, { selectClasses } from "@mui/material/Select";
 
-function Dropdown({optionsArray,label, labelId}) {
+function Dropdown({optionsArray, label, labelId, changeHandler,currentValue, inputName}) {
 
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
-    // const MenuProps = {
-    //     PaperProps: {
-    //     style: {
-    //         maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP
-    //     },
 
-    //     },
-    // };
+    const SelectProps = {
+
+		[`& .${selectClasses.select}`]: {
+			minWidth: "50px",
+			background: "var(--input--background)",
+			color: "var(--primary-content)",
+			// borderRadius: ".75rem",
+			border: "none",
+			padding: "calc((5px + 1.171875vw)/2) calc((5px + 0.78125vw))",
+			outline: "none"
+		},
+		[`& .${outlinedInputClasses.notchedOutline}`]: {
+			border: "none"
+		}
+    }
 
     const MenuProps = {
         PaperProps: {
@@ -22,19 +31,19 @@ function Dropdown({optionsArray,label, labelId}) {
             },
         },
         sx: {
-        //   marginBlock: "0.5rem",
           [`& .${menuClasses.list}`]: {
             paddingTop: 0,
             paddingBottom: 0,
-            background: "var(--background--middle)",
+            background: "var(--input--background)",
             "& li": {
-              paddingTop: "12px",
-              paddingBottom: "12px",
+              paddingTop: ".5rem",
+              paddingBottom: ".5rem",
             },
-            "& li:hover": {
-              background: 'var(--background--selected)',
-            }
+			"& li.Mui-selected": {
+               background: 'var(--input--background)'
+			}
           },
+		  
         },
       }
 
@@ -43,10 +52,15 @@ function Dropdown({optionsArray,label, labelId}) {
 
     return(
         <>
-            <InputLabel id={labelId}>{label}</InputLabel>
+            {/* {(label && labelId) && <InputLabel id={labelId}>{label}</InputLabel>} */}
             <Select
-                labelId={labelId}
+                labelId={labelId || undefined}
                 MenuProps={MenuProps}
+				name={inputName}
+				value={currentValue}
+				defaultValue={optionsArray[0]}
+				onChange={changeHandler}
+				sx={SelectProps}
             >
                 {optionsElements}
             </Select>

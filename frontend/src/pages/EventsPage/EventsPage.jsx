@@ -12,6 +12,7 @@ import { categoryData } from '../../services/eventsChartsService';
 import CategoryChart from '../../components/CategoryChart/CategoryChart';
 import EventsCountChart from '../../components/EventsCountChart/EventsCountChart';
 import CategoryHoursChart from '../../components/CategoryChart/CategoryHoursChart';
+import Dropdown from '../../components/Dropdown/Dropdown';
 
 function EventsPage() {
 
@@ -21,7 +22,7 @@ function EventsPage() {
 
     const DEFAULT_QUERY_DATA = {
         dateMoment : moment(),
-        dateInterval : "day",
+        dateInterval : "Day",
         categories : categories
     }
 
@@ -30,7 +31,7 @@ function EventsPage() {
 
     function getDate(){
         
-        return queryData.dateInterval === 'day' ? queryData.dateMoment.format('Do MMMM YYYY') : queryData.dateMoment.format('MMMM YYYY');
+        return queryData.dateInterval === 'Day' ? queryData.dateMoment.format('Do MMMM YYYY') : queryData.dateMoment.format('MMMM YYYY');
     }
 
     function incrementDate(){
@@ -61,7 +62,7 @@ function EventsPage() {
     function onChangeQuery(event) {
 
         let {name, value} = event.target;
-
+        console.log(name, value);
         if(name === 'dateMoment') value = moment(value);
         
         setQueryData(prev => ({
@@ -113,7 +114,7 @@ function EventsPage() {
     }
 
     const checkboxElements = categories.map
-    (c => <CheckboxInput key={c} label={c} isChecked={queryData.categories.includes(c)} checkHandler={checkboxHandler} />)
+    (c => <CheckboxInput inputName={c} key={c} label={c} isChecked={queryData.categories.includes(c)} checkHandler={checkboxHandler} />)
     
 
     // endregion
@@ -154,7 +155,7 @@ function EventsPage() {
 
     // When we submit a query with different filters - fetch the pageCount and the transactions for the first page
     useEffect(() => {
-        
+
         getEventsCountAPI(queryData).then(result =>{
 
             if(result === undefined) return;
@@ -204,7 +205,7 @@ function EventsPage() {
 
                 </div>
 
-                <select
+                {/* <select
                     className='dark--dropdown'
                     id='dateInterval'
                     name='dateInterval'
@@ -214,7 +215,9 @@ function EventsPage() {
                     <option className='dark--option' value="day" >Day</option>
                     <option className='dark--option' value="week" >Week</option>
                     <option className='dark--option' value="month" >Month</option>
-                </select>
+                </select> */}
+
+                <Dropdown inputName='dateInterval' changeHandler={onChangeQuery} currentValue={queryData.dateInterval} optionsArray={["Day","Week","Month"]} />
             </div>
 
             <main>

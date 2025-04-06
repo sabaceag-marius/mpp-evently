@@ -3,8 +3,10 @@ import Modal from 'react-modal';
 import style from './CreateEventModal.module.css';
 import moment from 'moment';
 import { addEventAPI } from '../../services/eventsService';
-import { toDateTimeInputString } from '../../utils/momentUtils';
+import { getTimeOptions, toDateTimeInputString } from '../../utils/momentUtils';
 import FormModal from '../FormModal/FormModal';
+import Dropdown from '../Dropdown/Dropdown';
+
 function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
   
   const DEFAULT_FORM_DATA = {
@@ -143,12 +145,14 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
 						value={formData.startDate}
 					/>
 
-					<select id="start-time" name="start-time">
-						<option value="09:00">09:00 AM</option>
-						<option value="12:00">12:00 PM</option>
-						<option value="15:00">03:00 PM</option>
-						<option value="18:00">06:00 PM</option>
-					</select>
+          <Dropdown 
+            optionsArray={getTimeOptions()} 
+            // label="Category" 
+            // labelId="Category"
+            // changeHandler={handleFormChange}
+            // inputName="categoryName"
+            // currentValue={formData.categoryName}
+          />
 				</div>
 			</div>
 			
@@ -163,18 +167,30 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
 						value={formData.endDate}
 					/>
 
-					<select id="start-time" name="start-time">
-						<option value="09:00">09:00 AM</option>
-						<option value="12:00">12:00 PM</option>
-						<option value="15:00">03:00 PM</option>
-						<option value="18:00">06:00 PM</option>
-					</select>
+          <Dropdown 
+            optionsArray={getTimeOptions()} 
+            // label="Category" 
+            // labelId="Category"
+            // changeHandler={handleFormChange}
+            // inputName="categoryName"
+            // currentValue={formData.categoryName}
+          />
+
 				</div>
 			</div>
 
+      
 			<div className={style.inputGroup}>
 				<label htmlFor="categoryName">Category</label>
-				{categoryDropdown}
+				{/* {categoryDropdown} */}
+        <Dropdown 
+          optionsArray={categories} 
+          label="Category" 
+          labelId="Category"
+          changeHandler={handleFormChange}
+          inputName="categoryName"
+          currentValue={formData.categoryName}
+        />
 			</div>
 
 			{errorsElements}
