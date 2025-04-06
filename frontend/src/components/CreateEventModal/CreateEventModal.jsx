@@ -4,6 +4,7 @@ import style from './CreateEventModal.module.css';
 import moment from 'moment';
 import { addEventAPI } from '../../services/eventsService';
 import { toDateTimeInputString } from '../../utils/momentUtils';
+import FormModal from '../FormModal/FormModal';
 function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
   
   const DEFAULT_FORM_DATA = {
@@ -97,64 +98,90 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
         style={styling}
         onRequestClose={onClose}
     >
-        <div className={style.modal} >
-          
-          <div className={style.modalHeader}>
-            
-            <button
-              className ="transparent--button material-symbols-outlined"
-              style={{left : "0", position : "absolute"}}
-              onClick={onClose}>close
-            </button>
 
-            <h2>Create new event</h2>
+      <div className={style.modalContent}>
+        
+		<div className={style.modalHeader}>
+			<h2>Create event</h2>
+			<button
+				className = {`${style.closeButton} transparent--button material-symbols-outlined`}
+				onClick={onClose}>close
+			</button>
+		</div>
 
-          </div>
+        <form className={style.formContainer} onSubmit={onSubmit}>
+			
+			<div className={style.inputGroup}>
+				<label htmlFor="name">Name</label>
+				<input
+					type="text"
+					id="name"
+					name="name"
+					onChange={handleFormChange}
+					value={formData.name}
+				/>
+			</div>
 
-          <form className={style.modalForm} onSubmit={onSubmit}>
-            <label htmlFor="name">Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              onChange={handleFormChange}
-              value={formData.name}
-            />
-            
-            <label htmlFor="description">Description</label>
-            <textarea
-              // className="modal--input"
-              id="description"
-              name="description"
-              onChange={handleFormChange}
-              value={formData.description}
-            />
+			<div className={style.inputGroup}>
+				<label htmlFor="description">Description</label>
+				<textarea
+					id="description"
+					name="description"
+					onChange={handleFormChange}
+					value={formData.description}
+				/>
+			</div>
 
-            <label htmlFor="startDate">Start Date</label>
-            <input
-              type="datetime-local"
-              id="startDate"
-              name="startDate"
-              onChange={handleFormChange}
-              value={formData.startDate}
-            />
+			<div className={style.inputGroup}>
+				<label htmlFor="startDate">Start Date</label>
+				<div className={style.dateTimeGroup}>
+					<input
+						type="date"
+						id="startDate"
+						name="startDate"
+						onChange={handleFormChange}
+						value={formData.startDate}
+					/>
 
-            <label htmlFor="endDate">End Date</label>
-            <input
-              type="datetime-local"
-              id="endDate"
-              name="endDate"
-              onChange={handleFormChange}
-              value={formData.endDate}
-            />
+					<select id="start-time" name="start-time">
+						<option value="09:00">09:00 AM</option>
+						<option value="12:00">12:00 PM</option>
+						<option value="15:00">03:00 PM</option>
+						<option value="18:00">06:00 PM</option>
+					</select>
+				</div>
+			</div>
+			
+			<div className={style.inputGroup}>
+				<label htmlFor="endDate">End Date</label>
+				<div className={style.dateTimeGroup}>
+					<input
+						type="date"
+						id="endDate"
+						name="endDate"
+						onChange={handleFormChange}
+						value={formData.endDate}
+					/>
 
-            <label htmlFor="categoryName">Category</label>
-            {categoryDropdown}
-            {errorsElements}
-            <button className="primary--button">Submit</button>
+					<select id="start-time" name="start-time">
+						<option value="09:00">09:00 AM</option>
+						<option value="12:00">12:00 PM</option>
+						<option value="15:00">03:00 PM</option>
+						<option value="18:00">06:00 PM</option>
+					</select>
+				</div>
+			</div>
 
-          </form>
-        </div>
+			<div className={style.inputGroup}>
+				<label htmlFor="categoryName">Category</label>
+				{categoryDropdown}
+			</div>
+
+			{errorsElements}
+			<button className={`${style.submitButton} primary--button`}>Submit</button>
+        </form>
+      </div>
+        
     </Modal>
   )
 }

@@ -9,7 +9,9 @@
   --secondary-dark: #a1392b; */
 
   --background: #1E1E1E;
-  --foreground: #393939 ;
+  --foreground: #393939;
+
+  --input--background: #404040;
   --success: #36c936 ;
   --error: #c93636 ;
 }
@@ -103,8 +105,14 @@ textarea{
 }
 
 input,textarea,select,option{
-  color: black;
+  color: var(--primary-content);
+  background-color: var(--input--background);
+  border: none;
   font-family: 'Inter', sans-serif;
+
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: .5rem;
 }
 
 .center{
