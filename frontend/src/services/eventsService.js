@@ -20,8 +20,6 @@ export async function getEventsAPI(queryData, currentPage, PAGE_SIZE) {
         pageSize: PAGE_SIZE
     }
 
-    console.log(queryRequest);
-
     try{
         const response = await axios.get(api+"/events",{
             params: queryRequest,

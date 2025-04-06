@@ -4,7 +4,7 @@ import EventCard from '../../components/EventCard/EventCard';
 import CreateEventModal from '../../components/CreateEventModal/CreateEventModal';
 import { getEventsAPI, getEventsCountAPI } from '../../services/eventsService';
 import moment from 'moment';
-import Checkbox from '../../components/Checkbox/Checkbox';
+import CheckboxInput from '../../components/Checkbox/Checkbox';
 import { toDateTimeInputString, toDateInputString } from '../../utils/momentUtils';
 import { arraysEqual } from '../../utils/arrayUtils';
 import PageSelector from '../../components/PageSelector/PageSelector';
@@ -78,6 +78,8 @@ function EventsPage() {
     function checkboxHandler(event){
         let {name, checked} = event.target;
 
+        console.log(name);
+        
         if(checked){
             setQueryData(prev =>({
                 ...prev,
@@ -109,6 +111,10 @@ function EventsPage() {
         }
 
     }
+
+    const checkboxElements = categories.map
+    (c => <CheckboxInput key={c} label={c} isChecked={queryData.categories.includes(c)} checkHandler={checkboxHandler} />)
+    
 
     // endregion
 
@@ -148,7 +154,7 @@ function EventsPage() {
 
     // When we submit a query with different filters - fetch the pageCount and the transactions for the first page
     useEffect(() => {
-        console.log("Fetch page count and transactions for 1st page");
+        
         getEventsCountAPI(queryData).then(result =>{
 
             if(result === undefined) return;
@@ -179,9 +185,7 @@ function EventsPage() {
 
     const [events, setEvents] = useState([]);
     const eventsElements = events.map(e => <EventCard event={e} key={e.id} />);
-    const checkboxElements = categories.map
-    (c => <Checkbox label={c} id={c.toLowerCase()} isChecked={queryData.categories.includes(c)} checkHandler={checkboxHandler} />)
-    
+       
     return (
     <>
         <div className='main--container'>
@@ -232,7 +236,7 @@ function EventsPage() {
                         <fieldset className='filter--fieldset'>
                             <label>Categories</label>
                             
-                            <Checkbox id='all' label='All' isChecked={arraysEqual(queryData.categories,categories)} checkHandler={checkboxAllHandler}/>
+                            <CheckboxInput id='all' label='All' isChecked={arraysEqual(queryData.categories,categories)} checkHandler={checkboxAllHandler}/>
                             {checkboxElements}
                         </fieldset>
                     </form>
