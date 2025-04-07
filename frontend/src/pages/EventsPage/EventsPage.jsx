@@ -13,6 +13,7 @@ import CategoryChart from '../../components/CategoryChart/CategoryChart';
 import EventsCountChart from '../../components/EventsCountChart/EventsCountChart';
 import CategoryHoursChart from '../../components/CategoryChart/CategoryHoursChart';
 import Dropdown from '../../components/Dropdown/Dropdown';
+import DateInput from '../../components/DateInput/DateInput';
 
 function EventsPage() {
 
@@ -64,6 +65,15 @@ function EventsPage() {
         let {name, value} = event.target;
         console.log(name, value);
         if(name === 'dateMoment') value = moment(value);
+        
+        setQueryData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+
+    }
+
+    function onChangeDateQuery(name,value) {
         
         setQueryData(prev => ({
             ...prev,
@@ -205,18 +215,6 @@ function EventsPage() {
 
                 </div>
 
-                {/* <select
-                    className='dark--dropdown'
-                    id='dateInterval'
-                    name='dateInterval'
-                    onChange={onChangeQuery}
-                    value={queryData.dateInterval}
-                >
-                    <option className='dark--option' value="day" >Day</option>
-                    <option className='dark--option' value="week" >Week</option>
-                    <option className='dark--option' value="month" >Month</option>
-                </select> */}
-
                 <Dropdown inputName='dateInterval' changeHandler={onChangeQuery} currentValue={queryData.dateInterval} optionsArray={["Day","Week","Month"]} />
             </div>
 
@@ -229,11 +227,12 @@ function EventsPage() {
                     <form className='filter--form'>
 
                         <label htmlFor='dateMoment'>Date</label>
-                        <input type='date'
-                            id='dateMoment'
-                            name='dateMoment'
-                            value={toDateInputString(queryData.dateMoment)}
-                            onChange={onChangeQuery}
+
+                        <DateInput
+                            id="dateMoment"
+                            onChange={onChangeDateQuery}
+                            value={queryData.dateMoment}
+                            name="dateMoment"
                         />
 
                         <fieldset className='filter--fieldset'>
