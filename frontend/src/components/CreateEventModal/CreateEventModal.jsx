@@ -3,19 +3,21 @@ import Modal from 'react-modal';
 import style from './CreateEventModal.module.css';
 import moment from 'moment';
 import { addEventAPI } from '../../services/eventsService';
-import { getTimeOptions, toDateInputString, toDateTimeInputString } from '../../utils/momentUtils';
+import { getTimeOptions, toDateTimeString, toDateTimeInputString } from '../../utils/momentUtils';
 import FormModal from '../FormModal/FormModal';
 import Dropdown from '../Dropdown/Dropdown';
 import { DatePicker } from '@mui/x-date-pickers';
 import DateInput from '../DateInput/DateInput';
 
-function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
+function CreateEventModal({isOpen,closeModal,submitHandler,categories,currentMoment}) {
   
   const DEFAULT_FORM_DATA = {
     name : "",
     description : "",
-    startDate : moment(),//toDateInputString(moment()),
-    endDate : moment(),//toDateInputString(moment()),
+    startDate : currentMoment,
+    startTime: "00:00",
+    endDate : currentMoment,
+    endTime: "00:00",
     categoryName: "",
     userName : "Mark"
   }
@@ -24,7 +26,7 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
   const [errors,setErrors] = useState([]);
   
   function handleFormChange(event){
-    console.log(event);
+
     const {name,value} = event.target;
 
     setFormData(prev =>({
@@ -38,15 +40,23 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
     setFormData(prev =>({
       ...prev,
       [name]:value
-  }));
+    }));
   }
 
-  async function onSubmit(event){
+  async function onSubmit(e){
         
-    event.preventDefault();
+    e.preventDefault();
     setErrors([]);
     
-    const result = await addEventAPI(formData);
+    const event = {
+      ...formData,
+      startDate: toDateTimeString(formData.startDate,formData.startTime),
+      endDate: toDateTimeString(formData.endDate,formData.endTime)
+    }
+
+    console.log(event);
+
+    const result = await addEventAPI(event);
 
     if(result.errorCode !== undefined){
       setErrors(result.errorMessages);
@@ -89,16 +99,6 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "unset";
   }, [isOpen]);
-  
-  const categoryDropdown = <select
-    id='categoryName'
-    name='categoryName'
-    onChange={handleFormChange}
-    value={formData.categoryName}
-  >
-    <option value="">Select a category</option>
-    {categories.map(c => <option key={c} value={c}>{c}</option>)}
-  </select>
 
   const errorsElements = errors.map(e => <p className={style.error} key={e}>{e}</p>)
 
@@ -108,6 +108,7 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
         preventScroll={true}
         style={styling}
         onRequestClose={onClose}
+        ariaHideApp={false}
     >
 
       <div className={style.modalContent}>
@@ -146,18 +147,6 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
 			<div className={style.inputGroup}>
 				<label htmlFor="startDate">Start Date</label>
 				<div className={style.dateTimeGroup}>
-					{/* <input
-						type="date"
-						id="startDate"
-						name="startDate"
-						onChange={handleFormChange}
-						value={formData.startDate}
-					/> */}
-          {/* <DatePicker
-            id="startDate"
-            onChange={handleDateChange}
-            value={formData.startDate}
-          /> */}
 
           <DateInput 
             id="startDate"
@@ -166,12 +155,10 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
             name="startDate"
           />
           <Dropdown 
-            optionsArray={getTimeOptions()} 
-            // label="Category" 
-            // labelId="Category"
-            // changeHandler={handleFormChange}
-            // inputName="categoryName"
-            // currentValue={formData.categoryName}
+            optionsArray={getTimeOptions()}
+            changeHandler={handleFormChange}
+            inputName="startTime"
+            currentValue={formData.startTime}
           />
 				</div>
 			</div>
@@ -187,12 +174,10 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
           />
 
           <Dropdown 
-            optionsArray={getTimeOptions()} 
-            // label="Category" 
-            // labelId="Category"
-            // changeHandler={handleFormChange}
-            // inputName="categoryName"
-            // currentValue={formData.categoryName}
+            optionsArray={getTimeOptions()}
+            changeHandler={handleFormChange}
+            inputName="endTime"
+            currentValue={formData.endTime}
           />
 
 				</div>

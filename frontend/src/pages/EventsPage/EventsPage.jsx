@@ -267,7 +267,13 @@ function EventsPage() {
 
         </div>
 
-        <CreateEventModal isOpen={isModalOpen} closeModal={closeModal} submitHandler={()=>{setQueryData(DEFAULT_QUERY_DATA)}} categories={categories} />
+        <CreateEventModal 
+            isOpen={isModalOpen} 
+            closeModal={closeModal} 
+            submitHandler={()=>{setQueryData(DEFAULT_QUERY_DATA)}} 
+            categories={categories}
+            currentMoment={queryData.dateMoment}
+        />
     </>
   )
 }

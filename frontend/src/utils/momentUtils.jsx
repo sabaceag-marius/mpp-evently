@@ -4,6 +4,10 @@ export function toDateTimeInputString(momentt){
     return moment(momentt).format("yyyy-MM-DDTHH:mm");
 }
 
+export function toDateTimeString(momentDate,timeString){
+    return `${moment(momentDate).format("yyyy-MM-DDT")}${timeString}Z`;
+}
+
 export function toDateInputString(momentt){
     return moment(momentt).format("yyyy-MM-DD");
 }
