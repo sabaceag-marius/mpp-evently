@@ -3,17 +3,19 @@ import Modal from 'react-modal';
 import style from './CreateEventModal.module.css';
 import moment from 'moment';
 import { addEventAPI } from '../../services/eventsService';
-import { getTimeOptions, toDateTimeInputString } from '../../utils/momentUtils';
+import { getTimeOptions, toDateInputString, toDateTimeInputString } from '../../utils/momentUtils';
 import FormModal from '../FormModal/FormModal';
 import Dropdown from '../Dropdown/Dropdown';
+import { DatePicker } from '@mui/x-date-pickers';
+import DateInput from '../DateInput/DateInput';
 
 function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
   
   const DEFAULT_FORM_DATA = {
     name : "",
     description : "",
-    startDate : toDateTimeInputString(moment()),
-    endDate : toDateTimeInputString(moment()),
+    startDate : moment(),//toDateInputString(moment()),
+    endDate : moment(),//toDateInputString(moment()),
     categoryName: "",
     userName : "Mark"
   }
@@ -22,14 +24,21 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
   const [errors,setErrors] = useState([]);
   
   function handleFormChange(event){
+    console.log(event);
     const {name,value} = event.target;
-    console.log(name,value);
 
     setFormData(prev =>({
         ...prev,
         [name]:value
     }));
+  }
+
+  function handleDateChange(name,value){
     
+    setFormData(prev =>({
+      ...prev,
+      [name]:value
+  }));
   }
 
   async function onSubmit(event){
@@ -137,14 +146,25 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
 			<div className={style.inputGroup}>
 				<label htmlFor="startDate">Start Date</label>
 				<div className={style.dateTimeGroup}>
-					<input
+					{/* <input
 						type="date"
 						id="startDate"
 						name="startDate"
 						onChange={handleFormChange}
 						value={formData.startDate}
-					/>
+					/> */}
+          {/* <DatePicker
+            id="startDate"
+            onChange={handleDateChange}
+            value={formData.startDate}
+          /> */}
 
+          <DateInput 
+            id="startDate"
+            onChange={handleDateChange}
+            value={formData.startDate}
+            name="startDate"
+          />
           <Dropdown 
             optionsArray={getTimeOptions()} 
             // label="Category" 
@@ -159,13 +179,12 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories}) {
 			<div className={style.inputGroup}>
 				<label htmlFor="endDate">End Date</label>
 				<div className={style.dateTimeGroup}>
-					<input
-						type="date"
-						id="endDate"
-						name="endDate"
-						onChange={handleFormChange}
-						value={formData.endDate}
-					/>
+          <DateInput 
+            id="endDate"
+            onChange={handleDateChange}
+            value={formData.endDate}
+            name="endDate"
+          />
 
           <Dropdown 
             optionsArray={getTimeOptions()} 

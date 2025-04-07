@@ -14,7 +14,7 @@ function Dropdown({optionsArray, label, labelId, changeHandler,currentValue, inp
 			minWidth: "50px",
 			background: "var(--input--background)",
 			color: "var(--primary-content)",
-			// borderRadius: ".75rem",
+			borderRadius: ".75rem",
 			border: "none",
 			padding: "calc((5px + 1.171875vw)/2) calc((5px + 0.78125vw))",
 			outline: "none"
@@ -45,6 +45,7 @@ function Dropdown({optionsArray, label, labelId, changeHandler,currentValue, inp
           },
 		  
         },
+        
       }
 
     const optionsElements = optionsArray
