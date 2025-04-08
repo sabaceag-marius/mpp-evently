@@ -4,6 +4,7 @@ import { deleteEventAPI, getEventAPI } from '../../services/eventsService';
 import UpdateEventModal from '../../components/UpdateEventModal/UpdateEventModal';
 import style from './EventDetails.module.css';
 import moment from 'moment';
+import { getMoment } from '../../utils/momentUtils';
 
 function EventDetailsPage() {
     
@@ -47,13 +48,14 @@ function EventDetailsPage() {
       const borderStyle = event === null ? {} : {
         'borderTop' : `2rem solid ${categoryColors[event.categoryName]}`
       }
-    
+
     const timeComponent = <div>{parseDates().map(t => <p key={t}>{t}</p>)}</div>;
     
     function parseDates(){
         if(event === null) return []
-        const startMoment = moment(event.startDate);
-        const endMoment = moment(event.endDate);
+
+        const startMoment = getMoment(event.startDate);
+        const endMoment = getMoment(event.endDate);
 
         if(startMoment.isSame(endMoment, 'day'))
             return [`${startMoment.format('Do MMM y')}`, `${startMoment.format('HH:mm')}-${endMoment.format('HH:mm')}`]

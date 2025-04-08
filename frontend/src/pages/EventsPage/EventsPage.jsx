@@ -4,14 +4,16 @@ import EventCard from '../../components/EventCard/EventCard';
 import CreateEventModal from '../../components/CreateEventModal/CreateEventModal';
 import { getEventsAPI, getEventsCountAPI } from '../../services/eventsService';
 import moment from 'moment';
-import Checkbox from '../../components/Checkbox/Checkbox';
-import { toDateTimeInputString, toDateInputString } from '../../utils/momentUtils';
+import CheckboxInput from '../../components/Checkbox/Checkbox';
+import { toDateTimeInputString, toDateInputString, getMoment } from '../../utils/momentUtils';
 import { arraysEqual } from '../../utils/arrayUtils';
 import PageSelector from '../../components/PageSelector/PageSelector';
 import { categoryData } from '../../services/eventsChartsService';
 import CategoryChart from '../../components/CategoryChart/CategoryChart';
 import EventsCountChart from '../../components/EventsCountChart/EventsCountChart';
 import CategoryHoursChart from '../../components/CategoryChart/CategoryHoursChart';
+import Dropdown from '../../components/Dropdown/Dropdown';
+import DateInput from '../../components/DateInput/DateInput';
 
 function EventsPage() {
 
@@ -20,8 +22,8 @@ function EventsPage() {
     
 
     const DEFAULT_QUERY_DATA = {
-        dateMoment : moment(),
-        dateInterval : "day",
+        dateMoment : getMoment(),
+        dateInterval : "Day",
         categories : categories
     }
 
@@ -30,7 +32,7 @@ function EventsPage() {
 
     function getDate(){
         
-        return queryData.dateInterval === 'day' ? queryData.dateMoment.format('Do MMMM YYYY') : queryData.dateMoment.format('MMMM YYYY');
+        return queryData.dateInterval === 'Day' ? queryData.dateMoment.format('Do MMMM YYYY') : queryData.dateMoment.format('MMMM YYYY');
     }
 
     function incrementDate(){
@@ -54,15 +56,24 @@ function EventsPage() {
     function setTodayDate(){
         setQueryData(prev =>({
             ...prev,
-            dateMoment: moment()
+            dateMoment: getMoment()
         }))
     }
 
     function onChangeQuery(event) {
 
         let {name, value} = event.target;
+        console.log(name, value);
+        if(name === 'dateMoment') value = getMoment(value);
+        
+        setQueryData(prev => ({
+            ...prev,
+            [name]: value
+        }));
 
-        if(name === 'dateMoment') value = moment(value);
+    }
+
+    function onChangeDateQuery(name,value) {
         
         setQueryData(prev => ({
             ...prev,
@@ -78,6 +89,8 @@ function EventsPage() {
     function checkboxHandler(event){
         let {name, checked} = event.target;
 
+        console.log(name);
+        
         if(checked){
             setQueryData(prev =>({
                 ...prev,
@@ -109,6 +122,10 @@ function EventsPage() {
         }
 
     }
+
+    const checkboxElements = categories.map
+    (c => <CheckboxInput inputName={c} key={c} label={c} isChecked={queryData.categories.includes(c)} checkHandler={checkboxHandler} />)
+    
 
     // endregion
 
@@ -148,7 +165,7 @@ function EventsPage() {
 
     // When we submit a query with different filters - fetch the pageCount and the transactions for the first page
     useEffect(() => {
-        console.log("Fetch page count and transactions for 1st page");
+
         getEventsCountAPI(queryData).then(result =>{
 
             if(result === undefined) return;
@@ -179,9 +196,7 @@ function EventsPage() {
 
     const [events, setEvents] = useState([]);
     const eventsElements = events.map(e => <EventCard event={e} key={e.id} />);
-    const checkboxElements = categories.map
-    (c => <Checkbox label={c} id={c.toLowerCase()} isChecked={queryData.categories.includes(c)} checkHandler={checkboxHandler} />)
-    
+       
     return (
     <>
         <div className='main--container'>
@@ -200,17 +215,7 @@ function EventsPage() {
 
                 </div>
 
-                <select
-                    className='dark--dropdown'
-                    id='dateInterval'
-                    name='dateInterval'
-                    onChange={onChangeQuery}
-                    value={queryData.dateInterval}
-                >
-                    <option className='dark--option' value="day" >Day</option>
-                    <option className='dark--option' value="week" >Week</option>
-                    <option className='dark--option' value="month" >Month</option>
-                </select>
+                <Dropdown inputName='dateInterval' changeHandler={onChangeQuery} currentValue={queryData.dateInterval} optionsArray={["Day","Week","Month"]} />
             </div>
 
             <main>
@@ -222,17 +227,18 @@ function EventsPage() {
                     <form className='filter--form'>
 
                         <label htmlFor='dateMoment'>Date</label>
-                        <input type='date'
-                            id='dateMoment'
-                            name='dateMoment'
-                            value={toDateInputString(queryData.dateMoment)}
-                            onChange={onChangeQuery}
+
+                        <DateInput
+                            id="dateMoment"
+                            onChange={onChangeDateQuery}
+                            value={queryData.dateMoment}
+                            name="dateMoment"
                         />
 
                         <fieldset className='filter--fieldset'>
                             <label>Categories</label>
                             
-                            <Checkbox id='all' label='All' isChecked={arraysEqual(queryData.categories,categories)} checkHandler={checkboxAllHandler}/>
+                            <CheckboxInput id='all' label='All' isChecked={arraysEqual(queryData.categories,categories)} checkHandler={checkboxAllHandler}/>
                             {checkboxElements}
                         </fieldset>
                     </form>
@@ -261,7 +267,13 @@ function EventsPage() {
 
         </div>
 
-        <CreateEventModal isOpen={isModalOpen} closeModal={closeModal} submitHandler={()=>{setQueryData(DEFAULT_QUERY_DATA)}} categories={categories} />
+        <CreateEventModal 
+            isOpen={isModalOpen} 
+            closeModal={closeModal} 
+            submitHandler={()=>{setQueryData(DEFAULT_QUERY_DATA)}} 
+            categories={categories}
+            currentMoment={queryData.dateMoment}
+        />
     </>
   )
 }

@@ -3,21 +3,39 @@ import Modal from 'react-modal';
 import style from './UpdateEventModal.module.css';
 import moment from 'moment';
 import { addEventAPI, updateEventAPI } from '../../services/eventsService';
-import { toDateTimeInputString } from '../../utils/momentUtils';
+import { getMoment, getTimeOptions, toDateTimeInputString, toDateTimeString, toTimeInputString } from '../../utils/momentUtils';
+import DateInput from '../DateInput/DateInput';
+import Dropdown from '../Dropdown/Dropdown';
 
 function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
   
   const categories = ['Work', 'School', 'Personal'];
 
+  // const DEFAULT_FORM_DATA = {
+  //   name : "",
+  //   description : "",
+  //   startDate : currentMoment,
+  //   startTime: "00:00",
+  //   endDate : currentMoment,
+  //   endTime: "00:00",
+  //   categoryName: "",
+  //   userName : "Mark"
+  // }
+
   const DEFAULT_FORM_DATA = {
     name : event.name,
     description : event.description,
-    startDate : toDateTimeInputString(moment(event.startDate)),
-    endDate : toDateTimeInputString(moment(event.endDate)),
+    startDate : getMoment(event.startDate),
+    startTime: toTimeInputString(event.startDate),
+    endDate : getMoment(event.endDate),
+    endTime: toTimeInputString(event.endDate),
     categoryName : event.categoryName,
     userName : event.userName
   }
   
+  console.log(event);
+  console.log(DEFAULT_FORM_DATA);
+
   const [formData,setFormData] = useState(DEFAULT_FORM_DATA);
   const [errors,setErrors] = useState([]);
 
@@ -33,13 +51,27 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
     
   }
 
+  function handleDateChange(name,value){
+    
+    setFormData(prev =>({
+      ...prev,
+      [name]:value
+    }));
+  }
+
   async function onSubmit(e){
         
     e.preventDefault();
     setErrors([]);
 
-    console.log(event);
-    const result = await updateEventAPI(event.id, formData);
+    const newEvent = {
+      ...formData,
+      startDate: toDateTimeString(formData.startDate,formData.startTime),
+      endDate: toDateTimeString(formData.endDate,formData.endTime)
+    }
+
+    console.log(newEvent);
+    const result = await updateEventAPI(event.id, newEvent);
     
     if(result.errorCode !== undefined){
       setErrors(result.errorMessages);
@@ -93,70 +125,170 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
   const errorsElements = errors.map(e => <p className={style.error} key={e}>{e}</p>)
   
   return (
+    // <Modal
+    //     isOpen = {isOpen}
+    //     preventScroll={true}
+    //     style={styling}
+    //     onRequestClose={onClose}
+    // >
+    //     <div className={style.modal} >
+          
+    //       <div className={style.modalHeader}>
+            
+    //         <button
+    //           className ="transparent--button material-symbols-outlined"
+    //           style={{left : "0", position : "absolute"}}
+    //           onClick={onClose}>close
+    //         </button>
+
+    //         <h2>Edit event</h2>
+
+    //       </div>
+
+    //       <form className={style.modalForm} onSubmit={onSubmit}>
+    //         <label htmlFor="name">Name</label>
+    //         <input
+    //           type="text"
+    //           id="name"
+    //           name="name"
+    //           onChange={handleFormChange}
+    //           value={formData.name}
+    //         />
+            
+    //         <label htmlFor="description">Description</label>
+    //         <textarea
+    //           // className="modal--input"
+    //           id="description"
+    //           name="description"
+    //           onChange={handleFormChange}
+    //           value={formData.description}
+    //         />
+
+    //         <label htmlFor="startDate">Start Date</label>
+    //         <input
+    //           type="datetime-local"
+    //           id="startDate"
+    //           name="startDate"
+    //           onChange={handleFormChange}
+    //           value={formData.startDate}
+    //         />
+
+    //         <label htmlFor="endDate">End Date</label>
+    //         <input
+    //           type="datetime-local"
+    //           id="endDate"
+    //           name="endDate"
+    //           onChange={handleFormChange}
+    //           value={formData.endDate}
+    //         />
+
+    //         {categoryDropdown}
+    //         {errorsElements}
+
+    //         <button className="primary--button">Submit</button>
+
+    //       </form>
+    //     </div>
+    // </Modal>
     <Modal
         isOpen = {isOpen}
         preventScroll={true}
         style={styling}
         onRequestClose={onClose}
+        ariaHideApp={false}
     >
-        <div className={style.modal} >
-          
-          <div className={style.modalHeader}>
-            
-            <button
-              className ="transparent--button material-symbols-outlined"
-              style={{left : "0", position : "absolute"}}
-              onClick={onClose}>close
-            </button>
 
-            <h2>Edit event</h2>
+      <div className={style.modalContent}>
+        
+		<div className={style.modalHeader}>
+			<h2>Create event</h2>
+			<button
+				className = {`${style.closeButton} transparent--button material-symbols-outlined`}
+				onClick={onClose}>close
+			</button>
+		</div>
 
-          </div>
+        <form className={style.formContainer} onSubmit={onSubmit}>
+			
+			<div className={style.inputGroup}>
+				<label htmlFor="name">Name</label>
+				<input
+					type="text"
+					id="name"
+					name="name"
+					onChange={handleFormChange}
+					value={formData.name}
+				/>
+			</div>
 
-          <form className={style.modalForm} onSubmit={onSubmit}>
-            <label htmlFor="name">Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              onChange={handleFormChange}
-              value={formData.name}
-            />
-            
-            <label htmlFor="description">Description</label>
-            <textarea
-              // className="modal--input"
-              id="description"
-              name="description"
-              onChange={handleFormChange}
-              value={formData.description}
-            />
+			<div className={style.inputGroup}>
+				<label htmlFor="description">Description</label>
+				<textarea
+					id="description"
+					name="description"
+					onChange={handleFormChange}
+					value={formData.description}
+				/>
+			</div>
 
-            <label htmlFor="startDate">Start Date</label>
-            <input
-              type="datetime-local"
-              id="startDate"
-              name="startDate"
-              onChange={handleFormChange}
-              value={formData.startDate}
-            />
+			<div className={style.inputGroup}>
+				<label htmlFor="startDate">Start Date</label>
+				<div className={style.dateTimeGroup}>
 
-            <label htmlFor="endDate">End Date</label>
-            <input
-              type="datetime-local"
-              id="endDate"
-              name="endDate"
-              onChange={handleFormChange}
-              value={formData.endDate}
-            />
+          <DateInput 
+            id="startDate"
+            onChange={handleDateChange}
+            value={formData.startDate}
+            name="startDate"
+          />
+          <Dropdown 
+            optionsArray={getTimeOptions()}
+            changeHandler={handleFormChange}
+            inputName="startTime"
+            currentValue={formData.startTime}
+          />
+				</div>
+			</div>
+			
+			<div className={style.inputGroup}>
+				<label htmlFor="endDate">End Date</label>
+				<div className={style.dateTimeGroup}>
+          <DateInput 
+            id="endDate"
+            onChange={handleDateChange}
+            value={formData.endDate}
+            name="endDate"
+          />
 
-            {categoryDropdown}
-            {errorsElements}
+          <Dropdown 
+            optionsArray={getTimeOptions()}
+            changeHandler={handleFormChange}
+            inputName="endTime"
+            currentValue={formData.endTime}
+          />
 
-            <button className="primary--button">Submit</button>
+				</div>
+			</div>
 
-          </form>
-        </div>
+      
+			<div className={style.inputGroup}>
+				<label htmlFor="categoryName">Category</label>
+				{/* {categoryDropdown} */}
+        <Dropdown 
+          optionsArray={categories} 
+          label="Category" 
+          labelId="Category"
+          changeHandler={handleFormChange}
+          inputName="categoryName"
+          currentValue={formData.categoryName}
+        />
+			</div>
+
+			{errorsElements}
+			<button className={`${style.submitButton} primary--button`}>Submit</button>
+        </form>
+      </div>
+        
     </Modal>
   )
 }

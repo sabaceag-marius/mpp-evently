@@ -1,15 +1,15 @@
-import logo from './logo.svg';
 import Navbar from './components/Navbar/Navbar';
-import EventCard from './components/EventCard/EventCard';
 import { Outlet } from 'react-router';
-import ErrorPage from './pages/ErrorPage/ErrorPage';
+
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 
 function App() {
   return (
-    <>
+    <LocalizationProvider dateAdapter={AdapterMoment}>
       <Navbar />
       <Outlet />
-    </>
+    </LocalizationProvider>
   );
 }
 

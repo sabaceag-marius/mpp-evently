@@ -5,14 +5,15 @@ import moment from 'moment';
 // import { deleteEventAPI } from '../../services/eventsService';
 import { Link } from 'react-router';
 import { deleteEventAPI } from '../../services/eventsService';
+import { getMoment } from '../../utils/momentUtils';
 
 function EventCard({event}) {
   
   const timeComponent = <div>{parseDates().map(t => <p key={t}>{t}</p>)}</div>;
 
   function parseDates(){
-    const startMoment = moment(event.startDate);
-    const endMoment = moment(event.endDate);
+    const startMoment = getMoment(event.startDate);
+    const endMoment = getMoment(event.endDate);
 
     if(startMoment.isSame(endMoment, 'day'))
       return [`${startMoment.format('Do MMM y')}`, `${startMoment.format('HH:mm')}-${endMoment.format('HH:mm')}`]
