@@ -72,7 +72,6 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories,currentMom
   }
 
   function onClose(){
-        
     //Reset form data
     setFormData(DEFAULT_FORM_DATA);
     setErrors([]);

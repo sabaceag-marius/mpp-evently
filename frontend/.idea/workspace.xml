@@ -2,12 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b04395e2-23de-4504-99b3-b9ecd07e550f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/Presentation/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/Presentation/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../backend/Presentation/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/Presentation/Properties/launchSettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/CreateEventModal/CreateEventModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/CreateEventModal/CreateEventModal.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Dropdown/Dropdown.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Dropdown/Dropdown.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/UpdateEventModal/UpdateEventModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/UpdateEventModal/UpdateEventModal.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/UpdateEventModal/UpdateEventModal.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/UpdateEventModal/UpdateEventModal.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/eventsService.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/eventsService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/momentUtils.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/momentUtils.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,11 +19,11 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="2uVXa4Ur3FMdVsFXH2W6BXKCuph" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -29,9 +33,9 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "features/a2-refactoring",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/Facultate/Semestrul 4/MPP/evently/frontend",
+    "last_opened_file_path": "D:/Facultate/Semestrul 4/MPP/mpp-evently/frontend",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
@@ -71,22 +75,11 @@
       <option name="presentableId" value="Default" />
       <updated>1742334776230</updated>
       <workItem from="1742334777376" duration="209000" />
+      <workItem from="1744131281013" duration="112000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/pages/EventDetailsPage/EventDetailsPage.jsx</url>
-          <line>22</line>
-          <properties lambdaOrdinal="-1" />
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

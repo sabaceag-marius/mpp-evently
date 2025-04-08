@@ -5,7 +5,7 @@ import CreateEventModal from '../../components/CreateEventModal/CreateEventModal
 import { getEventsAPI, getEventsCountAPI } from '../../services/eventsService';
 import moment from 'moment';
 import CheckboxInput from '../../components/Checkbox/Checkbox';
-import { toDateTimeInputString, toDateInputString } from '../../utils/momentUtils';
+import { toDateTimeInputString, toDateInputString, getMoment } from '../../utils/momentUtils';
 import { arraysEqual } from '../../utils/arrayUtils';
 import PageSelector from '../../components/PageSelector/PageSelector';
 import { categoryData } from '../../services/eventsChartsService';
@@ -22,7 +22,7 @@ function EventsPage() {
     
 
     const DEFAULT_QUERY_DATA = {
-        dateMoment : moment(),
+        dateMoment : getMoment(),
         dateInterval : "Day",
         categories : categories
     }
@@ -56,7 +56,7 @@ function EventsPage() {
     function setTodayDate(){
         setQueryData(prev =>({
             ...prev,
-            dateMoment: moment()
+            dateMoment: getMoment()
         }))
     }
 
@@ -64,7 +64,7 @@ function EventsPage() {
 
         let {name, value} = event.target;
         console.log(name, value);
-        if(name === 'dateMoment') value = moment(value);
+        if(name === 'dateMoment') value = getMoment(value);
         
         setQueryData(prev => ({
             ...prev,

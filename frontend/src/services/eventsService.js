@@ -2,7 +2,7 @@ import {data} from "./data";
 import moment from "moment";
 import axios from 'axios';
 import '../utils/momentUtils';
-import { toDateTimeInputString } from "../utils/momentUtils";
+import { getMoment, toDateTimeInputString } from "../utils/momentUtils";
 
 const api = 'https://localhost:2000/api';
 
@@ -28,6 +28,8 @@ export async function getEventsAPI(queryData, currentPage, PAGE_SIZE) {
               }
             }
         );
+
+        console.log(response.data);
         return addLengthStatistics(response.data);
     }
     catch (error){
@@ -39,7 +41,7 @@ function addLengthStatistics(events){
 
     const lengths = events.map(event => ({
         'id' : event.id,
-        'length' : Math.abs(moment.duration(moment(event.startDate).diff(moment(event.endDate))).asMinutes()) //Math.abs(moment(event.startDate).diff(moment(event.endDate), 'minutes', true))
+        'length' : Math.abs(moment.duration(getMoment(event.startDate).diff(getMoment(event.endDate))).asMinutes()) //Math.abs(moment(event.startDate).diff(moment(event.endDate), 'minutes', true))
     }))
     .sort((a,b) => - a.length + b.length);
 
@@ -185,7 +187,7 @@ export function validateEvent(event){
 
     if(event.name === "") errors.push('Name is required')
 
-    if(moment(event.endDate).isBefore(moment(event.startDate)))
+    if(getMoment(event.endDate).isBefore(getMoment(event.startDate)))
         errors.push('End date must be after start date');
 
     if(event.categoryName === "") 

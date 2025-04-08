@@ -55,13 +55,12 @@ function Dropdown({optionsArray, label, labelId, changeHandler,currentValue, inp
         <>
             {/* {(label && labelId) && <InputLabel id={labelId}>{label}</InputLabel>} */}
             <Select
-                labelId={labelId || undefined}
-                MenuProps={MenuProps}
-				name={inputName}
-				value={currentValue}
-				defaultValue={optionsArray[0]}
-				onChange={changeHandler}
-				sx={SelectProps}
+              labelId={labelId || undefined}
+              MenuProps={MenuProps}
+              name={inputName}
+              value={currentValue}
+              onChange={changeHandler}
+              sx={SelectProps}
             >
                 {optionsElements}
             </Select>
