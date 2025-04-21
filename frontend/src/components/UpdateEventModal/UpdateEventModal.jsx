@@ -32,17 +32,12 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
     categoryName : event.categoryName,
     userName : event.userName
   }
-  
-  console.log(event);
-  console.log(DEFAULT_FORM_DATA);
 
   const [formData,setFormData] = useState(DEFAULT_FORM_DATA);
   const [errors,setErrors] = useState([]);
 
   function handleFormChange(event){
     const {name,value} = event.target;
-
-    console.log(name, value);
 
     setFormData(prev =>({
         ...prev,
@@ -70,7 +65,6 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
       endDate: toDateTimeString(formData.endDate,formData.endTime)
     }
 
-    console.log(newEvent);
     const result = await updateEventAPI(event.id, newEvent);
     
     if(result.errorCode !== undefined){
@@ -125,71 +119,6 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
   const errorsElements = errors.map(e => <p className={style.error} key={e}>{e}</p>)
   
   return (
-    // <Modal
-    //     isOpen = {isOpen}
-    //     preventScroll={true}
-    //     style={styling}
-    //     onRequestClose={onClose}
-    // >
-    //     <div className={style.modal} >
-          
-    //       <div className={style.modalHeader}>
-            
-    //         <button
-    //           className ="transparent--button material-symbols-outlined"
-    //           style={{left : "0", position : "absolute"}}
-    //           onClick={onClose}>close
-    //         </button>
-
-    //         <h2>Edit event</h2>
-
-    //       </div>
-
-    //       <form className={style.modalForm} onSubmit={onSubmit}>
-    //         <label htmlFor="name">Name</label>
-    //         <input
-    //           type="text"
-    //           id="name"
-    //           name="name"
-    //           onChange={handleFormChange}
-    //           value={formData.name}
-    //         />
-            
-    //         <label htmlFor="description">Description</label>
-    //         <textarea
-    //           // className="modal--input"
-    //           id="description"
-    //           name="description"
-    //           onChange={handleFormChange}
-    //           value={formData.description}
-    //         />
-
-    //         <label htmlFor="startDate">Start Date</label>
-    //         <input
-    //           type="datetime-local"
-    //           id="startDate"
-    //           name="startDate"
-    //           onChange={handleFormChange}
-    //           value={formData.startDate}
-    //         />
-
-    //         <label htmlFor="endDate">End Date</label>
-    //         <input
-    //           type="datetime-local"
-    //           id="endDate"
-    //           name="endDate"
-    //           onChange={handleFormChange}
-    //           value={formData.endDate}
-    //         />
-
-    //         {categoryDropdown}
-    //         {errorsElements}
-
-    //         <button className="primary--button">Submit</button>
-
-    //       </form>
-    //     </div>
-    // </Modal>
     <Modal
         isOpen = {isOpen}
         preventScroll={true}

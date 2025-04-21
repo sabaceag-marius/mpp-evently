@@ -3,11 +3,15 @@ import { Outlet } from 'react-router';
 
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
+import { useState } from 'react';
 
 function App() {
+
+  const [connectionStatus, setConnectionStatus] = useState('internetOfflinea');
+
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
-      <Navbar />
+      <Navbar connectionStatus = {connectionStatus} setConnectionStatus = {setConnectionStatus} />
       <Outlet />
     </LocalizationProvider>
   );

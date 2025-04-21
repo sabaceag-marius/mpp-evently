@@ -41,8 +41,6 @@ function EventsCountChart({data}) {
         setLabels(Object.keys(result));
         setValues(Object.values(result));
 
-        console.log(Object.keys(result))
-        console.log(Object.values(result))
     },[data])
 
     //endregion

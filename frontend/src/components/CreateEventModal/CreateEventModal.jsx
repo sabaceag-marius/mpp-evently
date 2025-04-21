@@ -54,8 +54,6 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories,currentMom
       endDate: toDateTimeString(formData.endDate,formData.endTime)
     }
 
-    console.log(event);
-
     const result = await addEventAPI(event);
 
     if(result.errorCode !== undefined){

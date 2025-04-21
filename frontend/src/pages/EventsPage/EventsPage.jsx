@@ -63,7 +63,7 @@ function EventsPage() {
     function onChangeQuery(event) {
 
         let {name, value} = event.target;
-        console.log(name, value);
+
         if(name === 'dateMoment') value = getMoment(value);
         
         setQueryData(prev => ({
@@ -89,8 +89,6 @@ function EventsPage() {
     function checkboxHandler(event){
         let {name, checked} = event.target;
 
-        console.log(name);
-        
         if(checked){
             setQueryData(prev =>({
                 ...prev,
