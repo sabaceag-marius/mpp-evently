@@ -7,7 +7,7 @@ import { Link } from 'react-router';
 import { deleteEventAPI } from '../../services/eventsService';
 import { getMoment } from '../../utils/momentUtils';
 
-function EventCard({event}) {
+function EventCard({event, ref}) {
   
   const timeComponent = <div>{parseDates().map(t => <p key={t}>{t}</p>)}</div>;
 
@@ -39,7 +39,7 @@ function EventCard({event}) {
   return (
 
     <Link to={`/events/${event.id}`}>
-      <div style={borderStyle} className={card.container}>
+      <div ref={ref} style={borderStyle} className={card.container}>
         <div>
           <h3 style={event.tag === null || {color : statisticsColors[event.tag]}} className={card.title}>{event.name}</h3>
           <p className={card.username}>{event.username}</p>

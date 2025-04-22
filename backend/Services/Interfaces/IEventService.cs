@@ -7,7 +7,7 @@ public interface IEventService
 {
     Task<Response<IEnumerable<EventResponse>>> GetAllEvents();
 
-    Task<Response<IEnumerable<EventResponse>>> GetFilteredEvents(FilterEventRequest filterRequest);
+    Task<Response<QueryEventResponse>> GetFilteredEvents(FilterEventRequest filterRequest);
     Task<Response<int>> GetFilteredEventsCount(FilterEventCountRequest filterRequest);
     Task<Response<EventResponse>> GetEvent(Guid eventId);
     Task<Response<EventResponse>> CreateEvent(CreateEventRequest eventRequest);

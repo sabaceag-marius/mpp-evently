@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './EventsPage.css';
 import EventCard from '../../components/EventCard/EventCard';
 import CreateEventModal from '../../components/CreateEventModal/CreateEventModal';
-import { getEventsAPI, getEventsCountAPI } from '../../services/eventsService';
+import { getEventsAPI, getEventsCountAPI, useEventQuery } from '../../services/eventsService';
 import moment from 'moment';
 import CheckboxInput from '../../components/Checkbox/Checkbox';
 import { toDateTimeInputString, toDateInputString, getMoment } from '../../utils/momentUtils';
@@ -63,7 +63,7 @@ function EventsPage() {
     function onChangeQuery(event) {
 
         let {name, value} = event.target;
-        console.log(name, value);
+
         if(name === 'dateMoment') value = getMoment(value);
         
         setQueryData(prev => ({
@@ -141,61 +141,37 @@ function EventsPage() {
     }
     // endregion
     
-    // region Pagination
+    // region Events
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageCount, setPageCount] = useState(0);
-    const PAGE_SIZE = 8;
+
+    const {events, hasMore, loading} = useEventQuery(queryData,currentPage, setCurrentPage);
+
+    const observer = useRef();
+
+    const lastElementRef = useCallback(node =>{
+        
+        if(loading) return;
+
+        if(observer.current) observer.current.disconnect();
+        console.log(":3", hasMore);
+        observer.current = new IntersectionObserver(entries =>{
+            if(entries[0].isIntersecting && hasMore){
+                setCurrentPage(prev => prev + 1);
+            }
+        });
+
+        if(node) observer.current.observe(node);
+
+    },[loading,hasMore]);
 
     // endregion
 
-    // region FetchData
-
-    useEffect(() => {
-        getEventsAPI(queryData, currentPage, PAGE_SIZE).then(result =>{
-            
-            if(result === undefined) return;
-            
-            setEvents(result);
-
-            categoryData(result);
-        });
-
-    }, [currentPage]);
-
-    // When we submit a query with different filters - fetch the pageCount and the transactions for the first page
-    useEffect(() => {
-
-        getEventsCountAPI(queryData).then(result =>{
-
-            if(result === undefined) return;
-
-            setPageCount(Math.ceil(result / PAGE_SIZE));
-        });
-
-        // When we change the current page we fetch the transactions for that page
-        // so we check before what is the current page to prevent fetching the data twice
-
-        if(currentPage !== 1) {
-            setCurrentPage(1);
-        }
-        else {
-            getEventsAPI(queryData, currentPage, PAGE_SIZE).then(result =>{
-            
-                if(result === undefined) return;
-                
-                setEvents(result);
-
-                categoryData(result);
-            });
-        }
-
-    }, [queryData]);
-
-    // endregion
-
-    const [events, setEvents] = useState([]);
-    const eventsElements = events.map(e => <EventCard event={e} key={e.id} />);
+    // const [events, setEvents] = useState([]);
+    // const eventsElements = events.map(e => <EventCard event={e} key={e.id} />);
+    const eventsElements = events.map((e, index) => events.length === index + 1 ?  
+        <EventCard ref = {lastElementRef} event={e} key={e.id} /> 
+        :  <EventCard event={e} key={e.id} /> );
        
     return (
     <>
@@ -252,7 +228,7 @@ function EventsPage() {
                                 {eventsElements}
                             </div>
 
-                            <PageSelector pageCount={pageCount} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
+                            {/* <PageSelector pageCount={pageCount} currentPage={currentPage} setCurrentPage={setCurrentPage}/> */}
 
                             {/* <div className='charts--section'>
                                 <CategoryChart data={events} />
