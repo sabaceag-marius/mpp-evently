@@ -24,16 +24,24 @@ public class EventService : IEventService
         };
     }
 
-    public async Task<Response<IEnumerable<EventResponse>>> GetFilteredEvents(FilterEventRequest filterRequest)
+    public async Task<Response<QueryEventResponse>> GetFilteredEvents(FilterEventRequest filterRequest)
     {
         var specification = filterRequest.ToSpecification();
 
-        var result = await
+        var events = await
             _eventRepository.GetFilteredEventsAsync(specification, filterRequest.PageNumber, filterRequest.PageSize);
 
-        return new Response<IEnumerable<EventResponse>>
+        var count = await _eventRepository.GetFilteredEventsCountAsync(specification);
+
+        var result = new QueryEventResponse
         {
-            Value = result.Select(e => e.ToResponse())
+            Events = events.Select(e => e.ToResponse()),
+            Count = count
+        };
+
+        return new Response<QueryEventResponse>
+        {
+            Value = result
         };
     }
 

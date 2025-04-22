@@ -3,11 +3,59 @@ import moment from "moment";
 import axios from 'axios';
 import '../utils/momentUtils';
 import { getMoment, toDateTimeInputString } from "../utils/momentUtils";
+import { useEffect } from "react";
+import { useState } from "react";
+import { restoreTextDirection } from "chart.js/helpers";
 
 const api = 'https://localhost:2000/api';
 
-export async function getEventsAPI(queryData, currentPage, PAGE_SIZE) {
-    
+const PAGE_SIZE = 15;
+
+export function useEventQuery(query, pageNumber, setPageNumber){
+
+    const [loading, setLoading] = useState(true);
+    const [events, setEvents] = useState([]);
+    const [hasMore, setHasMore] = useState(false);
+
+    useEffect(() =>{
+        setEvents([]);
+        setPageNumber(1);
+    },[query]);
+
+    useEffect(() =>{
+        setLoading(true);
+
+        const queryRequest = setQuery(query,pageNumber);
+        let cancel;
+
+        axios.get(api+"/events",{
+            params: queryRequest,
+            paramsSerializer: {
+                indexes: null, // no brackets at all
+                },
+            cancelToken: new axios.CancelToken(c => cancel = c)
+            }
+        ).then(result => {
+            // Here we'll save the data for the connection dksafsdf
+            const r = result.data;
+            setEvents( prev => [... prev, ...r.events]);
+            setLoading(false);
+            setHasMore(PAGE_SIZE * pageNumber < r.count);
+
+        }).catch(e => {
+            if (axios.isCancel(e)) return;
+            console.log(e);
+        });
+
+        return () => cancel();
+
+    },[query,pageNumber]);
+
+    return {loading, events, hasMore}
+}
+
+function setQuery(queryData, currentPage){
+
     const startTimeInterval = queryData.dateMoment.clone().startOf(queryData.dateInterval);
     const endTimeInterval = queryData.dateMoment.clone().endOf(queryData.dateInterval);
 
@@ -15,10 +63,17 @@ export async function getEventsAPI(queryData, currentPage, PAGE_SIZE) {
 
         startDate: toDateTimeInputString(startTimeInterval),
         endDate: toDateTimeInputString(endTimeInterval),
-        categoriesList: queryData.categories.length > 0 ? queryData.categories.map(x => x.toLowerCase()) : [],
+        categoriesList: queryData.categories.length > 0 ? queryData.categories.map(x => x.toLowerCase()) : null,
         pageNumber: currentPage,
         pageSize: PAGE_SIZE
     }
+
+    return queryRequest;
+}
+
+export async function getEventsAPI(queryData, currentPage, pageSize) {
+
+    const queryRequest = setQuery(queryData, currentPage, pageSize);
 
     try{
         const response = await axios.get(api+"/events",{
@@ -29,8 +84,7 @@ export async function getEventsAPI(queryData, currentPage, PAGE_SIZE) {
             }
         );
 
-        console.log(response.data);
-        return addLengthStatistics(response.data);
+        return addLengthStatistics(response.data.events);
     }
     catch (error){
         console.log(error);
