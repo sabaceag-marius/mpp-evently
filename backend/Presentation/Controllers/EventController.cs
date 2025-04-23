@@ -20,6 +20,13 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
+        [Route("ping")]
+        public async Task<IActionResult> Ping()
+        {
+            return Ok();
+        }
+
+        [HttpGet]
         [Route("all")]
         public async Task<IActionResult> GetAllEvents()
         {
