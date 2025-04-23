@@ -8,6 +8,7 @@ import { useState } from "react";
 import { restoreTextDirection } from "chart.js/helpers";
 
 const api = 'https://localhost:2000/api';
+// const api = 'http://192.168.1.8:2000/api';
 
 const PAGE_SIZE = 15;
 

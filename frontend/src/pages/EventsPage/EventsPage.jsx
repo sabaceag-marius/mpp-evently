@@ -9,11 +9,9 @@ import { toDateTimeInputString, toDateInputString, getMoment } from '../../utils
 import { arraysEqual } from '../../utils/arrayUtils';
 import PageSelector from '../../components/PageSelector/PageSelector';
 import { categoryData } from '../../services/eventsChartsService';
-import CategoryChart from '../../components/CategoryChart/CategoryChart';
-import EventsCountChart from '../../components/EventsCountChart/EventsCountChart';
-import CategoryHoursChart from '../../components/CategoryChart/CategoryHoursChart';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import DateInput from '../../components/DateInput/DateInput';
+import { useQueryData } from '../../contexts/EventQueryContext';
 
 function EventsPage() {
 
@@ -28,8 +26,28 @@ function EventsPage() {
     }
 
 
-    const [queryData,setQueryData] = useState(DEFAULT_QUERY_DATA);
+    const {queryData,setQueryData} = useQueryData();
 
+    // const [queryData, setQueryData] = useState(() => {
+    //     // Load from localStorage if available, otherwise use default
+    //     const saved = sessionStorage.getItem('queryData');
+
+    //     if(!saved) return DEFAULT_QUERY_DATA;
+
+    //     let savedJSON = JSON.parse(saved);
+
+    //     return {
+    //         ...savedJSON,
+    //         dateMoment: getMoment(savedJSON)
+    //     }
+
+    //   });
+    
+    //   // Save to localStorage whenever queryData changes
+    //   useEffect(() => {
+    //     sessionStorage.setItem('queryData', JSON.stringify(queryData));
+    //   }, [queryData]);
+    
     function getDate(){
         
         return queryData.dateInterval === 'Day' ? queryData.dateMoment.format('Do MMMM YYYY') : queryData.dateMoment.format('MMMM YYYY');
@@ -147,12 +165,12 @@ function EventsPage() {
 
     const observer = useRef();
 
-    const lastElementRef = useCallback(node =>{
+    const eventElementRef = useCallback(node =>{
         
         if(loading) return;
 
         if(observer.current) observer.current.disconnect();
-        console.log(":3", hasMore);
+
         observer.current = new IntersectionObserver(entries =>{
             if(entries[0].isIntersecting && hasMore){
                 setCurrentPage(prev => prev + 1);
@@ -167,8 +185,8 @@ function EventsPage() {
 
     // const [events, setEvents] = useState([]);
     // const eventsElements = events.map(e => <EventCard event={e} key={e.id} />);
-    const eventsElements = events.map((e, index) => events.length === index + 1 ?  
-        <EventCard ref = {lastElementRef} event={e} key={e.id} /> 
+    const eventsElements = events.map((e, index) => Math.floor(events.length / 3 * 2) === index ?  
+        <EventCard ref = {eventElementRef} event={e} key={e.id} /> 
         :  <EventCard event={e} key={e.id} /> );
        
     return (
