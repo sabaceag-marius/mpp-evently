@@ -1,28 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { deleteEventAPI, getEventAPI } from '../../services/eventsService';
+import { deleteEventAPI, useDeleteEvent, useEventDetail } from '../../services/eventsService';
 import UpdateEventModal from '../../components/UpdateEventModal/UpdateEventModal';
 import style from './EventDetails.module.css';
 import moment from 'moment';
 import { getMoment } from '../../utils/momentUtils';
 
 function EventDetailsPage() {
-    
-    const params = useParams();
 
-    const id = params.id;
+    const id = useParams().id;
 
-    const [event,setEvent] = useState(null);
+    const {event} = useEventDetail(id);
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-
-        getEventAPI(id).then(result => {
-            setEvent(result);
-        });
-        
-    }, []);
+    const {deleteEventFunction} = useDeleteEvent();
 
     // Edit Modal
 
@@ -63,6 +55,10 @@ function EventDetailsPage() {
         return [`${startMoment.format('Do MMM y')} ${startMoment.format('HH:mm')}` ,`${endMoment.format('Do MMM y')} ${endMoment.format('HH:mm')}`]
     }
 
+    function OnDeleteEvent(){
+        deleteEventFunction(id).then(navigate('/events'));
+    }
+
     return (
         <div className='center'>
             { event &&
@@ -79,9 +75,7 @@ function EventDetailsPage() {
                     <div className={style.buttonContainer}> 
 
                         <button className='primary--button'
-                        onClick={() => {
-                            deleteEventAPI(id).then(e => navigate('/events'));
-                        }}>Delete</button>
+                        onClick={OnDeleteEvent}>Delete</button>
 
                         <button onClick={openUpdateModal} className='primary--button'>Edit</button>
                     </div>

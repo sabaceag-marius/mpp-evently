@@ -5,18 +5,19 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { useState } from 'react';
 import { QueryDataProvider } from './contexts/EventQueryContext';
+import { OfflineSupportProvider } from './contexts/OfflineSupportContext';
 
 function App() {
 
-  const [connectionStatus, setConnectionStatus] = useState('internetOfflinea');
-
   return (
-    <QueryDataProvider>
-      <LocalizationProvider dateAdapter={AdapterMoment}>
-        <Navbar connectionStatus = {connectionStatus} setConnectionStatus = {setConnectionStatus} />
-        <Outlet />
-      </LocalizationProvider>
-    </QueryDataProvider>
+    <OfflineSupportProvider>
+      <QueryDataProvider>
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+          <Navbar />
+          <Outlet />
+        </LocalizationProvider>
+      </QueryDataProvider>
+    </OfflineSupportProvider>
   );
 }
 

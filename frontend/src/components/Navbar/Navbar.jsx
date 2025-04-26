@@ -1,10 +1,12 @@
 import React from 'react';
 import './Navbar.css';
 import { Link } from 'react-router';
+import { useOfflineSupport } from '../../contexts/OfflineSupportContext';
 
 
-function Navbar({connectionStatus}) {
+function Navbar() {
 
+  const {connectionStatus} = useOfflineSupport();
   var connectionHeader = {
     'online' : {
       style: {

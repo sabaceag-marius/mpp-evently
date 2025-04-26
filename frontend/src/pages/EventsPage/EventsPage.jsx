@@ -12,6 +12,7 @@ import { categoryData } from '../../services/eventsChartsService';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import DateInput from '../../components/DateInput/DateInput';
 import { useQueryData } from '../../contexts/EventQueryContext';
+import { useOfflineSupport } from '../../contexts/OfflineSupportContext';
 
 function EventsPage() {
 
@@ -27,26 +28,6 @@ function EventsPage() {
 
 
     const {queryData,setQueryData} = useQueryData();
-
-    // const [queryData, setQueryData] = useState(() => {
-    //     // Load from localStorage if available, otherwise use default
-    //     const saved = sessionStorage.getItem('queryData');
-
-    //     if(!saved) return DEFAULT_QUERY_DATA;
-
-    //     let savedJSON = JSON.parse(saved);
-
-    //     return {
-    //         ...savedJSON,
-    //         dateMoment: getMoment(savedJSON)
-    //     }
-
-    //   });
-    
-    //   // Save to localStorage whenever queryData changes
-    //   useEffect(() => {
-    //     sessionStorage.setItem('queryData', JSON.stringify(queryData));
-    //   }, [queryData]);
     
     function getDate(){
         
@@ -189,6 +170,8 @@ function EventsPage() {
         <EventCard ref = {eventElementRef} event={e} key={e.id} /> 
         :  <EventCard event={e} key={e.id} /> );
        
+    const {isOffline} = useOfflineSupport();
+
     return (
     <>
         <div className='main--container'>
