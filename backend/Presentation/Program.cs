@@ -6,6 +6,8 @@ using Services.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.UseUrls("https://0.0.0.0:2000");
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -19,12 +21,14 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("frontend", configurePolicy =>
     {
-        configurePolicy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+        configurePolicy.AllowAnyHeader().AllowAnyMethod()
+        .AllowAnyOrigin();
+        // .WithOrigins("http://localhost:3000");
     });
 });
 
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddSingleton<IEventRepository, EventMemoryRepository>();
 builder.Services.AddScoped<IEventService, EventService>();
@@ -32,11 +36,11 @@ builder.Services.AddScoped<IEventService, EventService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
+if (app.Environment.IsDevelopment())
+{
+   app.UseSwagger();
+   app.UseSwaggerUI();
+}
 
 app.UseHttpsRedirection();
 
