@@ -12,106 +12,6 @@ const api = 'https://192.168.1.8:2000/api';
 
 const PAGE_SIZE = 15;
 
-export function useEventQuery(query, pageNumber, setPageNumber){
-
-    const [loading, setLoading] = useState(true);
-
-    const [hasMore, setHasMore] = useState(false);
-
-    const [reset,setReset] = useState(true);
-
-    const {isOffline} = useOfflineSupport();
-
-    const {queryEventsFunction} = useQueryEvents();
-
-    // console.log(isOffline, queryEventsFunction);
-    // const isOffline = false;
-
-    // We'll store the events in local storage 
-    const [events,setEvents] = useState([]);
-
-    useEffect(() =>{
-
-        if(!reset) return;
-        console.log("Reset query!");
-        setReset(false);
-
-        if(!isOffline) {
-            removeOfflineEvents();
-        }
-
-        setEvents([]);
-
-        // We do this to trigger the 2nd useEffect
-        setPageNumber(null);
-
-    },[query, isOffline, reset]);
-
-    useEffect(() =>{
-
-        if(queryEventsFunction === null) return;
-
-        if(pageNumber === null){
-            setPageNumber(1);
-            return;
-        }
-
-        setLoading(true);
-
-        const queryRequest = setQuery(query,pageNumber);
-        let cancel = null;
-
-        queryEventsFunction(queryRequest, pageNumber, cancel)
-        .then(result => {
-            console.log(result);
-            // const r = result.data;
-            // const newEvents = [... getOfflineEvents(), ...r.events];
-            // console.log(r);
-            // // local storage for offline support
-
-            // setOfflineEvents(newEvents);
-            // setEvents(newEvents);
-            
-
-            setEvents(prev => [...prev, ...result.events]);
-
-            setLoading(false);
-            setHasMore(PAGE_SIZE * pageNumber < result.count);
-
-
-        }).catch(e => {
-            if (axios.isCancel(e)) return;
-            console.log(e);
-        });
-
-
-        if(cancel !== null) return () => cancel();
-
-    }, [pageNumber, isOffline, queryEventsFunction]);
-
-    const resetQuery = () => {
-        setReset(true);
-    }
-
-    return {loading, events, hasMore, resetQuery}
-}
-
-function setQuery(queryData, currentPage){
-
-    const startTimeInterval = queryData.dateMoment.clone().startOf(queryData.dateInterval);
-    const endTimeInterval = queryData.dateMoment.clone().endOf(queryData.dateInterval);
-
-    const queryRequest = {
-
-        startDate: toDateTimeInputString(startTimeInterval),
-        endDate: toDateTimeInputString(endTimeInterval),
-        categoriesList: queryData.categories.length > 0 ? queryData.categories.map(x => x.toLowerCase()) : null,
-        pageNumber: currentPage,
-        pageSize: PAGE_SIZE
-    }
-
-    return queryRequest;
-}
 
 const getOfflineEvents = () =>{
 
@@ -129,9 +29,77 @@ const setOfflineEvents = (events) =>{
 }
 
 const addOfflineEvents = (events) => {
-    
-    console.log(events);
+
     setOfflineEvents([... getOfflineEvents(), ...events]);
+}
+
+export function useEventQuery(query, pageNumber, setPageNumber){
+
+    const [loading, setLoading] = useState(true);
+
+    const [hasMore, setHasMore] = useState(false);
+
+    const {isOffline} = useOfflineSupport();
+
+    const {queryEventsFunction} = useQueryEvents();
+     
+    const [events,setEvents] = useState([]);
+
+    const initializeNewQuery = () => {
+
+        if(!isOffline) {
+            removeOfflineEvents();
+        }
+
+        setEvents([]);
+
+        // We do this to trigger the 2nd useEffect
+        setPageNumber(null);
+    }
+
+    useEffect(() =>{
+
+        initializeNewQuery();
+
+    },[query, isOffline]);
+
+    useEffect(() =>{
+
+        if(queryEventsFunction === null) return;
+
+        if(pageNumber === null){
+            setPageNumber(1);
+            return;
+        }
+
+        setLoading(true);
+
+        const queryRequest = setQuery(query,pageNumber);
+        let cancel = null;
+
+        queryEventsFunction(queryRequest, pageNumber, cancel)
+        .then(result => {
+
+            setEvents(prev => [...prev, ...result.events]);
+
+            setLoading(false);
+            setHasMore(PAGE_SIZE * pageNumber < result.count);
+
+        }).catch(e => {
+            if (axios.isCancel(e)) return;
+            console.log(e);
+        });
+
+
+        if(cancel !== null) return () => cancel();
+
+    }, [pageNumber, isOffline, queryEventsFunction]);
+
+    const resetQuery = () => {
+        initializeNewQuery();
+    }
+
+    return {loading, events, hasMore, resetQuery}
 }
 
 const removeOfflineEvents = () => {
@@ -142,8 +110,6 @@ export function useQueryEvents(){
     const queryEventsOffline = async (query, cancel) => {
         
         const events = getOfflineEvents();
-
-        console.log(query);
 
         // console.log(events.map(e => getMoment(e.startDate)));
 
@@ -429,4 +395,20 @@ export function validateEvent(event){
     if(event.categoryName === "") 
         errors.push('Category is required');
     return errors;
+}
+
+function setQuery(queryData, currentPage){
+
+    const startTimeInterval = queryData.dateMoment.clone().startOf(queryData.dateInterval);
+    const endTimeInterval = queryData.dateMoment.clone().endOf(queryData.dateInterval);
+    console.log(queryData.dateMoment,startTimeInterval);
+    const queryRequest = {
+
+        startDate: toDateTimeInputString(startTimeInterval),
+        endDate: toDateTimeInputString(endTimeInterval),
+        categoriesList: queryData.categories.length > 0 ? queryData.categories.map(x => x.toLowerCase()) : null,
+        pageNumber: currentPage,
+        pageSize: PAGE_SIZE
+    }
+    return queryRequest;
 }

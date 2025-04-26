@@ -19,7 +19,7 @@ export const OfflineSupportProvider = ({children}) => {
                 await axios.get(api + '/events/ping');
                 setConnectionStatus('online');
             } catch (e) {
-                setConnectionStatus('serverOffline');
+                await checkOfflineStatus();
             }
         };
 
@@ -29,8 +29,6 @@ export const OfflineSupportProvider = ({children}) => {
 
     const isOffline = 
     connectionStatus === null || connectionStatus === 'serverOffline' || connectionStatus === 'internetOffline';
-    // console.log(connectionStatus);
-    // const operations = [];
 
     const pingServer = async () => {
 
@@ -56,17 +54,21 @@ export const OfflineSupportProvider = ({children}) => {
     });
 
     const checkOfflineStatus = async () => {
-        setConnectionStatus('serverOffline');
-    }
+
+        try{
+            await axios.get("https://clients3.google.com/generate_204",{timeout: 2000});
+            
+            setConnectionStatus('serverOffline');
+        }
+        catch{
+            setConnectionStatus('internetOffline');
+        }
+
+}
 
     const beginSync = async() => {
 
         setConnectionStatus('syncing');
-
-        // operations.forEach(el => {
-        //     el.function(el.params);
-        // });
-        console.log(syncOperations);
 
         syncOperations.forEach(async op => await op.call())
 
@@ -76,10 +78,8 @@ export const OfflineSupportProvider = ({children}) => {
 
         setTimeout(() => setConnectionStatus('online'), 5000);
 
-        // add navigate to root
     }
 
-    // if this doesnt work properly because useState fuckywucky imma kms
     const addOperation = (func, params) => {
         const operation = {
             func : func,
@@ -89,7 +89,7 @@ export const OfflineSupportProvider = ({children}) => {
                 await this.func(...this.params);
             }
         }
-        console.log('added sync function!');
+
         setSyncOperations(prev => [...prev, operation]);
 
     }
