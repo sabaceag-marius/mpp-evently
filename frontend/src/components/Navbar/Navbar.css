@@ -2,12 +2,8 @@ header{
     display: flex;
     flex-direction: column;
 
-    position: sticky;
-    top: 0;
+    
 
-    background-color: var(--background);
-
-    z-index: 999;
 }
 
 .connection--header{
@@ -17,6 +13,7 @@ header{
     padding: .5rem 0;
 
     font-size: 1.25rem;
+    
 }
 
 .main--header{

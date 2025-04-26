@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import style from './UpdateEventModal.module.css';
 import moment from 'moment';
-import { addEventAPI, updateEventAPI } from '../../services/eventsService';
+import { addEventAPI, updateEventAPI, useUpdateEvent } from '../../services/eventsService';
 import { getMoment, getTimeOptions, toDateTimeInputString, toDateTimeString, toTimeInputString } from '../../utils/momentUtils';
 import DateInput from '../DateInput/DateInput';
 import Dropdown from '../Dropdown/Dropdown';
@@ -36,6 +36,8 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
   const [formData,setFormData] = useState(DEFAULT_FORM_DATA);
   const [errors,setErrors] = useState([]);
 
+  const {updateEventFunction} = useUpdateEvent();
+
   function handleFormChange(event){
     const {name,value} = event.target;
 
@@ -65,8 +67,8 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
       endDate: toDateTimeString(formData.endDate,formData.endTime)
     }
 
-    const result = await updateEventAPI(event.id, newEvent);
-    
+    const result = await updateEventFunction(event.id, newEvent);
+   
     if(result.errorCode !== undefined){
       setErrors(result.errorMessages);
       return;

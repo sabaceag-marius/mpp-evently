@@ -1,5 +1,3 @@
-import {data} from "./data";
-import moment from "moment";
 import axios from 'axios';
 import '../utils/momentUtils';
 import { getMoment, toDateTimeInputString } from "../utils/momentUtils";
@@ -101,7 +99,11 @@ const getOfflineEvents = () =>{
 
     const saved = localStorage.getItem('events');
 
-    return saved ? JSON.parse(saved) : [];
+    if(!saved) return [];
+
+    const events = JSON.parse(saved).sort((a,b) => getMoment(a.startDate).isBefore(getMoment(b.startDate)) ? -1 : 1);
+
+    return events;
 }
 
 const setOfflineEvents = (events) =>{
@@ -112,52 +114,7 @@ const removeOfflineEvents = () => {
     localStorage.removeItem('events');
 }
 
-function addLengthStatistics(events){
-
-    const lengths = events.map(event => ({
-        'id' : event.id,
-        'length' : Math.abs(moment.duration(getMoment(event.startDate).diff(getMoment(event.endDate))).asMinutes()) //Math.abs(moment(event.startDate).diff(moment(event.endDate), 'minutes', true))
-    }))
-    .sort((a,b) => - a.length + b.length);
-
-    const num = 2;
-    const topN = lengths.slice(0, num).map(e => e.id);
-    const average = lengths.length > 1 ? lengths.slice(lengths.length/2,lengths.length/2+1).map(e => e.id) : lengths.map(e => e.id);
-    const bottomN = lengths.slice(-num).map(e => e.id);
-
-    for(let i = 0; i < events.length; i++){
-
-        if(topN.filter(e => e === events[i].id).length > 0){
-            
-            events[i] = {
-                ...events[i],
-                tag : "top"
-            }
-        }
-
-        if(bottomN.filter(e => e === events[i].id).length > 0){
-
-            events[i] = {
-                ...events[i],
-                tag : "bottom"
-            }
-        }
-
-        if(average.filter(e => e === events[i].id).length > 0){
-
-            events[i] = {
-                ...events[i],
-                tag : "average"
-            }
-        }
-    }
-    // console.log(events);
-    return events;
-}
-
-export function useEventDetail(id) {
-
-    const [event, setEvent] = useState(null);
+export function useEventDetail() {
 
     const getEventOffline = async (id) => {
         
@@ -178,17 +135,15 @@ export function useEventDetail(id) {
     }
 
     const {isOffline} = useOfflineSupport();
+    const [getEventFunction,setGetEventFunction] = useState(null);
 
     useEffect(() => {
 
-        const func = isOffline ? getEventOffline : getEventOnline;
-        func(id).then(result => {
-            setEvent(result);
-        });
+        setGetEventFunction(isOffline ? (id) => getEventOffline : (id) => getEventOnline)
         
-    }, []);
+    }, [isOffline]);
 
-    return {event}; 
+    return {getEventFunction}; 
 }
 
 export async function getEventsCountAPI(queryData) {
@@ -252,18 +207,55 @@ export async function addEventAPI(event){
 
 export function useUpdateEvent(){
 
-    const {isOffline} = useOfflineSupport();
+    const {isOffline, addOperation} = useOfflineSupport();
     const [updateEventFunction,setUpdateEventFunction] = useState(null);
 
     const updateEventOffline = async (id,event) => {
         
-        // add the 
+        event.id = id;
+
+        const errors = validateEvent(event);
+
+        if(errors.length > 0){
+            return {
+                errorCode: 402,
+                errorMessages: errors
+            }
+        }
+
+        const events = getOfflineEvents();
+
+        const index = events.indexOf(events.filter(e => e.id === id)[0]);
+
+        if(index === -1) return;
+
+        events.splice(index,1);
+
+        events.push(event);
+
+        setOfflineEvents(events);
+
+        // add to the sync operations
+        addOperation(updateEventOnline, [id, event]);
+
+        return event;
     }
 
     const updateEventOnline = async (id,event) => {
-        const errors = validateEvent(event);
+        
         event.id = id;
+
+        const errors = validateEvent(event);
+
+        if(errors.length > 0){
+            return {
+                errorCode: 402,
+                errorMessages: errors
+            }
+        }
+
         try{
+
             const response = await axios.put(`${api}/events/${id}`,event);
 
             return response.data;
@@ -280,7 +272,7 @@ export function useUpdateEvent(){
     }
 
     useEffect(() => {
-        setUpdateEventFunction(isOffline ? updateEventOffline : updateEventOnline);
+        setUpdateEventFunction(isOffline ? (id,event) => updateEventOffline : (id,event) => updateEventOnline);
     },[isOffline]);
 
     return {updateEventFunction}
@@ -311,15 +303,15 @@ export function useDeleteEvent(){
 
     const deleteEventOffline = async (id) => {
 
-        const data = getOfflineEvents();
+        const events = getOfflineEvents();
 
-        const index = data.indexOf(data.filter(e => e.id === id)[0]);
+        const index = events.indexOf(events.filter(e => e.id === id)[0]);
 
         if(index === -1) return;
 
-        data.splice(index,1);
+        events.splice(index,1);
 
-        setOfflineEvents(data);
+        setOfflineEvents(events);
         
         addOperation(deleteEventOnline, [id]);
     }
@@ -335,10 +327,10 @@ export function useDeleteEvent(){
     }
 
     const {isOffline, addOperation} = useOfflineSupport();
-    const [deleteEventFunction,setUpdateEventFunction] = useState(null);
+    const [deleteEventFunction,setDeleteEventFunction] = useState(null);
 
     useEffect(() => {
-        setUpdateEventFunction(isOffline ? (id) => deleteEventOffline : (id) => deleteEventOnline);
+        setDeleteEventFunction(isOffline ? (id) => deleteEventOffline : (id) => deleteEventOnline);
         
     },[isOffline]);
 

@@ -10,11 +10,19 @@ function EventDetailsPage() {
 
     const id = useParams().id;
 
-    const {event} = useEventDetail(id);
+    const [event,setEvent] = useState(null);
+    
+    const {deleteEventFunction} = useDeleteEvent();
+    const {getEventFunction} = useEventDetail();
+
+    useEffect(() =>{
+        
+        if(getEventFunction === null) return;
+
+        getEventFunction(id).then(r => setEvent(r))
+    },[getEventFunction]);
 
     const navigate = useNavigate();
-
-    const {deleteEventFunction} = useDeleteEvent();
 
     // Edit Modal
 
@@ -38,13 +46,13 @@ function EventDetailsPage() {
         'Personal' : '#2860bf'
       }
       const borderStyle = event === null ? {} : {
-        'borderTop' : `2rem solid ${categoryColors[event.categoryName]}`
+        'borderTop' : `2rem solid ${categoryColors[event && event.categoryName]}`
       }
 
     const timeComponent = <div>{parseDates().map(t => <p key={t}>{t}</p>)}</div>;
     
     function parseDates(){
-        if(event === null) return []
+        if(event === null || event === undefined) return []
 
         const startMoment = getMoment(event.startDate);
         const endMoment = getMoment(event.endDate);
