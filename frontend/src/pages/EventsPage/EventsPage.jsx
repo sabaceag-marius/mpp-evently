@@ -18,7 +18,6 @@ function EventsPage() {
 
     // region Filters
     const categories = ['Work', 'School', 'Personal'];
-    
 
     const DEFAULT_QUERY_DATA = {
         dateMoment : getMoment(),
@@ -30,8 +29,7 @@ function EventsPage() {
     const {queryData,setQueryData} = useQueryData();
     
     function getDate(){
-        
-        return queryData.dateInterval === 'Day' ? queryData.dateMoment.format('Do MMMM YYYY') : queryData.dateMoment.format('MMMM YYYY');
+        return queryData.dateInterval === 'Day' ? queryData.dateMoment.utc().format('Do MMMM YYYY') : queryData.dateMoment.utc().format('MMMM YYYY');
     }
 
     function incrementDate(){
