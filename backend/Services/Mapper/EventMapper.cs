@@ -54,7 +54,7 @@ public static class EventMapper
     {
         return new Event
         {
-            Id = Guid.NewGuid(),
+            Id = eventRequest.Id ?? Guid.NewGuid(),
             Name = eventRequest.Name,
             Description = eventRequest.Description,
             StartDate = eventRequest.StartDate,
