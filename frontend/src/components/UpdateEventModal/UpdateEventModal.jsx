@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import style from './UpdateEventModal.module.css';
 import moment from 'moment';
-import { addEventAPI, updateEventAPI, useUpdateEvent } from '../../services/eventsService';
+import { useUpdateEvent } from '../../services/eventsService';
 import { getMoment, getTimeOptions, toDateTimeInputString, toDateTimeString, toTimeInputString } from '../../utils/momentUtils';
 import DateInput from '../DateInput/DateInput';
 import Dropdown from '../Dropdown/Dropdown';

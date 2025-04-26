@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { deleteEventAPI, useDeleteEvent, useEventDetail } from '../../services/eventsService';
+import { deleteEventAPI, useDeleteEvent, useGetEvent } from '../../services/eventsService';
 import UpdateEventModal from '../../components/UpdateEventModal/UpdateEventModal';
 import style from './EventDetails.module.css';
 import moment from 'moment';
@@ -13,7 +13,7 @@ function EventDetailsPage() {
     const [event,setEvent] = useState(null);
     
     const {deleteEventFunction} = useDeleteEvent();
-    const {getEventFunction} = useEventDetail();
+    const {getEventFunction} = useGetEvent();
 
     useEffect(() =>{
         

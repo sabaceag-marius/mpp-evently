@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import style from './CreateEventModal.module.css';
 import moment from 'moment';
-import { addEventAPI } from '../../services/eventsService';
+import { useAddEvent } from '../../services/eventsService';
 import { getTimeOptions, toDateTimeString, toDateTimeInputString } from '../../utils/momentUtils';
 import FormModal from '../FormModal/FormModal';
 import Dropdown from '../Dropdown/Dropdown';
@@ -25,6 +25,8 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories,currentMom
   const [formData,setFormData] = useState(DEFAULT_FORM_DATA);
   const [errors,setErrors] = useState([]);
   
+  const {addEventFunction} = useAddEvent();
+
   function handleFormChange(event){
 
     const {name,value} = event.target;
@@ -54,7 +56,7 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories,currentMom
       endDate: toDateTimeString(formData.endDate,formData.endTime)
     }
 
-    const result = await addEventAPI(event);
+    const result = await addEventFunction(event);
 
     if(result.errorCode !== undefined){
       setErrors(result.errorMessages);

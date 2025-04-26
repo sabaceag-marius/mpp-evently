@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { restoreTextDirection } from "chart.js/helpers";
 import { useOfflineSupport } from "../contexts/OfflineSupportContext";
+import { Guid } from 'js-guid';
 
 // const api = 'https://localhost:2000/api';
 const api = 'https://192.168.1.8:2000/api';
@@ -14,68 +15,85 @@ const PAGE_SIZE = 15;
 export function useEventQuery(query, pageNumber, setPageNumber){
 
     const [loading, setLoading] = useState(true);
-    // const [events, setEvents] = useState([]);
+
     const [hasMore, setHasMore] = useState(false);
+
+    const [reset,setReset] = useState(true);
 
     const {isOffline} = useOfflineSupport();
 
+    const {queryEventsFunction} = useQueryEvents();
+
+    // console.log(isOffline, queryEventsFunction);
     // const isOffline = false;
 
     // We'll store the events in local storage 
-    const [events,setEvents] = useState(getOfflineEvents);
-
-    // console.log(events);
+    const [events,setEvents] = useState([]);
 
     useEffect(() =>{
 
-        if(isOffline) return;
+        if(!reset) return;
+        console.log("Reset query!");
+        setReset(false);
 
-        removeOfflineEvents();
+        if(!isOffline) {
+            removeOfflineEvents();
+        }
+
         setEvents([]);
-        setPageNumber(1);
-    },[query, isOffline]);
+
+        // We do this to trigger the 2nd useEffect
+        setPageNumber(null);
+
+    },[query, isOffline, reset]);
 
     useEffect(() =>{
-        console.log(":3");
 
-        if(isOffline) {
+        if(queryEventsFunction === null) return;
+
+        if(pageNumber === null){
+            setPageNumber(1);
             return;
         }
 
         setLoading(true);
 
         const queryRequest = setQuery(query,pageNumber);
-        let cancel;
+        let cancel = null;
 
-        axios.get(api+"/events",{
-            params: queryRequest,
-            paramsSerializer: {
-                indexes: null, // no brackets at all
-                },
-            cancelToken: new axios.CancelToken(c => cancel = c)
-            }
-        ).then(result => {
+        queryEventsFunction(queryRequest, pageNumber, cancel)
+        .then(result => {
+            console.log(result);
+            // const r = result.data;
+            // const newEvents = [... getOfflineEvents(), ...r.events];
+            // console.log(r);
+            // // local storage for offline support
 
-            const r = result.data;
-            const newEvents = [... getOfflineEvents(), ...r.events];
-            console.log(r);
-            // local storage for offline support
+            // setOfflineEvents(newEvents);
+            // setEvents(newEvents);
+            
 
-            setOfflineEvents(newEvents);
-            setEvents(newEvents);
+            setEvents(prev => [...prev, ...result.events]);
+
             setLoading(false);
-            setHasMore(PAGE_SIZE * pageNumber < r.count);
+            setHasMore(PAGE_SIZE * pageNumber < result.count);
+
 
         }).catch(e => {
             if (axios.isCancel(e)) return;
             console.log(e);
         });
 
-        return () => cancel();
 
-    },[query,pageNumber, isOffline]);
+        if(cancel !== null) return () => cancel();
 
-    return {loading, events, hasMore}
+    }, [pageNumber, isOffline, queryEventsFunction]);
+
+    const resetQuery = () => {
+        setReset(true);
+    }
+
+    return {loading, events, hasMore, resetQuery}
 }
 
 function setQuery(queryData, currentPage){
@@ -110,11 +128,89 @@ const setOfflineEvents = (events) =>{
     localStorage.setItem('events', JSON.stringify(events));
 }
 
+const addOfflineEvents = (events) => {
+    
+    console.log(events);
+    setOfflineEvents([... getOfflineEvents(), ...events]);
+}
+
 const removeOfflineEvents = () => {
     localStorage.removeItem('events');
 }
 
-export function useEventDetail() {
+export function useQueryEvents(){
+    const queryEventsOffline = async (query, cancel) => {
+        
+        const events = getOfflineEvents();
+
+        console.log(query);
+
+        // console.log(events.map(e => getMoment(e.startDate)));
+
+        const response = events.filter(event =>
+            getMoment(query.startDate) <= getMoment(event.startDate) &&
+            getMoment(event.startDate) <= getMoment(query.endDate )
+            && (query.categoriesList === null || query.categoriesList.includes(event.categoryName.toLowerCase()))
+        )   
+
+        const start = (query.pageNumber - 1)*query.pageSize;
+        const end = query.pageNumber * query.pageSize;
+       
+        return {
+            count : response.length,
+            events: response.slice(start, end).sort((a,b) => getMoment(a.startDate).isBefore(getMoment(b.startDate)) ? -1 : 1)
+        }
+    }
+
+    const queryEventsOnline = async (query, cancel) => {
+
+        var response = await axios.get(api+"/events",{
+            params: query,
+            paramsSerializer: {
+                indexes: null, // no brackets at all
+                },
+            cancelToken: new axios.CancelToken(c => cancel = c)
+            }
+        );
+        
+        // console.log(response.data);
+
+        addOfflineEvents(response.data.events);
+
+        return response.data;
+
+        // .then(result => {
+
+        //     const r = result.data;
+        //     const newEvents = [... getOfflineEvents(), ...r.events];
+        //     console.log(r);
+        //     // local storage for offline support
+
+        //     setOfflineEvents(newEvents);
+        //     setEvents(newEvents);
+        //     setLoading(false);
+        //     setHasMore(PAGE_SIZE * pageNumber < r.count);
+
+        // }).catch(e => {
+        //     if (axios.isCancel(e)) return;
+        //     console.log(e);
+        // });
+    }
+
+    const {isOffline} = useOfflineSupport();
+    const [queryEventsFunction,setQueryEventsFunction] = useState(null);
+
+    useEffect(() => {
+
+        setQueryEventsFunction(isOffline ? (query, cancel) => queryEventsOffline : 
+        (query, cancel) => queryEventsOnline);
+        
+    }, [isOffline]);
+
+    return {queryEventsFunction};
+}
+
+export function useGetEvent() {
 
     const getEventOffline = async (id) => {
         
@@ -146,63 +242,69 @@ export function useEventDetail() {
     return {getEventFunction}; 
 }
 
-export async function getEventsCountAPI(queryData) {
+export function useAddEvent(){
+    const {isOffline, addOperation} = useOfflineSupport();
+    const [addEventFunction,setAddEventFunction] = useState(null);
 
-    const startTimeInterval = queryData.dateMoment.clone().startOf(queryData.dateInterval);
-    const endTimeInterval = queryData.dateMoment.clone().endOf(queryData.dateInterval);
-    
-    const queryRequest = {
+    const addEventOffline = async (event) => {
+        
+        const errors = validateEvent(event);
 
-        startDate: toDateTimeInputString(startTimeInterval),
-        endDate: toDateTimeInputString(endTimeInterval),
-        categoriesList: queryData.categories.length > 0 ? queryData.categories.map(x => x.toLowerCase()) : []
-    }
-
-    try{
-        const response = await axios.get(api+"/events/count",{
-            params: queryRequest,
-            paramsSerializer: {
-                indexes: null, // no brackets at all
-              }
+        if(errors.length > 0){
+            return {
+                errorCode: 402,
+                errorMessages: errors
             }
-        );
-        return response.data;
+        }
+
+        event.id = Guid.newGuid().toString();
+        const events = getOfflineEvents();
+
+        events.push(event);
+
+        setOfflineEvents(events);
+
+        // add to the sync operations
+        addOperation(addEventOnline, [event]);
+
+        return event;
     }
-    catch (error){
-        console.log(error);
-    }
-}
 
-export async function addEventAPI(event){
+    const addEventOnline = async (event) => {
+        
+        const errors = validateEvent(event);
 
-    const errors = validateEvent(event);
+        
+        if(errors.length > 0){
 
-    console.log(errors);
-    
-    // if(errors.length > 0) {
-    //     return errors;
-    // }
+            console.log(errors);
 
-    // const eventId = Math.max(...data.map(event => event.id)) + 1;
+            return {
+                errorCode: 402,
+                errorMessages: errors
+            }
+        }
 
-    // data.push({
-    //     id : eventId,
-    //     ...event
-    // });
+        try{
+            const response = await axios.post(api + "/events", event);
 
-    try{
-        const response = await axios.post(api + "/events", event);
+            return response.data;
+        }
+        catch (error){
+            console.log(error);
 
-        return response.data;
-    }
-    catch (error){
-        console.log(error);
-
-        return {
-            errorCode: error.response.status,
-            errorMessages: error.response.data.split('\n')
+            return {
+                errorCode: error.response.status,
+                errorMessages: error.response.data.split('\n')
+            }
         }
     }
+
+    useEffect(() => {
+        setAddEventFunction(isOffline ? (event) => addEventOffline : (event) => addEventOnline);
+    },[isOffline]);
+
+    return {addEventFunction}
 }
 
 export function useUpdateEvent(){
@@ -278,27 +380,6 @@ export function useUpdateEvent(){
     return {updateEventFunction}
 }
 
-export async function updateEventAPI(id,event){
-
-    const errors = validateEvent(event);
-    event.id = id;
-    try{
-        const response = await axios.put(`${api}/events/${id}`,event);
-
-        return response.data;
-
-    }
-    catch (error){
-        console.log(error);
-
-        return {
-            errorCode: error.response.status,
-            errorMessages: error.response.data.split('\n')
-        }
-    }
-    
-}
-
 export function useDeleteEvent(){
 
     const deleteEventOffline = async (id) => {
@@ -337,22 +418,12 @@ export function useDeleteEvent(){
     return {deleteEventFunction}
 }
 
-export async function deleteEventAPI(id) {
-    try{
-        const response = await axios.delete(`${api}/events/${id}`);
-        return response.data;
-    }
-    catch (error){
-        console.log(error);
-    }
-}
-
 export function validateEvent(event){
     let errors = []
 
     if(event.name === "") errors.push('Name is required')
 
-    if(getMoment(event.endDate).isBefore(getMoment(event.startDate)))
+    if(getMoment(event.endDate).isSameOrBefore(getMoment(event.startDate)))
         errors.push('End date must be after start date');
 
     if(event.categoryName === "") 

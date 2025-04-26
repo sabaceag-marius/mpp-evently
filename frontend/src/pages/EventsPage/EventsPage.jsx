@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './EventsPage.css';
 import EventCard from '../../components/EventCard/EventCard';
 import CreateEventModal from '../../components/CreateEventModal/CreateEventModal';
-import { getEventsAPI, getEventsCountAPI, useEventQuery } from '../../services/eventsService';
+import { useEventQuery } from '../../services/eventsService';
 import moment from 'moment';
 import CheckboxInput from '../../components/Checkbox/Checkbox';
 import { toDateTimeInputString, toDateInputString, getMoment } from '../../utils/momentUtils';
@@ -141,8 +141,7 @@ function EventsPage() {
     // region Events
 
     const [currentPage, setCurrentPage] = useState(1);
-
-    const {events, hasMore, loading} = useEventQuery(queryData,currentPage, setCurrentPage);
+    const {events, hasMore, loading, resetQuery} = useEventQuery(queryData, currentPage, setCurrentPage);
 
     const observer = useRef();
 
@@ -245,7 +244,7 @@ function EventsPage() {
         <CreateEventModal 
             isOpen={isModalOpen} 
             closeModal={closeModal} 
-            submitHandler={()=>{setQueryData(DEFAULT_QUERY_DATA)}} 
+            submitHandler={()=>{resetQuery()}} 
             categories={categories}
             currentMoment={queryData.dateMoment}
         />
