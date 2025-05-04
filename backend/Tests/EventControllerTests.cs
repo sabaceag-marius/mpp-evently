@@ -71,7 +71,7 @@ public class EventControllerTests
         nokObjectResult.Should().NotBe(null);
         nokObjectResult.StatusCode.Should().Be(404);
 
-        nokObjectResult.Value.Should().Be("Event was not found");
+        nokObjectResult.Value.Should().Be("Events was not found");
 
     }
 
@@ -148,7 +148,7 @@ public class EventControllerTests
         nokObjectResult.Should().NotBe(null);
         nokObjectResult.StatusCode.Should().Be(404);
 
-        nokObjectResult.Value.Should().Be("Event was not found");
+        nokObjectResult.Value.Should().Be("Events was not found");
     }
 
     [TestMethod]

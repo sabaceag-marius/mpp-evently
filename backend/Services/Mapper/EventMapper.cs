@@ -30,8 +30,14 @@ public static class EventMapper
 
         specification = specification.And(new EventSpecificationEndDate(filterRequest.EndDate));
 
-        if (filterRequest.categoriesList != null)
-            specification = specification.And(new EventSpecificationCategoryInList(filterRequest.categoriesList));
+        Specification<Event> categorySpecification = new NoneSpecification<Event>();
+
+        foreach (var category in filterRequest.categoriesList ?? new List<string>())
+        {
+            categorySpecification = categorySpecification.Or(new EventSpecificationCategory(category));
+        }
+
+        specification = specification.And(categorySpecification);
 
         return specification;
     }

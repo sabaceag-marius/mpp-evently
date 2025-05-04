@@ -68,7 +68,7 @@ public class EventService : IEventService
             {
                 IsError = true,
                 ErrorStatusCode = ErrorStatusCodes.NotFound,
-                ErrorMessage = "Event was not found"
+                ErrorMessage = "Events was not found"
             };
         }
 
@@ -122,7 +122,7 @@ public class EventService : IEventService
             {
                 IsError = true,
                 ErrorStatusCode = ErrorStatusCodes.NotFound,
-                ErrorMessage = "Event was not found"
+                ErrorMessage = "Events was not found"
             };
         }
 

@@ -4,8 +4,8 @@ const OfflineSupportContext = createContext();
 
 export const OfflineSupportProvider = ({children}) => {
 
-    // const api = 'https://localhost:2000/api';
-    const api = 'https://192.168.1.8:2000/api';
+    const api = 'https://localhost:2000/api';
+    // const api = 'https://192.168.1.8:2000/api';
     
     const [isReady, setIsReady] = useState(false);
 
@@ -36,7 +36,7 @@ export const OfflineSupportProvider = ({children}) => {
             // ping
             
             await axios.get(api+'/events/ping',{
-                timeout: 2000
+                timeout: 5000
             });
 
             if(isOffline && connectionStatus !== null) {
@@ -56,8 +56,7 @@ export const OfflineSupportProvider = ({children}) => {
     const checkOfflineStatus = async () => {
 
         try{
-            await axios.get("https://clients3.google.com/generate_204",{timeout: 2000});
-            
+            await axios.get("https://httpbin.org/status/204", { timeout: 2000 });
             setConnectionStatus('serverOffline');
         }
         catch{
