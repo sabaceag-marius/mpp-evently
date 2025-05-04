@@ -13,7 +13,10 @@ public class Event()
     public required string Name { get; set; } = "";
 
     public required string Username { get; set; } = "Mark";
-    
+
+    //public required Guid UserId { get; set; } = Guid.Empty;
+    //public required Guid CategoryId { get; set; } = Guid.Empty;
+
     public required string Description { get; set; } = "";
 
     public required DateTime StartDate { get; set; } = DateTime.Now;

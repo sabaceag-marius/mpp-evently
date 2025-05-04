@@ -1,6 +1,8 @@
 using Domain.Interfaces;
+using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Services.Interfaces;
 using Services.Services;
 
@@ -30,7 +32,13 @@ builder.Services.AddCors(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<IEventRepository, EventMemoryRepository>();
+// Database
+
+builder.Services.AddDbContext<AppDbContext>(opt
+        => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")),
+    ServiceLifetime.Transient);
+
+builder.Services.AddScoped<IEventRepository, EventRepository>();
 builder.Services.AddScoped<IEventService, EventService>();
 
 var app = builder.Build();
