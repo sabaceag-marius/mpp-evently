@@ -55,9 +55,11 @@ function Navbar() {
 
           <nav className='navbar'>
             <Link to='/events'>Events</Link>
-            <Link to='/events'>Friends</Link>
+            <Link to='/login'>Log in</Link>
+            <Link to='/register'>Register</Link>
+            {/* <Link to='/events'>Friends</Link>
             <Link to='/events'>Profile</Link>
-            <Link to='/events'>Log out</Link>
+            <Link to='/events'>Log out</Link> */}
           </nav>
         </div>
 

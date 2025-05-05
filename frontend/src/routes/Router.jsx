@@ -3,7 +3,9 @@ import ErrorPage from '../pages/ErrorPage/ErrorPage';
 import EventsPage from '../pages/EventsPage/EventsPage';
 import App from '../App';
 import EventDetailsPage from '../pages/EventDetailsPage/EventDetailsPage';
-import FormModal from '../components/FormModal/FormModal';
+import LoginPage from '../pages/LoginPage/LoginPage';
+import RegisterPage from '../pages/RegisterPage/RegisterPage';
+import OfflineRoute from './OfflineRoute';
 
 export const router = createBrowserRouter([
     {
@@ -13,7 +15,8 @@ export const router = createBrowserRouter([
         children: [
             {path: "/events", element:<EventsPage />},
             {path: "/events/:id", element:<EventDetailsPage />},
-            {path: "/form", element: <FormModal />},
+            {path: "/login", element: <LoginPage />},
+            {path: "/register", element: <OfflineRoute><RegisterPage /></OfflineRoute>},
             {path: "*", element: <ErrorPage />}
         ]
     }
