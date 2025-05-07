@@ -5,8 +5,14 @@ using Domain.Enums;
 
 namespace Domain.Specifications.Events;
 
-public class EventSpecificationCategory(string category) : Specification<Event>
+//public class EventSpecificationCategory(string category) : Specification<Event>
+//{
+//    public override Expression<Func<Event, bool>> Expr =>
+//        (e) => e.Category == category.ToCategoryType();
+//}
+
+public class EventSpecificationCategory(Guid categoryId) : Specification<Event>
 {
     public override Expression<Func<Event, bool>> Expr =>
-        (e) => e.Category == category.ToCategoryType();
+        (e) => e.CategoryId == categoryId;
 }

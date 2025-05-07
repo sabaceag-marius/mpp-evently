@@ -6,10 +6,12 @@ import { useUpdateEvent } from '../../services/eventsService';
 import { getMoment, getTimeOptions, toDateTimeInputString, toDateTimeString, toTimeInputString } from '../../utils/momentUtils';
 import DateInput from '../DateInput/DateInput';
 import Dropdown from '../Dropdown/Dropdown';
+import { useQueryData } from '../../contexts/EventQueryContext';
 
 function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
   
-  const categories = ['Work', 'School', 'Personal'];
+  const {categories} = useQueryData();
+  // const categories = ['Work', 'School', 'Personal'];
 
   // const DEFAULT_FORM_DATA = {
   //   name : "",
@@ -29,7 +31,7 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
     startTime: toTimeInputString(event.startDate),
     endDate : getMoment(event.endDate),
     endTime: toTimeInputString(event.endDate),
-    categoryName : event.categoryName,
+    categoryName : categories ? categories.filter(c => event.categoryName === c.name)[0].id: undefined,
     userName : event.userName
   }
 
@@ -63,6 +65,7 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
 
     const newEvent = {
       ...formData,
+      categoryId: formData.categoryName,
       startDate: toDateTimeString(formData.startDate,formData.startTime),
       endDate: toDateTimeString(formData.endDate,formData.endTime)
     }
@@ -206,7 +209,8 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
 				<label htmlFor="categoryName">Category</label>
 				{/* {categoryDropdown} */}
         <Dropdown 
-          optionsArray={categories} 
+          optionsArray={categories.map(c => c.id)} 
+          optionLabelsArray={categories.map(c => c.name)} 
           label="Category" 
           labelId="Category"
           changeHandler={handleFormChange}

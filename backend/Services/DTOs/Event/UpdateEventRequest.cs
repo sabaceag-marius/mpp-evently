@@ -11,5 +11,6 @@ public class UpdateEventRequest
 
     public DateTime EndDate { get; set; } = DateTime.Now;
 
-    public string CategoryName { get; set; }
+    public Guid CategoryId { get; set; }
+
 }

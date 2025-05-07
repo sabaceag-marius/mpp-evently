@@ -12,6 +12,5 @@ public class CreateEventRequest
     public DateTime StartDate { get; set; } = DateTime.Now;
 
     public DateTime EndDate { get; set; } = DateTime.Now;
-
-    public string CategoryName { get; set; }
+    public Guid CategoryId { get; set; }
 }

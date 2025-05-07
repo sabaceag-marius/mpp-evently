@@ -240,6 +240,7 @@ export function useAddEvent(){
         
         const errors = validateEvent(event);
 
+        console.log(event);
         
         if(errors.length > 0){
 
@@ -401,12 +402,12 @@ function setQuery(queryData, currentPage){
 
     const startTimeInterval = queryData.dateMoment.clone().startOf(queryData.dateInterval);
     const endTimeInterval = queryData.dateMoment.clone().endOf(queryData.dateInterval);
-    console.log(queryData.dateMoment,startTimeInterval);
+    // console.log(queryData.dateMoment,startTimeInterval);
     const queryRequest = {
 
         startDate: toDateTimeInputString(startTimeInterval),
         endDate: toDateTimeInputString(endTimeInterval),
-        categoriesList: queryData.categories.length > 0 ? queryData.categories.map(x => x.toLowerCase()) : null,
+        categoryIds: queryData.categories.length > 0 ? queryData.categories : null,
         pageNumber: currentPage,
         pageSize: PAGE_SIZE
     }

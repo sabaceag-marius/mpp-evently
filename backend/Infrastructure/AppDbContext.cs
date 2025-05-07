@@ -9,7 +9,7 @@ public class AppDbContext : DbContext
 //public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
     public DbSet<Event> Events { get; set; }
-    //public DbSet<Category> Categories { get; set; }
+    public DbSet<Category> Categories { get; set; }
 
     //protected override void OnModelCreating(ModelBuilder builder)
     //{

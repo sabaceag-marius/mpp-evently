@@ -23,7 +23,7 @@ public class EventControllerTests
     public void Initialize()
     {
         _eventRepository = new EventMemoryRepository();
-        _eventService = new EventService(_eventRepository);
+        //_eventService = new EventService(_eventRepository);
         _eventController = new EventController(_eventService);
     }
 
@@ -32,7 +32,7 @@ public class EventControllerTests
     {
         var filterRequest = new FilterEventRequest
         {
-            categoriesList = ["work", "school", "personal"],
+            //categoryIds = ["work", "school", "personal"],
             StartDate = new DateTime(2025,4,4),
             EndDate = new DateTime(2025,4,4).AddHours(23).AddMinutes(59),
             PageNumber = 1,
@@ -82,7 +82,7 @@ public class EventControllerTests
         {
             Name = "Test",
             Description = "",
-            CategoryName = "school",
+            //CategoryName = "school",
             StartDate = new DateTime(2024, 4, 4).AddHours(9),
             EndDate = new DateTime(2024, 4, 4).AddHours(10)
         };
@@ -173,7 +173,7 @@ public class EventControllerTests
             Description = eventObj.Description,
             StartDate = eventObj.StartDate,
             EndDate = eventObj.EndDate,
-            CategoryName = "school"
+            //CategoryName = "school"
         };
         
         result = await _eventController.UpdateEvent(eventId, eventUpdateRequest);

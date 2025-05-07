@@ -46,12 +46,13 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories,currentMom
   }
 
   async function onSubmit(e){
-        
+
     e.preventDefault();
     setErrors([]);
     
     const event = {
       ...formData,
+      categoryId: formData.categoryName,
       startDate: toDateTimeString(formData.startDate,formData.startTime),
       endDate: toDateTimeString(formData.endDate,formData.endTime)
     }
@@ -187,7 +188,8 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories,currentMom
 				<label htmlFor="categoryName">Category</label>
 				{/* {categoryDropdown} */}
         <Dropdown 
-          optionsArray={categories} 
+          optionsArray={categories.map(c => c.id)} 
+          optionLabelsArray={categories.map(c => c.name)} 
           label="Category" 
           labelId="Category"
           changeHandler={handleFormChange}

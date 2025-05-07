@@ -18,7 +18,8 @@ public static class EventMapper
             Description = e.Description,
             EndDate = e.EndDate,
             StartDate = e.StartDate,
-            CategoryName = e.Category.ToString()
+            CategoryName = e.Category.Name,
+            CategoryColor = e.Category.Color
         };
     }
 
@@ -32,26 +33,13 @@ public static class EventMapper
 
         Specification<Event> categorySpecification = new NoneSpecification<Event>();
 
-        foreach (var category in filterRequest.categoriesList ?? new List<string>())
+        foreach (var categoryId in filterRequest.categoryIds ?? new List<Guid>())
         {
-            categorySpecification = categorySpecification.Or(new EventSpecificationCategory(category));
+            //categorySpecification = categorySpecification.Or(new EventSpecificationCategory(category));
+            categorySpecification = categorySpecification.Or(new EventSpecificationCategory(categoryId));
         }
 
         specification = specification.And(categorySpecification);
-
-        return specification;
-    }
-
-    public static Specification<Event> ToSpecification(this FilterEventCountRequest filterRequest)
-    {
-        Specification<Event> specification = new AnySpecification<Event>();
-
-        specification = specification.And(new EventSpecificationStartDate(filterRequest.StartDate));
-
-        specification = specification.And(new EventSpecificationEndDate(filterRequest.EndDate));
-
-        if (filterRequest.categoriesList != null)
-            specification = specification.And(new EventSpecificationCategoryInList(filterRequest.categoriesList));
 
         return specification;
     }
@@ -65,7 +53,7 @@ public static class EventMapper
             Description = eventRequest.Description,
             StartDate = eventRequest.StartDate,
             EndDate = eventRequest.EndDate,
-            Category = eventRequest.CategoryName.ToCategoryType()
+            CategoryId = eventRequest.CategoryId
         };
     }
 
@@ -78,7 +66,7 @@ public static class EventMapper
             Description = eventRequest.Description,
             StartDate = eventRequest.StartDate,
             EndDate = eventRequest.EndDate,
-            Category = eventRequest.CategoryName.ToCategoryType()
+            CategoryId = eventRequest.CategoryId
         };
     }
 }

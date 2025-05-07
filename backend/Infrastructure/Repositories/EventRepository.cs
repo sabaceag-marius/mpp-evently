@@ -2,6 +2,7 @@
 using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Repositories;
 
@@ -16,17 +17,25 @@ public class EventRepository : IEventRepository
 
     public async Task<IEnumerable<Event>> GetAllDataAsync()
     {
-        return await _dbContext.Events.ToListAsync();
+        return await _dbContext.Events.Include(e => e.Category).ToListAsync();
     }
 
     public async Task<Event?> GetByIdAsync(Guid id)
     {
-        return await _dbContext.Events.FirstOrDefaultAsync(e => e.Id == id);
+        var event_ = await _dbContext.Events.Include(e => e.Category).FirstOrDefaultAsync(e => e.Id == id);
+
+        if (event_ == null) return new Event();
+
+        return event_;
     }
 
     public async Task<Event?> GetByIdNoTracking(Guid id)
     {
-        return await _dbContext.Events.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+        var event_ = await _dbContext.Events.Include(e => e.Category).AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+
+        if (event_ == null) return new Event();
+
+        return event_;
     }
 
     public Event? Add(Event e)
@@ -40,7 +49,7 @@ public class EventRepository : IEventRepository
 
     public async Task<Event?> UpdateAsync(Event e)
     {
-        _dbContext.Add(e);
+        _dbContext.Events.Update(e);
 
         await _dbContext.SaveChangesAsync();
 
@@ -60,6 +69,7 @@ public class EventRepository : IEventRepository
             .OrderBy(e => e.StartDate)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
+            .Include(e => e.Category)
             .ToListAsync();
     }
 

@@ -9,10 +9,12 @@ namespace Services.Services;
 public class EventService : IEventService
 {
     private readonly IEventRepository _eventRepository;
+    private readonly ICategoryRepository _categoryRepository;
 
-    public EventService(IEventRepository eventRepository)
+    public EventService(IEventRepository eventRepository, ICategoryRepository categoryRepository)
     {
         _eventRepository = eventRepository;
+        _categoryRepository = categoryRepository;
     }
     public async Task<Response<IEnumerable<EventResponse>>> GetAllEvents()
     {
@@ -47,15 +49,7 @@ public class EventService : IEventService
 
     public async Task<Response<int>> GetFilteredEventsCount(FilterEventCountRequest filterRequest)
     {
-        var specification = filterRequest.ToSpecification();
-
-        var result = await
-            _eventRepository.GetFilteredEventsCountAsync(specification);
-
-        return new Response<int>
-        {
-            Value = result
-        };
+        throw new NotImplementedException();
     }
 
     public async Task<Response<EventResponse>> GetEvent(Guid eventId)
@@ -80,6 +74,19 @@ public class EventService : IEventService
 
     public async Task<Response<EventResponse>> CreateEvent(CreateEventRequest eventRequest)
     {
+
+        Category? category = await _categoryRepository.GetByIdAsync(eventRequest.CategoryId);
+
+        if (category == null || category.Id == Guid.Empty)
+        {
+            return new Response<EventResponse>
+            {
+                IsError = true,
+                ErrorMessage = "The category doesn't exist",
+                ErrorStatusCode = ErrorStatusCodes.BadRequest
+            };
+        }
+
         var eventObj = EventMapper.ToEvent(eventRequest);
 
         eventObj = _eventRepository.Add(eventObj);
@@ -94,6 +101,8 @@ public class EventService : IEventService
             };
         }
 
+        eventObj.Category = category;
+
         return new Response<EventResponse>
         {
             Value = eventObj.ToResponse()
@@ -102,9 +111,23 @@ public class EventService : IEventService
 
     public async Task<Response<EventResponse>> UpdateEvent(Guid eventId, UpdateEventRequest eventRequest)
     {
+        Category? category = await _categoryRepository.GetByIdAsync(eventRequest.CategoryId);
+
+        if (category == null || category.Id == Guid.Empty)
+        {
+            return new Response<EventResponse>
+            {
+                IsError = true,
+                ErrorMessage = "The category doesn't exist",
+                ErrorStatusCode = ErrorStatusCodes.BadRequest
+            };
+        }
+
         var eventObj = eventRequest.ToEvent();
 
         await _eventRepository.UpdateAsync(eventObj);
+
+        eventObj.Category = category;
 
         return new Response<EventResponse>
         {

@@ -155,8 +155,7 @@ public class EventMemoryRepository : IEventRepository
                 Username = item.Username,
                 Description = item.Description,
                 StartDate = DateTime.Parse(item.StartDate, null, DateTimeStyles.RoundtripKind),
-                EndDate = DateTime.Parse(item.EndDate, null, DateTimeStyles.RoundtripKind),
-                Category = item.Category.ToCategoryType()
+                EndDate = DateTime.Parse(item.EndDate, null, DateTimeStyles.RoundtripKind)
             };
 
             data[newEvent.Id] = newEvent;

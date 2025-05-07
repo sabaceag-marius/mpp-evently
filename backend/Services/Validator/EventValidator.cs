@@ -15,10 +15,10 @@ public static class EventValidator
         if (eventRequest.StartDate >= eventRequest.EndDate)
             errorMessage += "End date can't be before the start date!\n";
 
-        if (String.IsNullOrWhiteSpace(eventRequest.CategoryName)
-            || eventRequest.CategoryName.ToCategoryType() == CategoryType.None)
+        //if (String.IsNullOrWhiteSpace(eventRequest.CategoryName)
+        //    || eventRequest.CategoryName.ToCategoryType() == CategoryType.None)
 
-            errorMessage += "Category name is not valid!\n";
+        //    errorMessage += "Category name is not valid!\n";
 
         if(!String.IsNullOrEmpty(errorMessage))
             return new Response
@@ -43,11 +43,6 @@ public static class EventValidator
 
         if (eventRequest.StartDate >= eventRequest.EndDate)
             errorMessage += "End date can't be before the start date!\n";
-
-        if (String.IsNullOrWhiteSpace(eventRequest.CategoryName)
-            || eventRequest.CategoryName.ToCategoryType() == CategoryType.None)
-
-            errorMessage += "Category name is not valid!\n";
 
         if (!String.IsNullOrEmpty(errorMessage))
             return new Response

@@ -3,7 +3,7 @@ import React from 'react';
 import { menuClasses } from "@mui/material/Menu";
 import Select, { selectClasses } from "@mui/material/Select";
 
-function Dropdown({optionsArray, label, labelId, changeHandler,currentValue, inputName}) {
+function Dropdown({optionsArray, optionLabelsArray, label, labelId, changeHandler,currentValue, inputName}) {
 
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -49,7 +49,7 @@ function Dropdown({optionsArray, label, labelId, changeHandler,currentValue, inp
       }
 
     const optionsElements = optionsArray
-    .map(e => <MenuItem className='dark--option' value={e} key={e}>{e}</MenuItem>);
+    .map((e, idx) => <MenuItem className='dark--option' value={e} key={e}>{optionLabelsArray? optionLabelsArray[idx] : e}</MenuItem>);
 
     return(
         <>

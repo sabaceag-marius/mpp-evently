@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import './EventsPage.css';
 import EventCard from '../../components/EventCard/EventCard';
 import CreateEventModal from '../../components/CreateEventModal/CreateEventModal';
@@ -13,23 +13,27 @@ import Dropdown from '../../components/Dropdown/Dropdown';
 import DateInput from '../../components/DateInput/DateInput';
 import { useQueryData } from '../../contexts/EventQueryContext';
 import { useOfflineSupport } from '../../contexts/OfflineSupportContext';
+import { getCategoriesAPI } from '../../services/categoriesService';
 
 function EventsPage() {
 
     // region Filters
-    const categories = ['Work', 'School', 'Personal'];
+    // const categories = ['Work', 'School', 'Personal'];
+
+
+    // const [categories,setCategories] = useState([]);
 
     const DEFAULT_QUERY_DATA = {
         dateMoment : getMoment(),
         dateInterval : "Day",
-        categories : categories
+        categories : []
     }
 
-
-    const {queryData,setQueryData} = useQueryData();
+    const {categories, queryData,setQueryData} = useQueryData();
     
     function getDate(){
-        return queryData.dateInterval === 'Day' ? queryData.dateMoment.utc().format('Do MMMM YYYY') : queryData.dateMoment.utc().format('MMMM YYYY');
+        return queryData.dateInterval === 'Day' ? queryData.dateMoment.utc().format('Do MMMM YYYY') 
+        : queryData.dateMoment.utc().format('MMMM YYYY');
     }
 
     function incrementDate(){
@@ -37,7 +41,7 @@ function EventsPage() {
 
         setQueryData(prev => ({
             ...prev,
-            dateMoment: dateMoment.clone().add(1,dateInterval)
+            dateMoment: dateMoment.clone().add(1, dateInterval)
         }))
     }
 
@@ -85,7 +89,6 @@ function EventsPage() {
 
     function checkboxHandler(event){
         let {name, checked} = event.target;
-
         if(checked){
             setQueryData(prev =>({
                 ...prev,
@@ -106,7 +109,7 @@ function EventsPage() {
         if(checked){
             setQueryData(prev =>({
                 ...prev,
-                categories : categories
+                categories : categories.map(c => c.id)
             }));
         }
         else{
@@ -119,7 +122,7 @@ function EventsPage() {
     }
 
     const checkboxElements = categories.map
-    (c => <CheckboxInput inputName={c} key={c} label={c} isChecked={queryData.categories.includes(c)} checkHandler={checkboxHandler} />)
+    (c => <CheckboxInput inputName={c.id} key={c.id} label={c.name} isChecked={queryData.categories.includes(c.id)} checkHandler={checkboxHandler} />)
     
 
     // endregion
@@ -210,7 +213,7 @@ function EventsPage() {
                         <fieldset className='filter--fieldset'>
                             <label>Categories</label>
                             
-                            <CheckboxInput id='all' label='All' isChecked={arraysEqual(queryData.categories,categories)} checkHandler={checkboxAllHandler}/>
+                            <CheckboxInput id='all' label='All' isChecked={arraysEqual(queryData.categories,categories.map(c => c.id))} checkHandler={checkboxAllHandler}/>
                             {checkboxElements}
                         </fieldset>
                     </form>

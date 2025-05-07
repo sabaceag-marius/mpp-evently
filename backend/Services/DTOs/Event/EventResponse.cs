@@ -20,4 +20,6 @@ public class EventResponse()
     public required DateTime EndDate { get; set; } = DateTime.Now;
 
     public required string CategoryName { get; set; } = "";
+    public required string CategoryColor { get; set; } = "";
+
 }

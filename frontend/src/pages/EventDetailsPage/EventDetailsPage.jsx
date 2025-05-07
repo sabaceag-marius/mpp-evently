@@ -14,7 +14,7 @@ function EventDetailsPage() {
     
     const {deleteEventFunction} = useDeleteEvent();
     const {getEventFunction} = useGetEvent();
-
+    
     useEffect(() =>{
         
         if(getEventFunction === null) return;

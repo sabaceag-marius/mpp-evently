@@ -111,36 +111,6 @@ namespace Presentation.Controllers
             return Ok(response.Value);
         }
 
-        [HttpGet]
-        [Route("count")]
-        public async Task<IActionResult> GetFilteredEventsCount([FromQuery] FilterEventCountRequest filterRequest)
-        {
-            if (!ModelState.IsValid)
-            {
-                var errorMessage = ModelState.Values
-                    .SelectMany(x => x.Errors)
-                    .Select(x => x.ErrorMessage)
-                    .Aggregate("", (current, next) => current + "\n" + next);
-                return new ObjectResult(new { errorMessage = errorMessage })
-                {
-                    StatusCode = ErrorStatusCodes.BadRequest.ToStatusCode(),
-                };
-            }
-
-            var response = await _eventService.GetFilteredEventsCount(filterRequest);
-
-            if (response.IsError)
-            {
-                return new ObjectResult(response.ErrorMessage)
-                {
-                    StatusCode = response.ErrorStatusCode.ToStatusCode()
-                };
-            }
-
-            return Ok(response.Value);
-        }
-
-
         [HttpPost]
         public async Task<IActionResult> CreateEvent([FromBody] CreateEventRequest eventRequest)
         {

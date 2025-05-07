@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using Domain.Enums;
 
@@ -15,7 +16,9 @@ public class Event()
     public required string Username { get; set; } = "Mark";
 
     //public required Guid UserId { get; set; } = Guid.Empty;
-    //public required Guid CategoryId { get; set; } = Guid.Empty;
+
+    [ForeignKey("Category")]
+    public required Guid CategoryId { get; set; } = Guid.Empty;
 
     public required string Description { get; set; } = "";
 
@@ -23,5 +26,5 @@ public class Event()
 
     public required DateTime EndDate { get; set; } = DateTime.Now;
 
-    public CategoryType Category { get; set; }
+    public Category Category { get; set; }
 }
