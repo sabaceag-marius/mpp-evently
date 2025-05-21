@@ -73,3 +73,4 @@ VALUES
 ('eaa95a96-ff3b-4ddb-9954-1fcf511c73a2', 'Event 58', 'Personal time or self-care activity.', '2025-04-24T13:45:00', '2025-04-24T15:15:00', 'Mark', '0E74D58E-C207-4A8D-A46E-511B8229634A'),
 ('910e5297-e49b-4397-9e5a-0b932fd7cf1c', 'Event 59', 'Work-related task or meeting.', '2025-04-24T10:15:00', '2025-04-24T10:45:00', 'Mark', 'E266DA92-E59E-4117-A404-AAD53735EF33'),
 ('b6cc736b-1877-452c-95b8-bd193ddf2956', 'Event 60', 'Personal time or self-care activity.', '2025-04-24T16:45:00', '2025-04-24T17:30:00', 'Mark', '0E74D58E-C207-4A8D-A46E-511B8229634A');
+
