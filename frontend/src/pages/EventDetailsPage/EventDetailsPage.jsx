@@ -40,14 +40,11 @@ function EventDetailsPage() {
         navigate("/events");
     }
 
-    const categoryColors = {
-        'Work' : '#fcba03',
-        'School' : '#a12a32',
-        'Personal' : '#2860bf'
-      }
-      const borderStyle = event === null ? {} : {
-        'borderTop' : `2rem solid ${categoryColors[event && event.categoryName]}`
-      }
+    var borderColor = event && event.categoryColor ? '#'+event.categoryColor : "var(--background)";
+
+    const borderStyle = {
+        'borderTop' : `2rem solid ${borderColor}`
+    }
 
     const timeComponent = <div>{parseDates().map(t => <p key={t}>{t}</p>)}</div>;
     

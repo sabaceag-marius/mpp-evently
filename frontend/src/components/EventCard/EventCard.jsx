@@ -21,13 +21,10 @@ function EventCard({event, ref}) {
     return [`${startMoment.format('Do MMM y')} ${startMoment.format('HH:mm')}` ,`${endMoment.format('Do MMM y')} ${endMoment.format('HH:mm')}`]
   }
 
-  const categoryColors = {
-    'Work' : '#fcba03',
-    'School' : '#a12a32',
-    'Personal' : '#2860bf'
-  }
+  var borderColor = event.categoryColor ? '#'+event.categoryColor : "var(--background)";
+
   const borderStyle = {
-    'borderTop' : `2rem solid ${categoryColors[event.categoryName]}`
+    'borderTop' : `2rem solid ${borderColor}`
   }
 
   const statisticsColors = {
@@ -41,7 +38,7 @@ function EventCard({event, ref}) {
     <Link to={`/events/${event.id}`}>
       <div ref={ref} style={borderStyle} className={card.container}>
         <div>
-          <h3 style={event.tag === null || {color : event.categoryColor}} className={card.title}>{event.name}</h3>
+          <h3 className={card.title}>{event.name}</h3>
           <p className={card.username}>{event.username}</p>
           {event.tag === null || <p>{event.tag}</p>}
         </div>

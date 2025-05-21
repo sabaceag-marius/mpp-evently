@@ -31,7 +31,7 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
     startTime: toTimeInputString(event.startDate),
     endDate : getMoment(event.endDate),
     endTime: toTimeInputString(event.endDate),
-    categoryName : categories ? categories.filter(c => event.categoryName === c.name)[0].id: undefined,
+    categoryName : categories && event ? categories.filter(c => event.categoryName === c.name)[0].id: undefined,
     userName : event.userName
   }
 
