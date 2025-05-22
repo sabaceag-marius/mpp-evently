@@ -53,7 +53,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         public async Task<IActionResult> GetUserCategories()
         {
             if (!ModelState.IsValid)

@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export function arraysEqual(a, b) {
     if (a === b) return true;
     if (a == null || b == null) return false;
@@ -10,3 +12,18 @@ export function arraysEqual(a, b) {
     }
     return true;
   }
+
+  export function handleError(error){
+
+    // console.log(error);
+    if(!axios.isAxiosError(error) || error.code === "ERR_NETWORK"){
+        return "Internal server error"; 
+    }
+
+    
+    let errorData = error.response?.data.errorMessage;
+
+    if(!errorData) errorData = error.response?.data;
+
+    return errorData;
+}

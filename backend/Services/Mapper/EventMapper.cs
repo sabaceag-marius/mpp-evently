@@ -13,7 +13,7 @@ public static class EventMapper
         return new EventResponse
         {
             Id = e.Id,
-            Username = e.Username,
+            //Username = e.Username,
             Name = e.Name,
             Description = e.Description,
             EndDate = e.EndDate,

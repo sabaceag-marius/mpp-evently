@@ -18,6 +18,10 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
 
         getCategoriesAPI().then(data => {
         setCategories(data);
+        setFormData(prev => ({
+          ...prev,
+          categoryName : event ? data.filter(c => event.categoryName === c.name)[0].id : undefined
+        }))
         })
         
     }, []);
@@ -41,7 +45,7 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
     startTime: toTimeInputString(event.startDate),
     endDate : getMoment(event.endDate),
     endTime: toTimeInputString(event.endDate),
-    categoryName : categories && event ? categories.filter(c => event.categoryName === c.name)[0].id: undefined,
+    categoryName : "",
     userName : event.userName
   }
 
@@ -120,6 +124,8 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
         // filter: " blur(50%)"
     }
   }
+
+  console.log(formData);
 
   const categoryDropdown = <select
     id='categoryName'

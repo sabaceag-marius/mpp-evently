@@ -13,8 +13,6 @@ public class Event()
 
     public required string Name { get; set; } = "";
 
-    public required string Username { get; set; } = "Mark";
-
     [ForeignKey("User")]
 
     public required Guid UserId { get; set; } = Guid.Empty;

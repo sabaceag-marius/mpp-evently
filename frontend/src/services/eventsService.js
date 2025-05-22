@@ -139,7 +139,7 @@ export function useQueryEvents(){
             }
         );
         
-        // console.log(response.data);
+        console.log(response.data);
 
         addOfflineEvents(response.data.events);
 

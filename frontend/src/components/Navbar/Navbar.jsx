@@ -2,6 +2,8 @@ import React from 'react';
 import './Navbar.css';
 import { Link } from 'react-router';
 import { useOfflineSupport } from '../../contexts/OfflineSupportContext';
+import axios from 'axios';
+import { useAuth } from '../../contexts/AuthContext';
 
 
 function Navbar() {
@@ -43,6 +45,9 @@ function Navbar() {
     }
   }
 
+  const {isLoggedIn} = useAuth();
+  const {logoutUser} = useAuth();
+
   const connectionHeaderStyle = connectionHeader[connectionStatus] ? connectionHeader[connectionStatus].style : {}
   const connectionHeaderText = connectionHeader[connectionStatus] ? connectionHeader[connectionStatus].text : ""
   return (
@@ -54,12 +59,21 @@ function Navbar() {
           <Link to='/events'><h1 className='logo'>Evently</h1></Link>
 
           <nav className='navbar'>
-            <Link to='/events'>Events</Link>
-            <Link to='/login'>Log in</Link>
-            <Link to='/register'>Register</Link>
-            {/* <Link to='/events'>Friends</Link>
-            <Link to='/events'>Profile</Link>
-            <Link to='/events'>Log out</Link> */}
+            {
+              isLoggedIn() ?
+                <>
+                  <Link to='/events'>Events</Link>
+                  <Link to='/login'onClick={() => {
+                    logoutUser();
+                  }}>Log out</Link>
+                </>
+                :
+                <>
+                  <Link to='/login'>Log in</Link>
+                  <Link to='/register'>Register</Link>
+                </>
+              }
+            
           </nav>
         </div>
 

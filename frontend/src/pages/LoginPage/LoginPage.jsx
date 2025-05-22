@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import style from './LoginPage.module.css';
 import PasswordInput from '../../components/PasswordInput/PasswordInput';
 import { Link } from 'react-router';
-import { login } from '../../contexts/AuthContext';
+import { login, useAuth } from '../../contexts/AuthContext';
 export default function LoginPage(){
 
     const DEFAULT_FORM_DATA = {
@@ -10,6 +10,8 @@ export default function LoginPage(){
         password: ""
     }
     
+    const {loginUser} = useAuth();
+
     const [formData,setFormData] = useState(DEFAULT_FORM_DATA);
     const [errors,setErrors] = useState([]);
     
@@ -27,16 +29,18 @@ export default function LoginPage(){
     async function onSubmit(e){
         e.preventDefault();
 
-        const result = await login(formData);
+        const result = await loginUser(formData.username,formData.password);
 
-        if(result.errorCode !== undefined){
-            setErrors(result.errorMessages);
+        if(result && result.errorMessage){
+            setErrors(result.errorMessage);
             return;
         }
 
         setFormData(DEFAULT_FORM_DATA);
-        setErrors([]);
+        setErrors(null);
     }
+
+    const errorsElements = errors === null ? <p></p> : <p className={style.error} >{errors}</p>
 
     return(
 

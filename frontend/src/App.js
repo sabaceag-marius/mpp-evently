@@ -6,11 +6,13 @@ import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { useState } from 'react';
 import { QueryDataProvider } from './contexts/EventQueryContext';
 import { OfflineSupportProvider } from './contexts/OfflineSupportContext';
+import { UserProvider } from './contexts/AuthContext';
 
 function App() {
 
   return (
-    <OfflineSupportProvider>
+    <UserProvider>
+      <OfflineSupportProvider>
       {/* <QueryDataProvider> */}
         <LocalizationProvider dateAdapter={AdapterMoment}>
           <Navbar />
@@ -18,6 +20,8 @@ function App() {
         </LocalizationProvider>
       {/* </QueryDataProvider> */}
     </OfflineSupportProvider>
+    </UserProvider>
+    
   );
 }
 

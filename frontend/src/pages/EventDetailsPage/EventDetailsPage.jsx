@@ -9,7 +9,7 @@ import { getMoment } from '../../utils/momentUtils';
 function EventDetailsPage() {
 
     const id = useParams().id;
-
+    console.log(id);
     const [event,setEvent] = useState(null);
     
     const {deleteEventFunction} = useDeleteEvent();
