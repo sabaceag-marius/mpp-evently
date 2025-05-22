@@ -16,19 +16,20 @@ public class EventService : IEventService
         _eventRepository = eventRepository;
         _categoryRepository = categoryRepository;
     }
-    public async Task<Response<IEnumerable<EventResponse>>> GetAllEvents()
+    public async Task<ServiceResponse<IEnumerable<EventResponse>>> GetAllEvents()
     {
         var result = await _eventRepository.GetAllDataAsync();
 
-        return new Response<IEnumerable<EventResponse>>
+        return new ServiceResponse<IEnumerable<EventResponse>>
         {
             Value = result.Select(e => e.ToResponse())
         };
     }
 
-    public async Task<Response<QueryEventResponse>> GetFilteredEvents(FilterEventRequest filterRequest)
+    public async Task<ServiceResponse<QueryEventResponse>> GetFilteredEvents(FilterEventRequest filterRequest,
+        Guid userId)
     {
-        var specification = filterRequest.ToSpecification();
+        var specification = filterRequest.ToSpecification(userId);
 
         var events = await
             _eventRepository.GetFilteredEventsAsync(specification, filterRequest.PageNumber, filterRequest.PageSize);
@@ -41,24 +42,24 @@ public class EventService : IEventService
             Count = count
         };
 
-        return new Response<QueryEventResponse>
+        return new ServiceResponse<QueryEventResponse>
         {
             Value = result
         };
     }
 
-    public async Task<Response<int>> GetFilteredEventsCount(FilterEventCountRequest filterRequest)
+    public async Task<ServiceResponse<int>> GetFilteredEventsCount(FilterEventCountRequest filterRequest)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Response<EventResponse>> GetEvent(Guid eventId)
+    public async Task<ServiceResponse<EventResponse>> GetEvent(Guid eventId)
     {
         var e = await _eventRepository.GetByIdAsync(eventId);
 
         if (e.Id == Guid.Empty)
         {
-            return new Response<EventResponse>
+            return new ServiceResponse<EventResponse>
             {
                 IsError = true,
                 ErrorStatusCode = ErrorStatusCodes.NotFound,
@@ -66,20 +67,20 @@ public class EventService : IEventService
             };
         }
 
-        return new Response<EventResponse>
+        return new ServiceResponse<EventResponse>
         {
             Value = e.ToResponse()
         };
     }
 
-    public async Task<Response<EventResponse>> CreateEvent(CreateEventRequest eventRequest)
+    public async Task<ServiceResponse<EventResponse>> CreateEvent(CreateEventRequest eventRequest)
     {
 
         Category? category = await _categoryRepository.GetByIdAsync(eventRequest.CategoryId);
 
         if (category == null || category.Id == Guid.Empty)
         {
-            return new Response<EventResponse>
+            return new ServiceResponse<EventResponse>
             {
                 IsError = true,
                 ErrorMessage = "The category doesn't exist",
@@ -93,7 +94,7 @@ public class EventService : IEventService
 
         if (eventObj.Id == Guid.Empty)
         {
-            return new Response<EventResponse>
+            return new ServiceResponse<EventResponse>
             {
                 IsError = true,
                 ErrorMessage = "Couldn't add the event",
@@ -103,19 +104,19 @@ public class EventService : IEventService
 
         eventObj.Category = category;
 
-        return new Response<EventResponse>
+        return new ServiceResponse<EventResponse>
         {
             Value = eventObj.ToResponse()
         };
     }
 
-    public async Task<Response<EventResponse>> UpdateEvent(Guid eventId, UpdateEventRequest eventRequest)
+    public async Task<ServiceResponse<EventResponse>> UpdateEvent(Guid eventId, UpdateEventRequest eventRequest)
     {
         Category? category = await _categoryRepository.GetByIdAsync(eventRequest.CategoryId);
 
         if (category == null || category.Id == Guid.Empty)
         {
-            return new Response<EventResponse>
+            return new ServiceResponse<EventResponse>
             {
                 IsError = true,
                 ErrorMessage = "The category doesn't exist",
@@ -129,19 +130,19 @@ public class EventService : IEventService
 
         eventObj.Category = category;
 
-        return new Response<EventResponse>
+        return new ServiceResponse<EventResponse>
         {
             Value = eventObj.ToResponse()
         };
     }
 
-    public async Task<Response> DeleteEvent(Guid eventId)
+    public async Task<ServiceResponse> DeleteEvent(Guid eventId)
     {
         var e = await _eventRepository.GetByIdNoTracking(eventId);
 
         if (e.Id == Guid.Empty)
         {
-            return new Response
+            return new ServiceResponse
             {
                 IsError = true,
                 ErrorStatusCode = ErrorStatusCodes.NotFound,
@@ -151,6 +152,6 @@ public class EventService : IEventService
 
         await _eventRepository.DeleteAsync(e);
 
-        return new Response();
+        return new ServiceResponse();
     }
 }

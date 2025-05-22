@@ -23,9 +23,9 @@ public static class EventMapper
         };
     }
 
-    public static Specification<Event> ToSpecification(this FilterEventRequest filterRequest)
+    public static Specification<Event> ToSpecification(this FilterEventRequest filterRequest, Guid userId)
     {
-        Specification<Event> specification = new AnySpecification<Event>();
+        Specification<Event> specification = new EventSpecificationUser(userId);
 
         specification = specification.And(new EventSpecificationStartDate(filterRequest.StartDate));
 
@@ -35,7 +35,6 @@ public static class EventMapper
 
         foreach (var categoryId in filterRequest.categoryIds ?? new List<Guid>())
         {
-            //categorySpecification = categorySpecification.Or(new EventSpecificationCategory(category));
             categorySpecification = categorySpecification.Or(new EventSpecificationCategory(categoryId));
         }
 

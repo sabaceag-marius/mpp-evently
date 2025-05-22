@@ -1,12 +1,12 @@
 ﻿namespace Services;
 
-public class Response
+public class ServiceResponse
 {
     public bool IsError { get; set; }
     public string? ErrorMessage { get; set; }
     public ErrorStatusCodes ErrorStatusCode { get; set; }
 }
-public class Response<T> : Response
+public class ServiceResponse<T> : ServiceResponse
 {
     public T? Value { get; set; }
 }

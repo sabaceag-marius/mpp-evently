@@ -54,7 +54,6 @@ public class CategoryRepository : ICategoryRepository
 
     public async Task<IEnumerable<Category>> GetUserCategories(Guid userId)
     {
-        throw new NotImplementedException();
-        //return await _dbContext.Categories.Where(c => c.UserId == userId).ToListAsync();
+        return await _dbContext.Categories.Where(c => c.UserId == userId).ToListAsync();
     }
 }

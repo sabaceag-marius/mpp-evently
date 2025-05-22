@@ -29,7 +29,23 @@ function EventsPage() {
         categories : []
     }
 
-    const {categories, queryData,setQueryData} = useQueryData();
+    const [queryData, setQueryData] = useState(DEFAULT_QUERY_DATA);
+    const [categories, setCategories] = useState([]);
+
+    useEffect(() =>{
+
+        getCategoriesAPI().then(data => {
+        setQueryData(prev => ({
+            ...prev,
+            categories: data.map(c => c.id)
+        }))
+        
+        setCategories(data);
+        })
+        
+    }, []);
+
+    // const {categories, queryData,setQueryData} = useQueryData();
     
     function getDate(){
         return queryData.dateInterval === 'Day' ? queryData.dateMoment.utc().format('Do MMMM YYYY') 

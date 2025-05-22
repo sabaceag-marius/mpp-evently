@@ -6,7 +6,7 @@ const api = 'https://localhost:2000/api';
 export async function getCategoriesAPI(){
 
     try{
-        const response = await axios.get(api+'/categories/all');
+        const response = await axios.get(api+'/categories');
         return response.data;
     }
     catch(error){

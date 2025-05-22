@@ -56,10 +56,12 @@ export const OfflineSupportProvider = ({children}) => {
     const checkOfflineStatus = async () => {
 
         try{
-            await axios.get("https://httpbin.org/status/204", { timeout: 2000 });
+            await axios.get("https://httpbin.org/get");
+            console.log('server is offline!');
             setConnectionStatus('serverOffline');
         }
         catch{
+            console.log('internet is offline!');
             setConnectionStatus('internetOffline');
         }
 
@@ -97,7 +99,7 @@ export const OfflineSupportProvider = ({children}) => {
 
         const interval = setInterval(() => {
             pingServer();
-            }, 3000);
+            }, 10000);
             
         return () => clearInterval(interval);
     },[connectionStatus, syncOperations]);

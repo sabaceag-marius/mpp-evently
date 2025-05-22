@@ -5,7 +5,7 @@ namespace Services.Validator;
 
 public static class EventValidator
 {
-    public static Response ValidateEvent(CreateEventRequest eventRequest)
+    public static ServiceResponse ValidateEvent(CreateEventRequest eventRequest)
     {
         string errorMessage = "";
 
@@ -18,20 +18,20 @@ public static class EventValidator
         //if (String.IsNullOrWhiteSpace(eventRequest.CategoryName)
         //    || eventRequest.CategoryName.ToCategoryType() == CategoryType.None)
 
-        //    errorMessage += "Category name is not valid!\n";
+        //    errorMessage += "CategoryDTO name is not valid!\n";
 
         if(!String.IsNullOrEmpty(errorMessage))
-            return new Response
+            return new ServiceResponse
             {
                 IsError = true,
                 ErrorStatusCode = ErrorStatusCodes.BadRequest,
                 ErrorMessage = errorMessage
             };
 
-        return new Response();
+        return new ServiceResponse();
     }
 
-    public static Response ValidateEvent(Guid id, UpdateEventRequest eventRequest)
+    public static ServiceResponse ValidateEvent(Guid id, UpdateEventRequest eventRequest)
     {
         string errorMessage = "";
 
@@ -45,13 +45,13 @@ public static class EventValidator
             errorMessage += "End date can't be before the start date!\n";
 
         if (!String.IsNullOrEmpty(errorMessage))
-            return new Response
+            return new ServiceResponse
             {
                 IsError = true,
                 ErrorStatusCode = ErrorStatusCodes.BadRequest,
                 ErrorMessage = errorMessage
             };
 
-        return new Response();
+        return new ServiceResponse();
     }
 }

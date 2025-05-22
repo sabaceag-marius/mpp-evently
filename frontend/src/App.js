@@ -11,12 +11,12 @@ function App() {
 
   return (
     <OfflineSupportProvider>
-      <QueryDataProvider>
+      {/* <QueryDataProvider> */}
         <LocalizationProvider dateAdapter={AdapterMoment}>
           <Navbar />
           <Outlet />
         </LocalizationProvider>
-      </QueryDataProvider>
+      {/* </QueryDataProvider> */}
     </OfflineSupportProvider>
   );
 }

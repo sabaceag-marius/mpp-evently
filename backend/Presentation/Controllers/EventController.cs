@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 using Services.DTOs.Event;
 using Services.Interfaces;
+using Services.Services;
 using Services.Validator;
+using System.Security.Claims;
 
 namespace Presentation.Controllers
 {
@@ -13,10 +16,12 @@ namespace Presentation.Controllers
     public class EventController : ControllerBase
     {
         private readonly IEventService _eventService;
+        private readonly IUserService _userService;
 
-        public EventController(IEventService eventService)
+        public EventController(IEventService eventService, IUserService userService)
         {
             _eventService = eventService;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -55,6 +60,7 @@ namespace Presentation.Controllers
             return Ok(response.Value);
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetFilteredEvents([FromQuery] FilterEventRequest filterRequest)
         {
@@ -70,7 +76,22 @@ namespace Presentation.Controllers
                 };
             }
 
-            var response = await _eventService.GetFilteredEvents(filterRequest);
+            var username = User.FindFirstValue(ClaimTypes.GivenName);
+
+            var userResponse = await _userService.GetUserByNameAsync(username);
+
+            // This shouldn't happen since we have the 'Authorize' attribute
+            if (userResponse.IsError)
+            {
+                return new ObjectResult(userResponse.ErrorMessage)
+                {
+                    StatusCode = userResponse.ErrorStatusCode.ToStatusCode()
+                };
+            }
+
+            var user = userResponse.Value;
+
+            var response = await _eventService.GetFilteredEvents(filterRequest, user.Id);
 
             if (response.IsError)
             {

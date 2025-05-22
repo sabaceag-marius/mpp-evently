@@ -2,13 +2,12 @@ import React, { useState } from 'react'
 import style from './LoginPage.module.css';
 import PasswordInput from '../../components/PasswordInput/PasswordInput';
 import { Link } from 'react-router';
+import { login } from '../../contexts/AuthContext';
 export default function LoginPage(){
 
     const DEFAULT_FORM_DATA = {
         username: "",
-        email: "",
-        password: "",
-        confirmPassword: ""
+        password: ""
     }
     
     const [formData,setFormData] = useState(DEFAULT_FORM_DATA);
@@ -25,9 +24,18 @@ export default function LoginPage(){
         }));
     }
 
-    function onSubmit(e){
+    async function onSubmit(e){
         e.preventDefault();
 
+        const result = await login(formData);
+
+        if(result.errorCode !== undefined){
+            setErrors(result.errorMessages);
+            return;
+        }
+
+        setFormData(DEFAULT_FORM_DATA);
+        setErrors([]);
     }
 
     return(
@@ -53,17 +61,6 @@ export default function LoginPage(){
                     </div>
 
                     <div className={style.inputGroup}>
-                        <label htmlFor="name">Email</label>
-                        <input
-                            type="text"
-                            id="email"
-                            name="email"
-                            onChange={handleFormChange}
-                            value={formData.email}
-                        />
-                    </div>
-
-                    <div className={style.inputGroup}>
                         <label htmlFor="password">Password</label>
                         <PasswordInput
                             id="password"
@@ -73,17 +70,7 @@ export default function LoginPage(){
                         />
                     </div>
 
-                    <div className={style.inputGroup}>
-                        <label htmlFor="confirmPassword">Confirm Password</label>
-                        <PasswordInput
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            onChange={handleFormChange}
-                            value={formData.confirmPassword}
-                        />
-                    </div>
-
-                    {/* {errorsElements} */}
+                    {errorsElements}
                     <p>Don't have an account?<Link to='/register'> Register</Link></p>
                     <button className={`${style.submitButton} primary--button`}>Log in</button>
                 </form>

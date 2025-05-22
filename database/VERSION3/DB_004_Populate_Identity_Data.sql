@@ -93,7 +93,7 @@ INSERT INTO [AspNetUsers] (
     
     -- Password: "User123!"
     -- This is a PBKDF2 hash for the password "User123!" with 10000 iterations
-    'AQAAAAIAAYagAAAAEGXpW8QeQlYQ9D5jK7X9YvVwZt3nMjHqLkPoNr5x7vT1aBc2XyZ8KpRqLsN9Xw2A==',
+    'AQAAAAIAAYagAAAAEPbGeOj+Q4QHWKR6y/ULYMnUk+HuVF4/I24Qd6KEC5gVMeGHm6mrbMGHOUBa+XBruQ==',
     
     '6D6E8F9G-2B3C-5D4E-0F9G-1H2J3K4L5M6N', -- SecurityStamp
     NEWID(), -- ConcurrencyStamp
@@ -138,7 +138,7 @@ INSERT INTO [AspNetUsers] (
     
     -- Password: "User123!"
     -- Same password as user1 for testing
-    'AQAAAAIAAYagAAAAEGXpW8QeQlYQ9D5jK7X9YvVwZt3nMjHqLkPoNr5x7vT1aBc2XyZ8KpRqLsN9Xw2A==',
+    'AQAAAAIAAYagAAAAEPbGeOj+Q4QHWKR6y/ULYMnUk+HuVF4/I24Qd6KEC5gVMeGHm6mrbMGHOUBa+XBruQ==',
     
     '7E7F9G0H-3C4D-6E5F-1G2H-2I3J4K5L6M7N', -- SecurityStamp
     NEWID(), -- ConcurrencyStamp
