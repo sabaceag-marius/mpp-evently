@@ -1,7 +1,7 @@
 import axios from "axios";
 import { handleError } from "../utils/arrayUtils";
 
-const api = 'https://localhost:2000/api';
+const api = process.env.REACT_APP_API_URL;
 
 export async function registerAPI(username, email, password, confirmPassword) {
     

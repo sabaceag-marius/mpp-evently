@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 export const offlineSupport = () => {
 
-    const api = 'https://localhost:2000/api';
+    const api = process.env.REACT_APP_API_URL;
     
     const [connectionStatus,setConnectionStatus] = useState('online');
 

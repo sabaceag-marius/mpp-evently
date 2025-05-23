@@ -7,8 +7,7 @@ import { restoreTextDirection } from "chart.js/helpers";
 import { useOfflineSupport } from "../contexts/OfflineSupportContext";
 import { Guid } from 'js-guid';
 
-const api = 'https://localhost:2000/api';
-// const api = 'https://192.168.1.8:2000/api';
+const api = process.env.REACT_APP_API_URL;
 
 const PAGE_SIZE = 15;
 
