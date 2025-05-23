@@ -55,7 +55,7 @@ export const OfflineSupportProvider = ({children}) => {
 
     const checkOfflineStatus = async () => {
         
-        if(!isOffline) return;
+        // if(!isOffline) return;
 
         try{
             await axios.get("https://httpbin.org/get");

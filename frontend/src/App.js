@@ -11,16 +11,18 @@ import { UserProvider } from './contexts/AuthContext';
 function App() {
 
   return (
-    <UserProvider>
       <OfflineSupportProvider>
+        <UserProvider>
+
       {/* <QueryDataProvider> */}
         <LocalizationProvider dateAdapter={AdapterMoment}>
           <Navbar />
           <Outlet />
         </LocalizationProvider>
       {/* </QueryDataProvider> */}
+      </UserProvider>
+
     </OfflineSupportProvider>
-    </UserProvider>
     
   );
 }

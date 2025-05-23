@@ -1,20 +1,29 @@
 import axios from "axios";
 import { handleError } from "../utils/arrayUtils";
 
-const validateUserRegister = (formData) => {
-    
-    let errors = [];
+const api = 'https://localhost:2000/api';
 
+export async function registerAPI(username, email, password, confirmPassword) {
     
+    try{
 
-    if(formData.password !== formData.confirmPassword){
-        errors.push('Passwords do not match');
+        const response = await axios.post(api + '/users/register',{
+            'username' : username,
+            'email' : email,
+            'password' : password,
+            'confirmPassword' : confirmPassword
+        });
+
+        return response.data;
+
+    }
+    catch(error){
+        return {
+            errorMessage: handleError(error)
+        };
     }
 
-    return errors;
 }
-
-const api = 'https://localhost:2000/api';
 
 export async function loginAPI(username, password) {
     

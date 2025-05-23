@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { loginAPI } from "../services/userService";
+import { loginAPI, registerAPI } from "../services/userService";
 
 const UserContext = createContext(null);
 
@@ -24,12 +24,12 @@ export const UserProvider = ({children}) => {
     }, [loggedStatus]);
 
 
-    const registerUser = async (email, username, password) => {
-        const result = null; 
-        // const result = await registerAPI(email, username, password).catch(e => handleError(e));
+    const registerUser = async (email, username, password, confirmPassword) => {
 
-        if (!result) {
-            return;
+        const result = await registerAPI(email, username, password, confirmPassword);
+
+        if(result.errorMessage){
+            return result;
         }
 
         // Store in local storage

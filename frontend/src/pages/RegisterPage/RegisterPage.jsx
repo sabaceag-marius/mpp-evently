@@ -29,10 +29,22 @@ export default function RegisterPage(){
         }));
     }
 
-    function onSubmit(e){
+    async function onSubmit(e){
         e.preventDefault();
 
+        const result = await registerUser(formData.username,formData.email, formData.password, formData.confirmPassword);
+
+        if(result && result.errorMessage){
+            setErrors(result.errorMessage);
+            return;
+        }
+
+        setFormData(DEFAULT_FORM_DATA);
+        setErrors(null);
     }
+
+    const errorsElements = errors === null ? <p></p> : <p className={style.error} >{errors}</p>
+
 
     return(
 
@@ -57,6 +69,17 @@ export default function RegisterPage(){
                     </div>
 
                     <div className={style.inputGroup}>
+                        <label htmlFor="name">Email</label>
+                        <input
+                            type="text"
+                            id="email"
+                            name="email"
+                            onChange={handleFormChange}
+                            value={formData.email}
+                        />
+                    </div>
+
+                    <div className={style.inputGroup}>
                         <label htmlFor="password">Password</label>
                         <PasswordInput
                             id="password"
@@ -66,7 +89,17 @@ export default function RegisterPage(){
                         />
                     </div>
 
-                    {/* {errorsElements} */}
+                    <div className={style.inputGroup}>
+                        <label htmlFor="password">Confirm Password</label>
+                        <PasswordInput
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            onChange={handleFormChange}
+                            value={formData.confirmPassword}
+                        />
+                    </div>
+
+                    {errorsElements}
 
                     <p>Already have an account?<Link to='/login'> Log-in</Link></p>
                     <button className={`${style.submitButton} primary--button`}>Register</button>

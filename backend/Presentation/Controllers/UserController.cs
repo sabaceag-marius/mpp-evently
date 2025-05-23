@@ -2,6 +2,7 @@
 using Services;
 using Services.DTOs;
 using Services.Interfaces;
+using Services.Validator;
 
 namespace Presentation.Controllers;
 
@@ -30,6 +31,17 @@ public class UserController : ControllerBase
                 StatusCode = ErrorStatusCodes.BadRequest.ToStatusCode(),
             };
         }
+
+        var validationResponse = registerRequest.ValidateRegisterRequest();
+
+        if (validationResponse.IsError)
+        {
+            return new ObjectResult(validationResponse.ErrorMessage)
+            {
+                StatusCode = validationResponse.ErrorStatusCode.ToStatusCode()
+            };
+        }
+
         var response = await _userService.Register(registerRequest);
 
         if (response.IsError)
