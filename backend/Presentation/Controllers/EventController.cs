@@ -104,6 +104,7 @@ namespace Presentation.Controllers
             return Ok(response.Value);
         }
 
+        [Authorize]
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetEvent([FromRoute] Guid id)
@@ -119,7 +120,23 @@ namespace Presentation.Controllers
                     StatusCode = ErrorStatusCodes.BadRequest.ToStatusCode(),
                 };
             }
-            var response = await _eventService.GetEvent(id);
+
+            var username = User.FindFirstValue(ClaimTypes.GivenName);
+
+            var userResponse = await _userService.GetUserByNameAsync(username);
+
+            // This shouldn't happen since we have the 'Authorize' attribute
+            if (userResponse.IsError)
+            {
+                return new ObjectResult(userResponse.ErrorMessage)
+                {
+                    StatusCode = userResponse.ErrorStatusCode.ToStatusCode()
+                };
+            }
+
+            var user = userResponse.Value;
+
+            var response = await _eventService.GetEvent(id, user.Id);
 
             if (response.IsError)
             {
@@ -132,6 +149,7 @@ namespace Presentation.Controllers
             return Ok(response.Value);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateEvent([FromBody] CreateEventRequest eventRequest)
         {
@@ -147,6 +165,21 @@ namespace Presentation.Controllers
                 };
             }
 
+            var username = User.FindFirstValue(ClaimTypes.GivenName);
+
+            var userResponse = await _userService.GetUserByNameAsync(username);
+
+            // This shouldn't happen since we have the 'Authorize' attribute
+            if (userResponse.IsError)
+            {
+                return new ObjectResult(userResponse.ErrorMessage)
+                {
+                    StatusCode = userResponse.ErrorStatusCode.ToStatusCode()
+                };
+            }
+
+            var user = userResponse.Value;
+
             var validate = EventValidator.ValidateEvent(eventRequest);
 
             if (validate.IsError)
@@ -157,7 +190,7 @@ namespace Presentation.Controllers
                 };
             }
 
-            var response = await _eventService.CreateEvent(eventRequest);
+            var response = await _eventService.CreateEvent(eventRequest, user.Id);
 
             if (response.IsError)
             {
@@ -171,6 +204,7 @@ namespace Presentation.Controllers
 
         }
 
+        [Authorize]
         [HttpDelete]
         [Route("{id}")]
         public async Task<IActionResult> DeleteEvent([FromRoute] Guid id)
@@ -187,7 +221,22 @@ namespace Presentation.Controllers
                 };
             }
 
-            var response = await _eventService.DeleteEvent(id);
+            var username = User.FindFirstValue(ClaimTypes.GivenName);
+
+            var userResponse = await _userService.GetUserByNameAsync(username);
+
+            // This shouldn't happen since we have the 'Authorize' attribute
+            if (userResponse.IsError)
+            {
+                return new ObjectResult(userResponse.ErrorMessage)
+                {
+                    StatusCode = userResponse.ErrorStatusCode.ToStatusCode()
+                };
+            }
+
+            var user = userResponse.Value;
+
+            var response = await _eventService.DeleteEvent(id, user.Id);
 
             if (response.IsError)
             {
@@ -200,6 +249,7 @@ namespace Presentation.Controllers
             return NoContent();
         }
 
+        [Authorize]
         [HttpPut]
         [Route("{id}")]
         public async Task<IActionResult> UpdateEvent([FromRoute] Guid id, [FromBody] UpdateEventRequest eventRequest)
@@ -216,6 +266,21 @@ namespace Presentation.Controllers
                 };
             }
 
+            var username = User.FindFirstValue(ClaimTypes.GivenName);
+
+            var userResponse = await _userService.GetUserByNameAsync(username);
+
+            // This shouldn't happen since we have the 'Authorize' attribute
+            if (userResponse.IsError)
+            {
+                return new ObjectResult(userResponse.ErrorMessage)
+                {
+                    StatusCode = userResponse.ErrorStatusCode.ToStatusCode()
+                };
+            }
+
+            var user = userResponse.Value;
+
             var validate = EventValidator.ValidateEvent(id, eventRequest);
 
             if (validate.IsError)
@@ -226,7 +291,7 @@ namespace Presentation.Controllers
                 };
             }
 
-            var response = await _eventService.UpdateEvent(id,eventRequest);
+            var response = await _eventService.UpdateEvent(id,eventRequest, user.Id);
 
             if (response.IsError)
             {

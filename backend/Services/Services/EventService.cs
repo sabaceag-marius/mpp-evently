@@ -53,17 +53,17 @@ public class EventService : IEventService
         throw new NotImplementedException();
     }
 
-    public async Task<ServiceResponse<EventResponse>> GetEvent(Guid eventId)
+    public async Task<ServiceResponse<EventResponse>> GetEvent(Guid eventId, Guid userId)
     {
         var e = await _eventRepository.GetByIdAsync(eventId);
 
-        if (e.Id == Guid.Empty)
+        if (e.Id == Guid.Empty || e.UserId != userId)
         {
             return new ServiceResponse<EventResponse>
             {
                 IsError = true,
                 ErrorStatusCode = ErrorStatusCodes.NotFound,
-                ErrorMessage = "Events was not found"
+                ErrorMessage = "Event was not found"
             };
         }
 
@@ -73,7 +73,7 @@ public class EventService : IEventService
         };
     }
 
-    public async Task<ServiceResponse<EventResponse>> CreateEvent(CreateEventRequest eventRequest)
+    public async Task<ServiceResponse<EventResponse>> CreateEvent(CreateEventRequest eventRequest, Guid userId)
     {
 
         Category? category = await _categoryRepository.GetByIdAsync(eventRequest.CategoryId);
@@ -88,7 +88,7 @@ public class EventService : IEventService
             };
         }
 
-        var eventObj = EventMapper.ToEvent(eventRequest);
+        var eventObj = eventRequest.ToEvent(userId);
 
         eventObj = _eventRepository.Add(eventObj);
 
@@ -110,7 +110,8 @@ public class EventService : IEventService
         };
     }
 
-    public async Task<ServiceResponse<EventResponse>> UpdateEvent(Guid eventId, UpdateEventRequest eventRequest)
+    public async Task<ServiceResponse<EventResponse>> UpdateEvent(Guid eventId, UpdateEventRequest eventRequest,
+        Guid userId)
     {
         Category? category = await _categoryRepository.GetByIdAsync(eventRequest.CategoryId);
 
@@ -124,9 +125,32 @@ public class EventService : IEventService
             };
         }
 
-        var eventObj = eventRequest.ToEvent();
+        var event_ = await _eventRepository.GetByIdNoTracking(eventId);
 
-        await _eventRepository.UpdateAsync(eventObj);
+        if(event_.Id == Guid.Empty || event_.UserId != userId)
+        {
+            return new ServiceResponse<EventResponse>
+            {
+                IsError = true,
+                ErrorStatusCode = ErrorStatusCodes.NotFound,
+                ErrorMessage = "Event was not found"
+            };
+        }
+        var eventObj = eventRequest.ToEvent(userId);
+
+        try
+        {
+            await _eventRepository.UpdateAsync(eventObj);
+        }
+        catch (Exception e)
+        {
+            return new ServiceResponse<EventResponse>
+            {
+                IsError = true,
+                ErrorStatusCode = ErrorStatusCodes.InternalServerError,
+                ErrorMessage = e.Message
+            };
+        }
 
         eventObj.Category = category;
 
@@ -136,17 +160,17 @@ public class EventService : IEventService
         };
     }
 
-    public async Task<ServiceResponse> DeleteEvent(Guid eventId)
+    public async Task<ServiceResponse> DeleteEvent(Guid eventId, Guid userId)
     {
         var e = await _eventRepository.GetByIdNoTracking(eventId);
 
-        if (e.Id == Guid.Empty)
+        if (e.Id == Guid.Empty || e.UserId != userId)
         {
             return new ServiceResponse
             {
                 IsError = true,
                 ErrorStatusCode = ErrorStatusCodes.NotFound,
-                ErrorMessage = "Events was not found"
+                ErrorMessage = "Event was not found"
             };
         }
 

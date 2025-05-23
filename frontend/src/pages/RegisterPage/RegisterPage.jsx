@@ -2,7 +2,11 @@ import React, { useState } from 'react'
 import style from './RegisterPage.module.css';
 import PasswordInput from '../../components/PasswordInput/PasswordInput';
 import { Link } from 'react-router';
+import { useAuth } from '../../contexts/AuthContext';
+
 export default function RegisterPage(){
+
+    const {registerUser} = useAuth();
 
     const DEFAULT_FORM_DATA = {
         username: "",

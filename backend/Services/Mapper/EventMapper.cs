@@ -43,7 +43,7 @@ public static class EventMapper
         return specification;
     }
 
-    public static Event ToEvent(this CreateEventRequest eventRequest)
+    public static Event ToEvent(this CreateEventRequest eventRequest, Guid userId)
     {
         return new Event
         {
@@ -52,11 +52,12 @@ public static class EventMapper
             Description = eventRequest.Description,
             StartDate = eventRequest.StartDate,
             EndDate = eventRequest.EndDate,
-            CategoryId = eventRequest.CategoryId
+            CategoryId = eventRequest.CategoryId,
+            UserId = userId,
         };
     }
 
-    public static Event ToEvent(this UpdateEventRequest eventRequest)
+    public static Event ToEvent(this UpdateEventRequest eventRequest, Guid userId)
     {
         return new Event
         {
@@ -65,7 +66,8 @@ public static class EventMapper
             Description = eventRequest.Description,
             StartDate = eventRequest.StartDate,
             EndDate = eventRequest.EndDate,
-            CategoryId = eventRequest.CategoryId
+            CategoryId = eventRequest.CategoryId,
+            UserId = userId,
         };
     }
 }
