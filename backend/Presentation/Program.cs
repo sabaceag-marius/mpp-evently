@@ -13,7 +13,13 @@ using Services.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseUrls("https://0.0.0.0:2000");
+//builder.WebHost.UseUrls("https://0.0.0.0:2000");
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(80);
+    serverOptions.ListenAnyIP(2000);
+});
 
 // Add services to the container.
 
@@ -125,7 +131,7 @@ app.UseCors(builder =>
         .AllowAnyMethod()
         .AllowAnyHeader());
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 app.UseAuthorization();
