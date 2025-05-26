@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   frontend:
@@ -31,24 +30,46 @@ services:
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     
-    healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P $$SA_PASSWORD -Q "SELECT 1" || exit 1
-      interval: 5s
-      timeout: 5s
-      retries: 20
 
     ports:
       - "1433:1433"
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=MppEvently123.
+      - MSSQL_SA_PASSWORD=MppEvently123.
       - MSSQL_PID=Express
     volumes:
       - db-data:/var/opt/mssql
-
     networks:
       - app-network
+    restart: unless-stopped
 
+  db-setup:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+       - db
+    #depends_on:
+    #  db:
+    #    condition: service_healthy
+    environment:
+      - SA_PASSWORD=MppEvently123.
+    volumes:
+      - ./sql-scripts:/sql-scripts
+    command: >
+      /bin/bash -c "
+      echo 'Waiting for SQL Server to be ready...';
+      until /opt/mssql-tools/bin/sqlcmd -S db -U sa -P $$SA_PASSWORD -Q 'SELECT 1' -t 30 -b; do
+        sleep 1;
+      done;
+      echo 'SQL Server is ready. Executing scripts...';
+      for script in /sql-scripts/*.sql; do
+        echo 'Executing $$script';
+        /opt/mssql-tools/bin/sqlcmd -S db -U sa -P $$SA_PASSWORD -d master -i $$script -b -I || exit 1;
+      done;
+      echo 'All scripts executed successfully';
+      "
+    networks:
+      - app-network
+      
 networks:
   app-network:
     driver: bridge
