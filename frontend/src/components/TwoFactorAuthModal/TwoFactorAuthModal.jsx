@@ -97,7 +97,8 @@ function TwoFactorAuthModal({isOpen,closeModal}) {
                 onClick={onClose}>close
             </button>
         </div>
-
+        <p>You recieved an email with your Token.</p>
+        <p>Please write your account's email and the token.</p>
         <form className={style.formContainer} onSubmit={onSubmit}>
             <div className={style.inputGroup}>
                 <label htmlFor="email">Email</label>
@@ -111,7 +112,7 @@ function TwoFactorAuthModal({isOpen,closeModal}) {
             </div>
 
             <div className={style.inputGroup}>
-                <label htmlFor="password">Password</label>
+                <label htmlFor="password">Token</label>
                 <input
                     id="password"
                     name="password"
