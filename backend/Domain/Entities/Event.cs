@@ -27,4 +27,6 @@ public class Event()
     public required DateTime EndDate { get; set; } = DateTime.Now;
 
     public Category Category { get; set; }
+
+    public User User { get; set; }
 }

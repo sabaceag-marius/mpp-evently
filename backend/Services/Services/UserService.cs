@@ -26,7 +26,7 @@ public class UserService : IUserService
 
     }
 
-    public async Task<ServiceResponse<UserResponse>> Register(UserRegisterRequest registerRequest)
+    public async Task<ServiceResponse<UserTokenResponse>> Register(UserRegisterRequest registerRequest)
     {
         var user = registerRequest.ToUser();
 
@@ -34,7 +34,7 @@ public class UserService : IUserService
 
         if (!createdUser.Succeeded)
         {
-            return new ServiceResponse<UserResponse>
+            return new ServiceResponse<UserTokenResponse>
             {
                 IsError = true,
                 ErrorMessage = createdUser.Errors.First().Description,
@@ -42,22 +42,22 @@ public class UserService : IUserService
             };
         }
 
-        return new ServiceResponse<UserResponse>
+        return new ServiceResponse<UserTokenResponse>
         {
-            Value = new UserResponse
+            Value = new UserTokenResponse
             {
                 Token = CreateToken(user)
             }
         };
     }
 
-    public async Task<ServiceResponse<UserResponse>> Login(UserLoginRequest loginRequest)
+    public async Task<ServiceResponse<UserTokenResponse>> Login(UserLoginRequest loginRequest)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == loginRequest.UserName);
 
         if (user == null)
         {
-            return new ServiceResponse<UserResponse>
+            return new ServiceResponse<UserTokenResponse>
             {
                 IsError = true,
                 ErrorMessage = "Invalid username or password!",
@@ -69,7 +69,7 @@ public class UserService : IUserService
 
         if (!result.Succeeded)
         {
-            return new ServiceResponse<UserResponse>
+            return new ServiceResponse<UserTokenResponse>
             {
                 IsError = true,
                 ErrorMessage = "Invalid username or password!",
@@ -77,9 +77,9 @@ public class UserService : IUserService
             };
         }
 
-        return new ServiceResponse<UserResponse>
+        return new ServiceResponse<UserTokenResponse>
         {
-            Value = new UserResponse
+            Value = new UserTokenResponse
             {
                 Token = CreateToken(user)
             }
@@ -105,6 +105,24 @@ public class UserService : IUserService
             Value = user
         };
     }
+
+    public async Task<ServiceResponse> SaveUser(User user, UserProfileRequest profileRequest)
+    {
+        var result = await _userManager.SetTwoFactorEnabledAsync(user, profileRequest.TwoFactorEnabled);
+
+        if (!result.Succeeded)
+        {
+            return new ServiceResponse
+            {
+                IsError = true,
+                ErrorMessage = "Couldn't update user!",
+                ErrorStatusCode = ErrorStatusCodes.BadRequest
+            };
+        }
+
+        return new ServiceResponse();
+    }
+
     private string CreateToken(User user)
     {
         var claims = new List<Claim>
