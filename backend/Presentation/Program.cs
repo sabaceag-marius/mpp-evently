@@ -1,3 +1,4 @@
+
 using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure;
@@ -10,16 +11,20 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Services.Interfaces;
 using Services.Services;
+using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //builder.WebHost.UseUrls("https://0.0.0.0:2000");
 
-builder.WebHost.ConfigureKestrel(serverOptions =>
-{
-    serverOptions.ListenAnyIP(80);
-    serverOptions.ListenAnyIP(2000);
+builder.WebHost.ConfigureKestrel(serverOptions => {
+   // serverOptions.ListenAnyIP(80);
+		serverOptions.ListenAnyIP(2000, listenOptions => {
+       // listenOptions.UseHttps("/etc/ssl/backend/backend.crt", "/etc/ssl/backend/backend.key");
+	listenOptions.UseHttps("/etc/ssl/backend/backend.pfx",""); 
+   });
 });
+
 
 // Add services to the container.
 
@@ -34,8 +39,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("frontend", configurePolicy =>
     {
-        configurePolicy.AllowAnyHeader().AllowAnyMethod()
-        .AllowAnyOrigin();
+        configurePolicy.WithOrigins("https://mpp-evently.com").AllowAnyHeader().AllowAnyMethod();
          //.WithOrigins("http://localhost:3000");
     });
 });
@@ -124,14 +128,9 @@ if (app.Environment.IsDevelopment())
    app.UseSwaggerUI();
 }
 
-//app.UseCors("frontend");
+app.UseCors("frontend");
 
-app.UseCors(builder =>
-    builder.AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader());
-
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
 app.UseAuthorization();

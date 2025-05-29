@@ -1,0 +1,19 @@
+server {
+    listen 80;
+    server_name mpp-evently.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name mpp-evently.com;
+
+    ssl_certificate /etc/letsencrypt/live/mpp-evently.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/mpp-evently.com/privkey.pem;
+
+    location / {
+        proxy_pass http://localhost:3000;  # Forward to your app
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}

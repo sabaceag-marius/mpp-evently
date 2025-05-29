@@ -14,11 +14,13 @@ services:
       - app-network
 
   backend:
+    volumes:
+      - /etc/ssl/backend/:/etc/ssl/backend
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "2000:80"
+      - "2000:2000"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__DefaultConnection=Server=db;Database=Evently;User=sa;Password=MppEvently123.;TrustServerCertificate=True;
