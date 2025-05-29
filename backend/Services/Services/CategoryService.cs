@@ -30,4 +30,37 @@ public class CategoryService : ICategoryService
             Value = categories.Select(c => c.ToResponse())
         };
     }
+
+    public async Task<ServiceResponse> AddDefaultCategories(Guid userId)
+    {
+        var workCategory = new Category
+        {
+            Id = Guid.NewGuid(),
+            Color = "fcba03",
+            Name = "Work",
+            UserId = userId
+        };
+
+        var schoolCategory = new Category
+        {
+            Id = Guid.NewGuid(),
+            Color = "a12a32",
+            Name = "School",
+            UserId = userId
+        };
+
+        var personalCategory = new Category
+        {
+            Id = Guid.NewGuid(),
+            Color = "2860bf",
+            Name = "Personal",
+            UserId = userId
+        };
+
+        _categoryRepository.Add(workCategory);
+        _categoryRepository.Add(schoolCategory);
+        _categoryRepository.Add(personalCategory);
+
+        return new ServiceResponse();
+    }
 }
