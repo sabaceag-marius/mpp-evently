@@ -44,3 +44,55 @@ export async function loginAPI(username, password) {
     }
 
 }
+
+export async function getUserAPI() {
+    
+    try{
+
+        const response = await axios.get(api + '/users');
+        return response.data;
+
+    }
+    catch(error){
+        return {
+            errorMessage: handleError(error)
+        };
+    }
+
+}
+
+export async function saveUserAPI(profileRequest) {
+    
+    try{
+
+        const response = await axios.post(api + '/users', profileRequest);
+        return response.data;
+
+    }
+    catch(error){
+        return {
+            errorMessage: handleError(error)
+        };
+    }
+
+}
+
+export async function login2FAAPI(email, token) {
+    
+    try{
+
+        const response = await axios.post(api + '/users/login/twofactor',{
+            'email' : email,
+            'token' : token
+        });
+
+        return response.data;
+
+    }
+    catch(error){
+        return {
+            errorMessage: handleError(error)
+        };
+    }
+
+}

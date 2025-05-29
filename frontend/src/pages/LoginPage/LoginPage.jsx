@@ -3,7 +3,10 @@ import style from './LoginPage.module.css';
 import PasswordInput from '../../components/PasswordInput/PasswordInput';
 import { Link } from 'react-router';
 import { login, useAuth } from '../../contexts/AuthContext';
+import TwoFactorAuthModal from '../../components/TwoFactorAuthModal/TwoFactorAuthModal';
 export default function LoginPage(){
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const DEFAULT_FORM_DATA = {
         username: "",
@@ -36,14 +39,21 @@ export default function LoginPage(){
             return;
         }
 
+        if(result && !result.succeeded){
+            setIsModalOpen(true);
+            return;
+        }
+
         setFormData(DEFAULT_FORM_DATA);
         setErrors(null);
     }
 
     const errorsElements = errors === null ? <p></p> : <p className={style.error} >{errors}</p>
-
+    
     return(
-
+        <>
+            {
+                isModalOpen ||
         <div className={style.center}>
             <div className={style.container}>
 
@@ -77,9 +87,19 @@ export default function LoginPage(){
                     {errorsElements}
                     <p>Don't have an account?<Link to='/register'> Register</Link></p>
                     <button className={`${style.submitButton} primary--button`}>Log in</button>
+                    {/* <button type='button' className={`${style.submitButton} primary--button`}
+                        onClick={() => setIsModalOpen(true)}>Open Modal</button> */}
                 </form>
             </div>
+
         </div>
+            }
+            
+        <TwoFactorAuthModal 
+            isOpen={isModalOpen}
+            closeModal={() => setIsModalOpen(false)}
+        />
+        </>
     )
 
 }

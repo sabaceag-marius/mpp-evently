@@ -17,12 +17,17 @@ public class EventRepository : IEventRepository
 
     public async Task<IEnumerable<Event>> GetAllDataAsync()
     {
-        return await _dbContext.Events.Include(e => e.Category).ToListAsync();
+        return await _dbContext.Events
+            .Include(e => e.User)
+            .Include(e => e.Category).ToListAsync();
     }
 
     public async Task<Event?> GetByIdAsync(Guid id)
     {
-        var event_ = await _dbContext.Events.Include(e => e.Category).FirstOrDefaultAsync(e => e.Id == id);
+        var event_ = await _dbContext.Events
+            .Include(e => e.User)
+            .Include(e => e.Category)
+            .FirstOrDefaultAsync(e => e.Id == id);
 
         if (event_ == null) return new Event();
 
@@ -31,7 +36,9 @@ public class EventRepository : IEventRepository
 
     public async Task<Event?> GetByIdNoTracking(Guid id)
     {
-        var event_ = await _dbContext.Events.Include(e => e.Category).AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+        var event_ = await _dbContext.Events
+            .Include(e => e.User)
+            .Include(e => e.Category).AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
 
         if (event_ == null) return new Event();
 
@@ -70,6 +77,7 @@ public class EventRepository : IEventRepository
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .Include(e => e.Category)
+            .Include(e => e.User)
             .ToListAsync();
     }
 

@@ -8,6 +8,7 @@ import RegisterPage from '../pages/RegisterPage/RegisterPage';
 import OfflineRoute from './OfflineRoute';
 import AuthentificatedRoute from './AuthentificatedRoute';
 import UnauthentificatedRoute from './UnauthentificatedRoute';
+import ProfilePage from '../pages/ProfilePage/ProfilePage';
 
 export const router = createBrowserRouter([
     {
@@ -16,6 +17,7 @@ export const router = createBrowserRouter([
         errorElement: <ErrorPage/>,
         children: [
             {path: "/events", element:<AuthentificatedRoute redirectPage='/login'><OfflineRoute><EventsPage /></OfflineRoute></AuthentificatedRoute>},
+            {path: "/profile", element:<AuthentificatedRoute redirectPage='/login'><OfflineRoute><ProfilePage /></OfflineRoute></AuthentificatedRoute>},
             {path: "/events/:id", element:<AuthentificatedRoute redirectPage='/login'><OfflineRoute><EventDetailsPage /></OfflineRoute></AuthentificatedRoute>},
             {path: "/login", element: <UnauthentificatedRoute redirectPage='/events'><OfflineRoute><LoginPage /></OfflineRoute></UnauthentificatedRoute>},
             {path: "/register", element: <UnauthentificatedRoute redirectPage='/events'><OfflineRoute><RegisterPage /></OfflineRoute></UnauthentificatedRoute>},

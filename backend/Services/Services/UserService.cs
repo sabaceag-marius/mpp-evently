@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using System.Diagnostics;
+using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -7,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Services.DTOs;
 
@@ -17,24 +19,29 @@ public class UserService : IUserService
     private readonly UserManager<User> _userManager;
     private readonly IConfiguration _configuration;
     private readonly SignInManager<User> _signInManager;
+    private readonly IEmailSender _emailSender;
 
-    public UserService(UserManager<User> userManager, IConfiguration configuration, SignInManager<User> signInManager)
+    public UserService(UserManager<User> userManager, 
+        IConfiguration configuration, 
+        SignInManager<User> signInManager,
+        IEmailSender emailSender)
     {
         _userManager = userManager;
         _configuration = configuration;
         _signInManager = signInManager;
-
+        _emailSender = emailSender;
     }
 
-    public async Task<ServiceResponse<UserResponse>> Register(UserRegisterRequest registerRequest)
+    public async Task<ServiceResponse<UserAuthResponse>> Register(UserRegisterRequest registerRequest)
     {
+
         var user = registerRequest.ToUser();
 
         var createdUser = await _userManager.CreateAsync(user, registerRequest.Password);
 
         if (!createdUser.Succeeded)
         {
-            return new ServiceResponse<UserResponse>
+            return new ServiceResponse<UserAuthResponse>
             {
                 IsError = true,
                 ErrorMessage = createdUser.Errors.First().Description,
@@ -42,22 +49,23 @@ public class UserService : IUserService
             };
         }
 
-        return new ServiceResponse<UserResponse>
+        return new ServiceResponse<UserAuthResponse>
         {
-            Value = new UserResponse
+            Value = new UserAuthResponse
             {
-                Token = CreateToken(user)
+                Token = CreateToken(user),
+                Succeeded = false
             }
         };
     }
 
-    public async Task<ServiceResponse<UserResponse>> Login(UserLoginRequest loginRequest)
+    public async Task<ServiceResponse<UserAuthResponse>> Login(UserLoginRequest loginRequest)
     {
         var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == loginRequest.UserName);
 
         if (user == null)
         {
-            return new ServiceResponse<UserResponse>
+            return new ServiceResponse<UserAuthResponse>
             {
                 IsError = true,
                 ErrorMessage = "Invalid username or password!",
@@ -69,7 +77,7 @@ public class UserService : IUserService
 
         if (!result.Succeeded)
         {
-            return new ServiceResponse<UserResponse>
+            return new ServiceResponse<UserAuthResponse>
             {
                 IsError = true,
                 ErrorMessage = "Invalid username or password!",
@@ -77,11 +85,79 @@ public class UserService : IUserService
             };
         }
 
-        return new ServiceResponse<UserResponse>
+        bool hasTwoFactorAuth = await _userManager.GetTwoFactorEnabledAsync(user);
+
+        if (hasTwoFactorAuth)
         {
-            Value = new UserResponse
+
+            var providers = await _userManager.GetValidTwoFactorProvidersAsync(user);
+
+            if (!providers.Contains("Email"))
             {
-                Token = CreateToken(user)
+                return new ServiceResponse<UserAuthResponse>
+                {
+                    IsError = true,
+                    ErrorMessage = "Couldn't generate one time password!",
+                    ErrorStatusCode = ErrorStatusCodes.BadRequest
+                };
+            }
+
+            var token = await _userManager.GenerateTwoFactorTokenAsync(user, "Email");
+
+            await _emailSender.SendEmailAsync(user.Email, "Evently 2FA", token);
+
+            return new ServiceResponse<UserAuthResponse>
+            {
+                Value = new UserAuthResponse
+                {
+                    Token = "",
+                    Succeeded = false
+                }
+            };
+        }
+
+        return new ServiceResponse<UserAuthResponse>
+        {
+            Value = new UserAuthResponse
+            {
+                Token = CreateToken(user),
+                Succeeded = true
+            }
+        };
+    }
+
+    public async Task<ServiceResponse<UserAuthResponse>> LoginTwoFactorAuth(UserLogin2FARequest loginRequest)
+    {
+        var user = await _userManager.FindByEmailAsync(loginRequest.Email);
+
+        if (user == null)
+        {
+            return new ServiceResponse<UserAuthResponse>
+            {
+                IsError = true,
+                ErrorMessage = "Invalid email or token!",
+                ErrorStatusCode = ErrorStatusCodes.NotFound
+            };
+        }
+
+        var validVerification = await _userManager.VerifyTwoFactorTokenAsync(user, "Email", loginRequest.Token);
+
+        if (!validVerification)
+        {
+            return new ServiceResponse<UserAuthResponse>
+            {
+                IsError = true,
+                ErrorMessage = "Invalid email or token!",
+                ErrorStatusCode = ErrorStatusCodes.NotFound
+            };
+        }
+
+        return new ServiceResponse<UserAuthResponse>
+        {
+            Value = new UserAuthResponse
+            {
+                Token = CreateToken(user),
+                Succeeded = true
             }
         };
     }
@@ -105,6 +181,24 @@ public class UserService : IUserService
             Value = user
         };
     }
+
+    public async Task<ServiceResponse> SaveUser(User user, UserProfileRequest profileRequest)
+    {
+        var result = await _userManager.SetTwoFactorEnabledAsync(user, profileRequest.TwoFactorEnabled);
+
+        if (!result.Succeeded)
+        {
+            return new ServiceResponse
+            {
+                IsError = true,
+                ErrorMessage = "Couldn't update user!",
+                ErrorStatusCode = ErrorStatusCodes.BadRequest
+            };
+        }
+
+        return new ServiceResponse();
+    }
+
     private string CreateToken(User user)
     {
         var claims = new List<Claim>

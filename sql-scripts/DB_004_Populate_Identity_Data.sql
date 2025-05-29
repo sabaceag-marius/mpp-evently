@@ -87,8 +87,8 @@ INSERT INTO [AspNetUsers] (
     @userId,
     'user1',
     'USER1',
-    'user1@example.com',
-    'USER1@EXAMPLE.COM',
+    'k2y.lelo@gmail.com',
+    'K2Y.LELO@GMAIL.COM',
     1, -- EmailConfirmed
     
     -- Password: "User123!"

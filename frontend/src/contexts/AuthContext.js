@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { loginAPI, registerAPI } from "../services/userService";
+import { login2FAAPI, loginAPI, registerAPI } from "../services/userService";
 
 const UserContext = createContext(null);
 
@@ -45,7 +45,7 @@ export const UserProvider = ({children}) => {
     const loginUser = async (username, password) => {
         const result = await loginAPI(username,password);
 
-        if(result.errorMessage){
+        if(result.errorMessage || !result.succeeded){
             return result;
         }
 
@@ -59,9 +59,27 @@ export const UserProvider = ({children}) => {
 
         navigate('/events');
 
+    }
 
+    const loginUser2FA = async (email, token) => {
+        const result = await login2FAAPI(email,token);
+
+        if(result.errorMessage || !result.succeeded){
+            return result;
+        }
+
+        // Store in local storage
+
+        localStorage.setItem('token',result?.token);
+
+
+        setToken(result?.token);
+        setLoggedStatus(true);
+
+        navigate('/events');
 
     }
+
     const isLoggedIn = () => {
         return !!token;
     }
@@ -78,7 +96,7 @@ export const UserProvider = ({children}) => {
 
 
     return (
-        <UserContext.Provider value={{loginUser, registerUser, logoutUser, token, isLoggedIn}}>
+        <UserContext.Provider value={{loginUser, registerUser, logoutUser, token, isLoggedIn, loginUser2FA}}>
             {isReady ? children : null}
         </UserContext.Provider>
     )
