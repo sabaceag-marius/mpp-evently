@@ -10,6 +10,13 @@ public class UserLoginRequest
     public required string Password { get; set; }
 }
 
+public class UserLogin2FARequest
+{
+    public required string Email { get; set; }
+
+    public required string Token { get; set; }
+}
+
 public class UserRegisterRequest
 {
     public required string UserName { get; set; }
@@ -22,8 +29,9 @@ public class UserRegisterRequest
     public required string ConfirmPassword { get; set; }
 }
 
-public class UserTokenResponse
+public class UserAuthResponse
 {
+    public required bool Succeeded { get; set; }
     public required string Token { get; set; }
 }
 

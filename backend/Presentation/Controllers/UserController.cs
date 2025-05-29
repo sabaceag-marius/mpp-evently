@@ -6,6 +6,7 @@ using Services.Interfaces;
 using Services.Services;
 using Services.Validator;
 using System.Security.Claims;
+using Domain.Entities;
 
 namespace Presentation.Controllers;
 
@@ -139,5 +140,34 @@ public class UserController : ControllerBase
         }
 
         return Ok("User saved successfully!");
+    }
+
+    [HttpPost("login/twofactor")]
+    public async Task<IActionResult> LoginUser2FA([FromBody] UserLogin2FARequest loginRequest)
+    {
+
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.Values
+                .SelectMany(x => x.Errors)
+                .First()
+                .ErrorMessage;
+            return new ObjectResult(new { errorMessage = errorMessage })
+            {
+                StatusCode = ErrorStatusCodes.BadRequest.ToStatusCode(),
+            };
+        }
+
+        var response = await _userService.LoginTwoFactorAuth(loginRequest);
+
+        if (response.IsError)
+        {
+            return new ObjectResult(new { errorMessage = response.ErrorMessage })
+            {
+                StatusCode = response.ErrorStatusCode.ToStatusCode()
+            };
+        }
+
+        return Ok(response.Value);
     }
 }

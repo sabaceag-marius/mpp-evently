@@ -76,3 +76,23 @@ export async function saveUserAPI(profileRequest) {
     }
 
 }
+
+export async function login2FAAPI(email, token) {
+    
+    try{
+
+        const response = await axios.post(api + '/users/login/twofactor',{
+            'email' : email,
+            'token' : token
+        });
+
+        return response.data;
+
+    }
+    catch(error){
+        return {
+            errorMessage: handleError(error)
+        };
+    }
+
+}

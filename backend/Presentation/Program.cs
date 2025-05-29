@@ -4,6 +4,7 @@ using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -77,8 +78,14 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
         options.Password.RequireLowercase = true;
         options.Password.RequireUppercase = true;
         options.Password.RequiredLength = 5;
+
+        options.SignIn.RequireConfirmedAccount = true;
+        options.SignIn.RequireConfirmedEmail = true;
+        options.Tokens.ProviderMap.Add("Email", new TokenProviderDescriptor(typeof(EmailTokenProvider<User>)));
+        options.Tokens.EmailConfirmationTokenProvider = "Email";
     })
-    .AddEntityFrameworkStores<AppDbContext>();
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
 
 //Auth
 
@@ -108,6 +115,7 @@ builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddTransient<IEmailSender,EmailSender>();
 
 var app = builder.Build();
 
