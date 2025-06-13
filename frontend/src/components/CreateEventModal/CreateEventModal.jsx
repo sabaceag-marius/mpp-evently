@@ -82,6 +82,7 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories,currentMom
   const styling = {
     overlay:{
       background : "transparent",
+       zIndex: 1000
     },
     content:{
 

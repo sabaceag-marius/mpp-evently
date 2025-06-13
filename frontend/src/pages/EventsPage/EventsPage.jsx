@@ -3,17 +3,19 @@ import './EventsPage.css';
 import EventCard from '../../components/EventCard/EventCard';
 import CreateEventModal from '../../components/CreateEventModal/CreateEventModal';
 import { useEventQuery } from '../../services/eventsService';
-import moment from 'moment';
 import CheckboxInput from '../../components/Checkbox/Checkbox';
 import { toDateTimeInputString, toDateInputString, getMoment } from '../../utils/momentUtils';
 import { arraysEqual } from '../../utils/arrayUtils';
-import PageSelector from '../../components/PageSelector/PageSelector';
-import { categoryData } from '../../services/eventsChartsService';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import DateInput from '../../components/DateInput/DateInput';
-import { useQueryData } from '../../contexts/EventQueryContext';
 import { useOfflineSupport } from '../../contexts/OfflineSupportContext';
 import { getCategoriesAPI } from '../../services/categoriesService';
+
+import FullCalendar from '@fullcalendar/react'
+import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
+import interactionPlugin from "@fullcalendar/interaction" // needed for dayClick
+import timeGridPlugin from '@fullcalendar/timegrid'
+import { toCalendarViewEvent } from '../../utils/calendarViewUtils';
 
 function EventsPage() {
 
@@ -180,13 +182,54 @@ function EventsPage() {
 
     // endregion
 
+
+    // region Calendar View
+
+    const [calendarView,setCalendarView] = useState(true);
+
+    function toggleView(){
+        setCalendarView(prev => !prev);
+    }
+
+    // Map your interval to FullCalendar's view names
+    const viewMap = {
+        Month: "dayGridMonth",
+        Week: "timeGridWeek",
+        Day: "timeGridDay",
+    };
+
+    const calendarRef = useRef(null);
+
+    useEffect(() => {
+        if (calendarRef.current && queryData?.dateInterval && queryData?.dateMoment) {
+            const calendarApi = calendarRef.current.getApi();
+            const viewName = viewMap[queryData.dateInterval];
+            if (viewName) {
+                calendarApi.changeView(viewName, queryData.dateMoment.toDate());
+            }
+        }
+    }, [queryData.dateInterval, queryData.dateMoment]);
+
+    useEffect(() => {
+        if (calendarRef.current) {
+        const api = calendarRef.current.getApi();
+        api.setOption('selectable', !isModalOpen);
+        api.setOption('editable', !isModalOpen);
+        }
+    }, [isModalOpen]);
+    
+    // endregion
+
     // const [events, setEvents] = useState([]);
     // const eventsElements = events.map(e => <EventCard event={e} key={e.id} />);
     const eventsElements = events.map((e, index) => Math.floor(events.length / 3 * 2) === index ?  
         <EventCard ref = {eventElementRef} event={e} key={e.id} /> 
         :  <EventCard event={e} key={e.id} /> );
-       
+    
     const {isOffline} = useOfflineSupport();
+
+    const calendarViewEvents = events.map(e => toCalendarViewEvent(e))
+    console.log(calendarViewEvents);
 
     return (
     <>
@@ -196,6 +239,8 @@ function EventsPage() {
 
                 <button className='primary--button' onClick={openModal}>Add +</button>
                 <button onClick={setTodayDate} className='outline--button'>Today</button>
+
+                <button onClick={toggleView} className='primary--button'>Toggle View</button>
 
 
                 <div className='date--selector'>
@@ -237,20 +282,41 @@ function EventsPage() {
                 
                 <div className='events--section'>
                     {
-                        events.length == 0 ? <p>There are no events!</p> : 
+                        calendarView ?
+                        <div className='events--calendar--view'>
+                            <FullCalendar
+                            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                            ref={calendarRef}
+                            initialDate={queryData.dateMoment?.toDate()}
+                            headerToolbar={false}
+                            initialView={viewMap[queryData.dateInterval] || "timeGridDay"} // Fallback
+                            
+                            editable={true}
+                            selectable={true}
+                            selectMirror={true}
+                            dayMaxEvents={true}
+                            
+                            height="auto"
+                            events={calendarViewEvents} // alternatively, use the `events` setting to fetch from a feed
+                            // select={handleDateSelect}
+                            // eventClick={handleEventClick}
+                            // eventsSet={handleEvents} // called after events are initialized/added/changed/removed
+                            /* you can update a remote database when these fire:
+                            eventAdd={function(){}}
+                            eventChange={function(){}}
+                            eventRemove={function(){}}
+                            */
+                            />
+                        </div>
+                        :
+                        events.length == 0 ? <p>There are no events!</p> :
                         <>
                             <div className='events--list--view'>
                                 {eventsElements}
                             </div>
-
-                            {/* <PageSelector pageCount={pageCount} currentPage={currentPage} setCurrentPage={setCurrentPage}/> */}
-
-                            {/* <div className='charts--section'>
-                                <CategoryChart data={events} />
-                                <EventsCountChart data={events} />
-                                <CategoryHoursChart data={events} />
-                            </div> */}
+                            
                         </>
+                        
                     }
                     
                 </div>
@@ -263,7 +329,7 @@ function EventsPage() {
             closeModal={closeModal} 
             submitHandler={()=>{resetQuery()}} 
             categories={categories}
-            currentMoment={queryData.dateMoment}
+            dateMoment={queryData.dateMoment}
         />
     </>
   )
