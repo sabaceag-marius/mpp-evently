@@ -1,26 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { deleteEventAPI, useDeleteEvent, useGetEvent } from '../../services/eventsService';
+import { deleteEvent, getEvent } from '../../services/eventsService';
 import UpdateEventModal from '../../components/UpdateEventModal/UpdateEventModal';
 import style from './EventDetails.module.css';
-import moment from 'moment';
 import { getMoment } from '../../utils/momentUtils';
 
 function EventDetailsPage() {
 
     const id = useParams().id;
-    console.log(id);
     const [event,setEvent] = useState(null);
-    
-    const {deleteEventFunction} = useDeleteEvent();
-    const {getEventFunction} = useGetEvent();
     
     useEffect(() =>{
         
-        if(getEventFunction === null) return;
-
-        getEventFunction(id).then(r => setEvent(r))
-    },[getEventFunction]);
+        getEvent(id).then(r => setEvent(r))
+    },[]);
 
     const navigate = useNavigate();
 
@@ -61,7 +54,7 @@ function EventDetailsPage() {
     }
 
     function OnDeleteEvent(){
-        deleteEventFunction(id).then(navigate('/events'));
+        deleteEvent(id).then(navigate('/events'));
     }
 
     return (

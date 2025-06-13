@@ -186,8 +186,6 @@ function EventsPage() {
         <EventCard ref = {eventElementRef} event={e} key={e.id} /> 
         :  <EventCard event={e} key={e.id} /> );
        
-    const {isOffline} = useOfflineSupport();
-
     return (
     <>
         <div className='main--container'>

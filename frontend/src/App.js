@@ -11,7 +11,7 @@ import { UserProvider } from './contexts/AuthContext';
 function App() {
 
   return (
-      <OfflineSupportProvider>
+      // <OfflineSupportProvider>
         <UserProvider>
 
       {/* <QueryDataProvider> */}
@@ -22,7 +22,7 @@ function App() {
       {/* </QueryDataProvider> */}
       </UserProvider>
 
-    </OfflineSupportProvider>
+    // </OfflineSupportProvider>
     
   );
 }

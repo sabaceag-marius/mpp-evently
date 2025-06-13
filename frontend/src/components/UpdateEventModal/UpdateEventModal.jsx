@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import style from './UpdateEventModal.module.css';
 import moment from 'moment';
-import { useUpdateEvent } from '../../services/eventsService';
+import { updateEvent } from '../../services/eventsService';
 import { getMoment, getTimeOptions, toDateTimeInputString, toDateTimeString, toTimeInputString } from '../../utils/momentUtils';
 import DateInput from '../DateInput/DateInput';
 import Dropdown from '../Dropdown/Dropdown';
@@ -25,18 +25,6 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
         })
         
     }, []);
-  // const categories = ['Work', 'School', 'Personal'];
-
-  // const DEFAULT_FORM_DATA = {
-  //   name : "",
-  //   description : "",
-  //   startDate : currentMoment,
-  //   startTime: "00:00",
-  //   endDate : currentMoment,
-  //   endTime: "00:00",
-  //   categoryName: "",
-  //   userName : "Mark"
-  // }
 
   const DEFAULT_FORM_DATA = {
     name : event.name,
@@ -51,8 +39,6 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
 
   const [formData,setFormData] = useState(DEFAULT_FORM_DATA);
   const [errors,setErrors] = useState([]);
-
-  const {updateEventFunction} = useUpdateEvent();
 
   function handleFormChange(event){
     const {name,value} = event.target;
@@ -84,7 +70,7 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
       endDate: toDateTimeString(formData.endDate,formData.endTime)
     }
 
-    const result = await updateEventFunction(event.id, newEvent);
+    const result = await updateEvent(event.id, newEvent);
    
     if(result.errorCode !== undefined){
       setErrors(result.errorMessages);
@@ -125,7 +111,6 @@ function  UpdateEventModal({event,isOpen,closeModal,submitHandler}) {
     }
   }
 
-  console.log(formData);
 
   const categoryDropdown = <select
     id='categoryName'
