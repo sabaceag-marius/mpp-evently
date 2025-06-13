@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Services.DTOs.Event;
 using Services.Interfaces;
 using Services.Mapper;
@@ -73,7 +74,7 @@ public class EventService : IEventService
         };
     }
 
-    public async Task<ServiceResponse<EventResponse>> CreateEvent(CreateEventRequest eventRequest, Guid userId)
+    public async Task<ServiceResponse<EventResponse>> CreateEvent(CreateEventRequest eventRequest, User user)
     {
 
         Category? category = await _categoryRepository.GetByIdAsync(eventRequest.CategoryId);
@@ -88,7 +89,7 @@ public class EventService : IEventService
             };
         }
 
-        var eventObj = eventRequest.ToEvent(userId);
+        var eventObj = eventRequest.ToEvent(user.Id);
 
         eventObj = _eventRepository.Add(eventObj);
 
@@ -103,6 +104,7 @@ public class EventService : IEventService
         }
 
         eventObj.Category = category;
+        eventObj.User = user;
 
         return new ServiceResponse<EventResponse>
         {
@@ -111,7 +113,7 @@ public class EventService : IEventService
     }
 
     public async Task<ServiceResponse<EventResponse>> UpdateEvent(Guid eventId, UpdateEventRequest eventRequest,
-        Guid userId)
+        User user)
     {
         Category? category = await _categoryRepository.GetByIdAsync(eventRequest.CategoryId);
 
@@ -127,7 +129,7 @@ public class EventService : IEventService
 
         var event_ = await _eventRepository.GetByIdNoTracking(eventId);
 
-        if(event_.Id == Guid.Empty || event_.UserId != userId)
+        if(event_.Id == Guid.Empty || event_.UserId != user.Id)
         {
             return new ServiceResponse<EventResponse>
             {
@@ -136,7 +138,7 @@ public class EventService : IEventService
                 ErrorMessage = "Event was not found"
             };
         }
-        var eventObj = eventRequest.ToEvent(userId);
+        var eventObj = eventRequest.ToEvent(user.Id);
 
         try
         {
@@ -153,6 +155,7 @@ public class EventService : IEventService
         }
 
         eventObj.Category = category;
+        eventObj.User = user;
 
         return new ServiceResponse<EventResponse>
         {
