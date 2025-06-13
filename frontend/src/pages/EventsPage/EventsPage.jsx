@@ -2,9 +2,9 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import './EventsPage.css';
 import EventCard from '../../components/EventCard/EventCard';
 import CreateEventModal from '../../components/CreateEventModal/CreateEventModal';
-import { useEventQuery } from '../../services/eventsService';
+import { useEventQuery, useUpdateEvent } from '../../services/eventsService';
 import CheckboxInput from '../../components/Checkbox/Checkbox';
-import { toDateTimeInputString, toDateInputString, getMoment } from '../../utils/momentUtils';
+import { toDateTimeInputString, toDateInputString, getMoment, currentMoment, toTimeInputString } from '../../utils/momentUtils';
 import { arraysEqual } from '../../utils/arrayUtils';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import DateInput from '../../components/DateInput/DateInput';
@@ -15,10 +15,10 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
 import interactionPlugin from "@fullcalendar/interaction" // needed for dayClick
 import timeGridPlugin from '@fullcalendar/timegrid'
-import { toCalendarViewEvent } from '../../utils/calendarViewUtils';
+import { toCalendarViewEvent, toUpdateEventRequest } from '../../utils/calendarViewUtils';
+import { useNavigate } from 'react-router';
 
 function EventsPage() {
-
     // region Filters
     // const categories = ['Work', 'School', 'Personal'];
 
@@ -30,6 +30,8 @@ function EventsPage() {
         dateInterval : "Day",
         categories : []
     }
+
+    const navigate = useNavigate();
 
     const [queryData, setQueryData] = useState(DEFAULT_QUERY_DATA);
     const [categories, setCategories] = useState([]);
@@ -148,8 +150,15 @@ function EventsPage() {
     // region CreateModal
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    function openModal() {
+    function openModal(timeIntervals_) {
+
+        setTimeIntervals(timeIntervals_ === undefined ? {
+            startTime: "00:00",
+            endTime: "00:00"
+        }: timeIntervals_);
+
         setIsModalOpen(true)
+
     }
 
     function closeModal() {
@@ -187,6 +196,11 @@ function EventsPage() {
 
     const [calendarView,setCalendarView] = useState(true);
 
+    const [timeIntervals, setTimeIntervals] = useState({
+        startTime: "00:00",
+        endTime: "00:00"
+    })
+
     function toggleView(){
         setCalendarView(prev => !prev);
     }
@@ -218,6 +232,40 @@ function EventsPage() {
         }
     }, [isModalOpen]);
     
+    function handleDateSelect(selectInfo){
+        if(queryData.dateInterval === 'Day') {
+            handleDayDateSelect(selectInfo);
+            return;
+        }
+
+        setQueryData(prev => ({
+            ...prev,
+            dateInterval: 'Day',
+            dateMoment: getMoment(selectInfo.startStr)
+        }));
+    }
+
+    function handleDayDateSelect(selectInfo) {
+    openModal({
+        startTime: `${String(selectInfo.start.getHours()).padStart(2, '0')}:${String(selectInfo.start.getMinutes()).padStart(2, '0')}`,
+        endTime: `${String(selectInfo.end.getHours()).padStart(2, '0')}:${String(selectInfo.end.getMinutes()).padStart(2, '0')}`,
+    });
+}
+    function handleEventClick(eventClickInfo){
+        navigate(`/events/${eventClickInfo.event.id}`);   
+    }
+
+    const {updateEventFunction} = useUpdateEvent();
+
+    async function handleEventResize(eventResizeInfo){
+
+        const event = toUpdateEventRequest(eventResizeInfo.event);
+
+        console.log(eventResizeInfo.event, event);
+
+        await updateEventFunction(event.id, event);
+    }
+
     // endregion
 
     // const [events, setEvents] = useState([]);
@@ -229,15 +277,13 @@ function EventsPage() {
     const {isOffline} = useOfflineSupport();
 
     const calendarViewEvents = events.map(e => toCalendarViewEvent(e))
-    console.log(calendarViewEvents);
-
     return (
     <>
         <div className='main--container'>
 
             <div className='subheader'>
 
-                <button className='primary--button' onClick={openModal}>Add +</button>
+                <button className='primary--button' onClick={() => openModal()}>Add +</button>
                 <button onClick={setTodayDate} className='outline--button'>Today</button>
 
                 <button onClick={toggleView} className='primary--button'>Toggle View</button>
@@ -291,15 +337,16 @@ function EventsPage() {
                             headerToolbar={false}
                             initialView={viewMap[queryData.dateInterval] || "timeGridDay"} // Fallback
                             
-                            editable={true}
-                            selectable={true}
-                            selectMirror={true}
+                            editable={queryData.dateInterval === 'Day'}
+                            selectable={queryData.dateInterval === 'Day'}
+                            selectMirror={queryData.dateInterval === 'Day'}
                             dayMaxEvents={true}
                             
                             height="auto"
                             events={calendarViewEvents} // alternatively, use the `events` setting to fetch from a feed
-                            // select={handleDateSelect}
-                            // eventClick={handleEventClick}
+                            select={handleDateSelect}
+                            eventClick={handleEventClick}
+                            eventChange={handleEventResize}
                             // eventsSet={handleEvents} // called after events are initialized/added/changed/removed
                             /* you can update a remote database when these fire:
                             eventAdd={function(){}}
@@ -330,6 +377,8 @@ function EventsPage() {
             submitHandler={()=>{resetQuery()}} 
             categories={categories}
             dateMoment={queryData.dateMoment}
+            startTime={timeIntervals.startTime}
+            endTime={timeIntervals.endTime}
         />
     </>
   )

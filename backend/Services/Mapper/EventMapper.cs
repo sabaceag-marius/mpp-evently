@@ -19,7 +19,8 @@ public static class EventMapper
             EndDate = e.EndDate,
             StartDate = e.StartDate,
             CategoryName = e.Category.Name,
-            CategoryColor = e.Category.Color
+            CategoryColor = e.Category.Color,
+            CategoryId = e.CategoryId
         };
     }
 
