@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import './EventsPage.css';
 import EventCard from '../../components/EventCard/EventCard';
 import CreateEventModal from '../../components/CreateEventModal/CreateEventModal';
-import { useEventQuery, useUpdateEvent } from '../../services/eventsService';
+import { updateEvent, useEventQuery } from '../../services/eventsService';
 import CheckboxInput from '../../components/Checkbox/Checkbox';
 import { toDateTimeInputString, toDateInputString, getMoment, currentMoment, toTimeInputString } from '../../utils/momentUtils';
 import { arraysEqual } from '../../utils/arrayUtils';
@@ -255,15 +255,14 @@ function EventsPage() {
         navigate(`/events/${eventClickInfo.event.id}`);   
     }
 
-    const {updateEventFunction} = useUpdateEvent();
-
     async function handleEventResize(eventResizeInfo){
 
         const event = toUpdateEventRequest(eventResizeInfo.event);
 
         console.log(eventResizeInfo.event, event);
 
-        await updateEventFunction(event.id, event);
+        await updateEvent(event.id, event);
+        resetQuery();
     }
 
     // endregion
@@ -272,6 +271,7 @@ function EventsPage() {
     // const eventsElements = events.map(e => <EventCard event={e} key={e.id} />);
     const eventsElements = events.map((e, index) => Math.floor(events.length / 3 * 2) === index ?  
         <EventCard ref = {eventElementRef} event={e} key={e.id} /> 
+        :  <EventCard event={e} key={e.id} /> );
 
     const calendarViewEvents = events.map(e => toCalendarViewEvent(e))
     return (
@@ -337,7 +337,7 @@ function EventsPage() {
                             editable={queryData.dateInterval === 'Day'}
                             selectable={queryData.dateInterval === 'Day'}
                             selectMirror={queryData.dateInterval === 'Day'}
-                            dayMaxEvents={true}
+                            dayMaxEvents={6}
                             
                             height="auto"
                             events={calendarViewEvents} // alternatively, use the `events` setting to fetch from a feed
