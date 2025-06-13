@@ -190,7 +190,7 @@ namespace Presentation.Controllers
                 };
             }
 
-            var response = await _eventService.CreateEvent(eventRequest, user.Id);
+            var response = await _eventService.CreateEvent(eventRequest, user);
 
             if (response.IsError)
             {
@@ -291,7 +291,7 @@ namespace Presentation.Controllers
                 };
             }
 
-            var response = await _eventService.UpdateEvent(id,eventRequest, user.Id);
+            var response = await _eventService.UpdateEvent(id,eventRequest, user);
 
             if (response.IsError)
             {

@@ -79,7 +79,6 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
         options.Password.RequireUppercase = true;
         options.Password.RequiredLength = 5;
 
-        options.SignIn.RequireConfirmedAccount = true;
         options.SignIn.RequireConfirmedEmail = true;
         options.Tokens.ProviderMap.Add("Email", new TokenProviderDescriptor(typeof(EmailTokenProvider<User>)));
         options.Tokens.EmailConfirmationTokenProvider = "Email";

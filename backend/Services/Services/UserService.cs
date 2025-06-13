@@ -20,16 +20,19 @@ public class UserService : IUserService
     private readonly IConfiguration _configuration;
     private readonly SignInManager<User> _signInManager;
     private readonly IEmailSender _emailSender;
+    private readonly ICategoryService _categoryService;
 
     public UserService(UserManager<User> userManager, 
         IConfiguration configuration, 
         SignInManager<User> signInManager,
-        IEmailSender emailSender)
+        IEmailSender emailSender,
+        ICategoryService categoryService)
     {
         _userManager = userManager;
         _configuration = configuration;
         _signInManager = signInManager;
         _emailSender = emailSender;
+        _categoryService = categoryService;
     }
 
     public async Task<ServiceResponse<UserAuthResponse>> Register(UserRegisterRequest registerRequest)
@@ -48,6 +51,13 @@ public class UserService : IUserService
                 ErrorStatusCode = ErrorStatusCodes.BadRequest
             };
         }
+
+        await _categoryService.AddDefaultCategories(user.Id);
+
+        // Cea mai romaneasca
+
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        await _userManager.ConfirmEmailAsync(user, token);
 
         return new ServiceResponse<UserAuthResponse>
         {
