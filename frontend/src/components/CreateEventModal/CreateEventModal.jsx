@@ -2,11 +2,9 @@ import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import style from './CreateEventModal.module.css';
 import moment from 'moment';
-import { useAddEvent } from '../../services/eventsService';
+import { addEvent } from '../../services/eventsService';
 import { getTimeOptions, toDateTimeString, toDateTimeInputString } from '../../utils/momentUtils';
-import FormModal from '../FormModal/FormModal';
 import Dropdown from '../Dropdown/Dropdown';
-import { DatePicker } from '@mui/x-date-pickers';
 import DateInput from '../DateInput/DateInput';
 
 function CreateEventModal({isOpen,closeModal,submitHandler,categories,dateMoment, startTime, endTime}) {
@@ -25,8 +23,6 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories,dateMoment
   const [formData,setFormData] = useState(DEFAULT_FORM_DATA);
 
   const [errors,setErrors] = useState([]);
-  
-  const {addEventFunction} = useAddEvent();
 
 useEffect(() => {
     setFormData(DEFAULT_FORM_DATA);
@@ -62,7 +58,7 @@ useEffect(() => {
       endDate: toDateTimeString(formData.endDate,formData.endTime)
     }
 
-    const result = await addEventFunction(event);
+    const result = await addEvent(event);
 
     if(result.errorCode !== undefined){
       setErrors(result.errorMessages);

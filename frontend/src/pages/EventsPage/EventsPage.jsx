@@ -272,9 +272,6 @@ function EventsPage() {
     // const eventsElements = events.map(e => <EventCard event={e} key={e.id} />);
     const eventsElements = events.map((e, index) => Math.floor(events.length / 3 * 2) === index ?  
         <EventCard ref = {eventElementRef} event={e} key={e.id} /> 
-        :  <EventCard event={e} key={e.id} /> );
-    
-    const {isOffline} = useOfflineSupport();
 
     const calendarViewEvents = events.map(e => toCalendarViewEvent(e))
     return (
