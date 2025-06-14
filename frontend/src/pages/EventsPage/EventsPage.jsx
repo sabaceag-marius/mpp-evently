@@ -255,25 +255,49 @@ function EventsPage() {
         navigate(`/events/${eventClickInfo.event.id}`);   
     }
 
+    const handleEventDragStart = (info) => {
+    // Store whether the event started in all-day area
+    info.el.dataset.wasAllDay = info.event.allDay;
+  };
+
+  const handleEventDrop = (info) => {
+    const wasAllDay = info.el.dataset.wasAllDay === 'true';
+    
+    // If trying to change all-day status, revert the event
+    if (wasAllDay || info.event.allDay) {
+      info.revert();
+      return;
+    }
+  };
+
     async function handleEventResize(eventResizeInfo){
+
+        console.log(eventResizeInfo);
+        // const wasAllDay = eventResizeInfo.el.dataset.wasAllDay === 'true';
+
+        if (eventResizeInfo.event.allDay) {
+            eventResizeInfo.revert();
+            return;
+        }
 
         const event = toUpdateEventRequest(eventResizeInfo.event);
 
         console.log(eventResizeInfo.event, event);
 
         await updateEvent(event.id, event);
-        resetQuery();
+        // resetQuery();
     }
 
     // endregion
 
-    // const [events, setEvents] = useState([]);
-    // const eventsElements = events.map(e => <EventCard event={e} key={e.id} />);
     const eventsElements = events.map((e, index) => Math.floor(events.length / 3 * 2) === index ?  
         <EventCard ref = {eventElementRef} event={e} key={e.id} /> 
         :  <EventCard event={e} key={e.id} /> );
 
-    const calendarViewEvents = events.map(e => toCalendarViewEvent(e))
+    const calendarViewEvents = events.map(e => toCalendarViewEvent(e, queryData.dateMoment, queryData.dateInterval))
+
+    if(calendarViewEvents.length > 10)console.log(calendarViewEvents);
+
     return (
     <>
         <div className='main--container'>
@@ -337,19 +361,16 @@ function EventsPage() {
                             editable={queryData.dateInterval === 'Day'}
                             selectable={queryData.dateInterval === 'Day'}
                             selectMirror={queryData.dateInterval === 'Day'}
-                            dayMaxEvents={6}
-                            
-                            height="auto"
-                            events={calendarViewEvents} // alternatively, use the `events` setting to fetch from a feed
+                            dayMaxEvents={2}
+                            fixedWeekCount={false}
+                            firstDay={1}
+                            allDaySlot={false}
+                            // height={"auto"}
+                            aspectRatio={2}
+                            events={calendarViewEvents}
                             select={handleDateSelect}
                             eventClick={handleEventClick}
                             eventChange={handleEventResize}
-                            // eventsSet={handleEvents} // called after events are initialized/added/changed/removed
-                            /* you can update a remote database when these fire:
-                            eventAdd={function(){}}
-                            eventChange={function(){}}
-                            eventRemove={function(){}}
-                            */
                             />
                         </div>
                         :

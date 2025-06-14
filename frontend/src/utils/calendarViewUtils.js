@@ -1,7 +1,8 @@
-import { toDateTimeInputString, toDateTimeStringNoTimezone } from "./momentUtils"
+import { getMoment, toDateTimeInputString, toDateTimeStringNoTimezone } from "./momentUtils"
 
-export function toCalendarViewEvent(event){
-    return {
+export function toCalendarViewEvent(event, dateMoment, dateInterval){
+    
+    const eventView = {
         id: event.id,
         title: event.name,
         description: event.description,
@@ -9,7 +10,12 @@ export function toCalendarViewEvent(event){
         end: event.endDate,
         backgroundColor: '#'+event.categoryColor,
         categoryId: event.categoryId,
+        // allDay: dateInterval === 'Day' 
+        //     && getMoment(event.startDate).isSameOrBefore(dateMoment.startOf('day'))
+        //     && getMoment(event.endDate).isSameOrAfter(dateMoment.endOf('day'))
     }
+    
+    return eventView;
 }
 
 export function getTimeFromDates(date){
