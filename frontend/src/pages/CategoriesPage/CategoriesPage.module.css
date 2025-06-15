@@ -1,0 +1,6 @@
+.categoryComponent{
+    max-width: 50rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
