@@ -11,27 +11,16 @@ import DateInput from '../../components/DateInput/DateInput';
 import { useOfflineSupport } from '../../contexts/OfflineSupportContext';
 import { getCategoriesAPI } from '../../services/categoriesService';
 
-import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
-import interactionPlugin from "@fullcalendar/interaction" // needed for dayClick
-import timeGridPlugin from '@fullcalendar/timegrid'
-import { toCalendarViewEvent, toUpdateEventRequest } from '../../utils/calendarViewUtils';
-import { useNavigate } from 'react-router';
+import CalendarView from '../../components/CalendarView/CalendarView';
 
 function EventsPage() {
     // region Filters
-    // const categories = ['Work', 'School', 'Personal'];
-
-
-    // const [categories,setCategories] = useState([]);
 
     const DEFAULT_QUERY_DATA = {
         dateMoment : getMoment(),
         dateInterval : "Day",
         categories : []
     }
-
-    const navigate = useNavigate();
 
     const [queryData, setQueryData] = useState(DEFAULT_QUERY_DATA);
     const [categories, setCategories] = useState([]);
@@ -205,98 +194,11 @@ function EventsPage() {
         setCalendarView(prev => !prev);
     }
 
-    // Map your interval to FullCalendar's view names
-    const viewMap = {
-        Month: "dayGridMonth",
-        Week: "timeGridWeek",
-        Day: "timeGridDay",
-    };
-
-    const calendarRef = useRef(null);
-
-    useEffect(() => {
-        if (calendarRef.current && queryData?.dateInterval && queryData?.dateMoment) {
-            const calendarApi = calendarRef.current.getApi();
-            const viewName = viewMap[queryData.dateInterval];
-            if (viewName) {
-                calendarApi.changeView(viewName, queryData.dateMoment.toDate());
-            }
-        }
-    }, [queryData.dateInterval, queryData.dateMoment]);
-
-    useEffect(() => {
-        if (calendarRef.current) {
-        const api = calendarRef.current.getApi();
-        api.setOption('selectable', !isModalOpen);
-        api.setOption('editable', !isModalOpen);
-        }
-    }, [isModalOpen]);
-    
-    function handleDateSelect(selectInfo){
-        if(queryData.dateInterval === 'Day') {
-            handleDayDateSelect(selectInfo);
-            return;
-        }
-
-        setQueryData(prev => ({
-            ...prev,
-            dateInterval: 'Day',
-            dateMoment: getMoment(selectInfo.startStr)
-        }));
-    }
-
-    function handleDayDateSelect(selectInfo) {
-    openModal({
-        startTime: `${String(selectInfo.start.getHours()).padStart(2, '0')}:${String(selectInfo.start.getMinutes()).padStart(2, '0')}`,
-        endTime: `${String(selectInfo.end.getHours()).padStart(2, '0')}:${String(selectInfo.end.getMinutes()).padStart(2, '0')}`,
-    });
-}
-    function handleEventClick(eventClickInfo){
-        navigate(`/events/${eventClickInfo.event.id}`);   
-    }
-
-    const handleEventDragStart = (info) => {
-    // Store whether the event started in all-day area
-    info.el.dataset.wasAllDay = info.event.allDay;
-  };
-
-  const handleEventDrop = (info) => {
-    const wasAllDay = info.el.dataset.wasAllDay === 'true';
-    
-    // If trying to change all-day status, revert the event
-    if (wasAllDay || info.event.allDay) {
-      info.revert();
-      return;
-    }
-  };
-
-    async function handleEventResize(eventResizeInfo){
-
-        console.log(eventResizeInfo);
-        // const wasAllDay = eventResizeInfo.el.dataset.wasAllDay === 'true';
-
-        if (eventResizeInfo.event.allDay) {
-            eventResizeInfo.revert();
-            return;
-        }
-
-        const event = toUpdateEventRequest(eventResizeInfo.event);
-
-        console.log(eventResizeInfo.event, event);
-
-        await updateEvent(event.id, event);
-        // resetQuery();
-    }
-
     // endregion
 
     const eventsElements = events.map((e, index) => Math.floor(events.length / 3 * 2) === index ?  
         <EventCard ref = {eventElementRef} event={e} key={e.id} /> 
         :  <EventCard event={e} key={e.id} /> );
-
-    const calendarViewEvents = events.map(e => toCalendarViewEvent(e, queryData.dateMoment, queryData.dateInterval))
-
-    if(calendarViewEvents.length > 10)console.log(calendarViewEvents);
 
     return (
     <>
@@ -350,29 +252,13 @@ function EventsPage() {
                 <div className='events--section'>
                     {
                         calendarView ?
-                        <div className='events--calendar--view'>
-                            <FullCalendar
-                            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                            ref={calendarRef}
-                            initialDate={queryData.dateMoment?.toDate()}
-                            headerToolbar={false}
-                            initialView={viewMap[queryData.dateInterval] || "timeGridDay"} // Fallback
-                            
-                            editable={queryData.dateInterval === 'Day'}
-                            selectable={queryData.dateInterval === 'Day'}
-                            selectMirror={queryData.dateInterval === 'Day'}
-                            dayMaxEvents={2}
-                            fixedWeekCount={false}
-                            firstDay={1}
-                            allDaySlot={false}
-                            // height={"auto"}
-                            aspectRatio={2}
-                            events={calendarViewEvents}
-                            select={handleDateSelect}
-                            eventClick={handleEventClick}
-                            eventChange={handleEventResize}
-                            />
-                        </div>
+                        <CalendarView 
+                            events={events}
+                            queryData={queryData}
+                            setQueryData={setQueryData}
+                            isModalOpen={isModalOpen}
+                            openModal={openModal}
+                        />
                         :
                         events.length == 0 ? <p>There are no events!</p> :
                         <>
