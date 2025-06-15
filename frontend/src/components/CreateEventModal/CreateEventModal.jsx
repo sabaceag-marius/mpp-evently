@@ -7,21 +7,26 @@ import { getTimeOptions, toDateTimeString, toDateTimeInputString } from '../../u
 import Dropdown from '../Dropdown/Dropdown';
 import DateInput from '../DateInput/DateInput';
 
-function CreateEventModal({isOpen,closeModal,submitHandler,categories,currentMoment}) {
+function CreateEventModal({isOpen,closeModal,submitHandler,categories,dateMoment, startTime, endTime}) {
   
   const DEFAULT_FORM_DATA = {
     name : "",
     description : "",
-    startDate : currentMoment,
-    startTime: "00:00",
-    endDate : currentMoment,
-    endTime: "00:00",
+    startDate : dateMoment,
+    startTime: startTime,
+    endDate : dateMoment,
+    endTime: endTime,
     categoryName: "",
     userName : "Mark"
   }
 
   const [formData,setFormData] = useState(DEFAULT_FORM_DATA);
+
   const [errors,setErrors] = useState([]);
+
+useEffect(() => {
+    setFormData(DEFAULT_FORM_DATA);
+  }, [startTime, endTime]); // Reset on time changes
 
   function handleFormChange(event){
 
@@ -78,6 +83,7 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories,currentMom
   const styling = {
     overlay:{
       background : "transparent",
+       zIndex: 1000
     },
     content:{
 
@@ -100,6 +106,7 @@ function CreateEventModal({isOpen,closeModal,submitHandler,categories,currentMom
 
   return (
     <Modal
+      key={isOpen ? "modal-open" : "modal-closed"}
         isOpen = {isOpen}
         preventScroll={true}
         style={styling}

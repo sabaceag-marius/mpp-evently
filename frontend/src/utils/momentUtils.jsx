@@ -13,6 +13,15 @@ export function toDateTimeString(momentDate,timeString){
     return `${getMoment(momentDate).format("yyyy-MM-DDT")}${timeString}Z`;
 }
 
+export function toDateTimeStringNoTimezone(date){
+    const timezoneOffsetMinutes = date.getTimezoneOffset();
+
+    const timezoneAgnosticMoment = getMoment(date).subtract(timezoneOffsetMinutes, 'minutes');
+    
+    return `${getMoment(timezoneAgnosticMoment).format("yyyy-MM-DDTHH:mm")}Z`;
+}
+
+
 export function toDateInputString(momentt){
     return getMoment(momentt).format("yyyy-MM-DD");
 }

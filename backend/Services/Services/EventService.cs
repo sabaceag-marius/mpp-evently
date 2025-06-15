@@ -32,10 +32,20 @@ public class EventService : IEventService
     {
         var specification = filterRequest.ToSpecification(userId);
 
-        var events = await
-            _eventRepository.GetFilteredEventsAsync(specification, filterRequest.PageNumber, filterRequest.PageSize);
+        IEnumerable<Event> events;
+        int count = -1;
 
-        var count = await _eventRepository.GetFilteredEventsCountAsync(specification);
+        if (filterRequest.FetchAllEvents)
+        {
+            events = await _eventRepository.GetAllFilteredEventsAsync(specification);
+        }
+        else
+        {
+            events = await
+                _eventRepository.GetFilteredEventsAsync(specification, filterRequest.PageNumber, filterRequest.PageSize);
+
+            count = await _eventRepository.GetFilteredEventsCountAsync(specification);
+        }
 
         var result = new QueryEventResponse
         {
