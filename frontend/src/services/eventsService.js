@@ -12,7 +12,7 @@ const api = process.env.REACT_APP_API_URL;
 const PAGE_SIZE = 15;
 
 
-export function useEventQuery(query, pageNumber, setPageNumber){
+export function useEventQuery(query, pageNumber, setPageNumber, calendarView){
 
     const [loading, setLoading] = useState(true);
     const [events, setEvents] = useState([]);
@@ -23,6 +23,13 @@ export function useEventQuery(query, pageNumber, setPageNumber){
         setPageNumber(null);
     }
 
+    useEffect(() =>{
+
+        // Update this only if we go from the list view to the calendar view
+        // and we didnt fetch all events
+
+        if(calendarView && hasMore) resetQuery();
+    },[calendarView]);
 
     useEffect(() =>{
         resetQuery();
@@ -37,7 +44,7 @@ export function useEventQuery(query, pageNumber, setPageNumber){
 
         setLoading(true);
 
-        const queryRequest = setQuery(query,pageNumber);
+        const queryRequest = setQuery(query,pageNumber,calendarView);
         let cancel;
 
         axios.get(api+"/events",{
@@ -48,7 +55,6 @@ export function useEventQuery(query, pageNumber, setPageNumber){
             cancelToken: new axios.CancelToken(c => cancel = c)
             }
         ).then(result => {
-            // Here we'll save the data for the connection dksafsdf
             const r = result.data;
             setEvents( prev => [... prev, ...r.events]);
             setLoading(false);
@@ -63,8 +69,24 @@ export function useEventQuery(query, pageNumber, setPageNumber){
 
     },[pageNumber]);
 
-    
-    return {loading, events, hasMore, resetQuery}
+    const updateStoredEvents = (id, startDate, endDate) => {
+        let newEvents = events;
+
+        const index = newEvents.map(e => e.id).indexOf(id);
+
+        if(index === -1) return;
+
+        console.log("old event", events[index]);
+
+        newEvents[index].startDate = startDate;
+        newEvents[index].endDate = endDate;
+
+        console.log("new event", newEvents[index]);
+
+        setEvents(newEvents);
+    }
+
+    return {loading, events, hasMore, resetQuery, updateStoredEvents}
 }
 
 export const getEvent = async (id) => {
@@ -162,7 +184,7 @@ export function validateEvent(event){
     return errors;
 }
 
-function setQuery(queryData, currentPage){
+function setQuery(queryData, currentPage, fetchAllEvents ){
 
     const startTimeInterval = queryData.dateMoment.clone().startOf(queryData.dateInterval);
     const endTimeInterval = queryData.dateMoment.clone().endOf(queryData.dateInterval);
@@ -173,7 +195,8 @@ function setQuery(queryData, currentPage){
         endDate: toDateTimeInputString(endTimeInterval),
         categoryIds: queryData.categories.length > 0 ? queryData.categories : null,
         pageNumber: currentPage,
-        pageSize: PAGE_SIZE
+        pageSize: PAGE_SIZE,
+        fetchAllEvents : fetchAllEvents 
     }
     return queryRequest;
 }

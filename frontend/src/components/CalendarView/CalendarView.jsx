@@ -10,7 +10,8 @@ import { getMoment } from "../../utils/momentUtils";
 
 import './CalendarView.css';
 
-export default function CalendarView({events, queryData, setQueryData, isModalOpen, openModal}){
+export default function CalendarView({events, queryData, setQueryData, isModalOpen, 
+    openModal, updateStoredEvents}){
 
     const navigate = useNavigate();
 
@@ -67,12 +68,17 @@ export default function CalendarView({events, queryData, setQueryData, isModalOp
     async function handleEventResize(eventResizeInfo){
 
         const event = toUpdateEventRequest(eventResizeInfo.event);
-
+        console.log(event);
         await updateEvent(event.id, event);
+
+        // setEventsUpdated(true);
+
+        updateStoredEvents(event.id, eventResizeInfo.event.start, eventResizeInfo.event.end);
     }
 
     const calendarViewEvents = events.map(e => toCalendarViewEvent(e, queryData.dateMoment, queryData.dateInterval))
 
+    console.log(events, calendarViewEvents);
     return(
 
         <div className='events--calendar--view'>

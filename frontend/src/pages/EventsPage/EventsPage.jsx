@@ -155,10 +155,26 @@ function EventsPage() {
     }
     // endregion
     
+// region Calendar View
+
+    const [calendarView,setCalendarView] = useState(true);
+
+    const [timeIntervals, setTimeIntervals] = useState({
+        startTime: "00:00",
+        endTime: "00:00"
+    })
+
+    function toggleView(){
+
+        setCalendarView(prev => !prev);
+    }
+
+    // endregion
+
     // region Events
 
     const [currentPage, setCurrentPage] = useState(1);
-    const {events, hasMore, loading, resetQuery} = useEventQuery(queryData, currentPage, setCurrentPage);
+    const {events, hasMore, loading, resetQuery, updateStoredEvents} = useEventQuery(queryData, currentPage, setCurrentPage, calendarView);
 
     const observer = useRef();
 
@@ -180,21 +196,7 @@ function EventsPage() {
 
     // endregion
 
-
-    // region Calendar View
-
-    const [calendarView,setCalendarView] = useState(true);
-
-    const [timeIntervals, setTimeIntervals] = useState({
-        startTime: "00:00",
-        endTime: "00:00"
-    })
-
-    function toggleView(){
-        setCalendarView(prev => !prev);
-    }
-
-    // endregion
+    
 
     const eventsElements = events.map((e, index) => Math.floor(events.length / 3 * 2) === index ?  
         <EventCard ref = {eventElementRef} event={e} key={e.id} /> 
@@ -258,6 +260,7 @@ function EventsPage() {
                             setQueryData={setQueryData}
                             isModalOpen={isModalOpen}
                             openModal={openModal}
+                            updateStoredEvents={updateStoredEvents}
                         />
                         :
                         events.length == 0 ? <p>There are no events!</p> :
@@ -265,9 +268,7 @@ function EventsPage() {
                             <div className='events--list--view'>
                                 {eventsElements}
                             </div>
-                            
                         </>
-                        
                     }
                     
                 </div>
