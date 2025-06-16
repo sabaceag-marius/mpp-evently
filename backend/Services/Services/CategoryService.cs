@@ -63,4 +63,26 @@ public class CategoryService : ICategoryService
 
         return new ServiceResponse();
     }
+
+    public async Task<ServiceResponse> UpdateUserCategories(IEnumerable<UpdateCategoryRequest> request, User user)
+    {
+        var categories = 
+            await _categoryRepository.GetCategoryRangeNoTracking(request.Select(c => c.Id).ToList());
+
+        if (categories.Count() != request.Count() || categories.Any(c => c.UserId != user.Id))
+        {
+            return new ServiceResponse
+            {
+                IsError = true,
+                ErrorStatusCode = ErrorStatusCodes.BadRequest,
+                ErrorMessage = "Couldn't find all categories"
+            };
+        }
+
+        var updatedCategories = request.Select(c => c.ToCategory(user.Id));
+
+        await _categoryRepository.UpdateAsyncRange(updatedCategories);
+
+        return new ServiceResponse();
+    }
 }
