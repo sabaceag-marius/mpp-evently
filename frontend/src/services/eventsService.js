@@ -70,20 +70,19 @@ export function useEventQuery(query, pageNumber, setPageNumber, calendarView){
     },[pageNumber]);
 
     const updateStoredEvents = (id, startDate, endDate) => {
-        let newEvents = events;
-
-        const index = newEvents.map(e => e.id).indexOf(id);
-
-        if(index === -1) return;
-
-        console.log("old event", events[index]);
-
-        newEvents[index].startDate = startDate;
-        newEvents[index].endDate = endDate;
-
-        console.log("new event", newEvents[index]);
-
-        setEvents(newEvents);
+        setEvents(prevEvents => {
+            const eventIndex = prevEvents.findIndex(event => event.id === id);
+            if (eventIndex === -1) return prevEvents;
+            
+            const updatedEvents = [...prevEvents]; // shallow copy of the array
+            updatedEvents[eventIndex] = {
+                ...updatedEvents[eventIndex], // copy all existing properties
+                startDate,                    // update startDate
+                endDate                       // update endDate
+            };
+            
+            return updatedEvents;
+        });
     }
 
     return {loading, events, hasMore, resetQuery, updateStoredEvents}

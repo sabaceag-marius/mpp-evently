@@ -211,7 +211,10 @@ function EventsPage() {
                 <button className='primary--button' onClick={() => openModal()}>Add +</button>
                 <button onClick={setTodayDate} className='outline--button'>Today</button>
 
-                <button onClick={toggleView} className='primary--button'>Toggle View</button>
+                <button
+                    className = {`toggle--button material-symbols-outlined`}
+                    onClick={toggleView}> {calendarView ? "list" : "calendar_month"}
+                </button>
 
 
                 <div className='date--selector'>

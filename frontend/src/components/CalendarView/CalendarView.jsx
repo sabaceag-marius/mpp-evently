@@ -78,7 +78,6 @@ export default function CalendarView({events, queryData, setQueryData, isModalOp
 
     const calendarViewEvents = events.map(e => toCalendarViewEvent(e, queryData.dateMoment, queryData.dateInterval))
 
-    console.log(events, calendarViewEvents);
     return(
 
         <div className='events--calendar--view'>

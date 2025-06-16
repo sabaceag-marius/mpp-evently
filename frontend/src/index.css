@@ -12,6 +12,7 @@
   --foreground: #393939;
 
   --input--background: #404040;
+  --input--background--light: #4f4f4f;
   --success: #36c936 ;
   --warning : #d1b838 ;
   --error: #c93636 ;
@@ -29,6 +30,16 @@ body{
 }
 
 /* inputs */
+
+/* In your global CSS file */
+.MuiPopover-root .MuiPaper-root {
+  background-color: var(--input--background) !important;
+  border-radius: 0.75rem !important;
+}
+
+.MuiPopover-root .flexbox-fix {
+  background-color: var(--input--background) !important;
+}
 
 /* buttons */
 
@@ -82,6 +93,27 @@ body{
   font-size: 2.5rem;
   padding: 0;
 }
+
+.toggle--button{
+
+  border-radius: 0.75rem;
+  padding: .25rem;
+  transition: .2s ease-in;
+
+  border: none;
+   background-color: transparent;
+  color: var(--primary-content);
+  cursor: pointer;
+
+  font-size: 2.5rem;
+}
+
+.toggle--button:hover{
+  color: var(--background);
+  background-color: var(--primary-content);
+  cursor: pointer;
+}
+
 
 /* dropdown */
 

@@ -21,6 +21,8 @@ function Navbar() {
               isLoggedIn() ?
                 <>
                   <Link to='/events'>Events</Link>
+                  <Link to='/events'>Groups</Link>
+                  <Link to='/categories'>Categories</Link>
                   <Link to='/profile'>Profile</Link>
                   <Link to='/login'onClick={() => {logoutUser();}}>Log out</Link>
                 </>
