@@ -6,6 +6,7 @@ export default function ColorPicker({id,value,onChange}){
     const sxStyle = {
     '& .MuiOutlinedInput-root': {
       backgroundColor: 'var(--input--background)',
+      maxWidth: '8rem',
       borderRadius: '0.75rem',
         transition: 'background-color 0.2s ease-in',
       '& input': {

@@ -94,6 +94,27 @@ body{
   padding: 0;
 }
 
+.toggle--button{
+
+  border-radius: 0.75rem;
+  padding: .25rem;
+  transition: .2s ease-in;
+
+  border: none;
+   background-color: transparent;
+  color: var(--primary-content);
+  cursor: pointer;
+
+  font-size: 2.5rem;
+}
+
+.toggle--button:hover{
+  color: var(--background);
+  background-color: var(--primary-content);
+  cursor: pointer;
+}
+
+
 /* dropdown */
 
 .dark--dropdown{
