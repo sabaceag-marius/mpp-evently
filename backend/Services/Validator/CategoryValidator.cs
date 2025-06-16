@@ -28,4 +28,25 @@ public static class CategoryValidator
 
         return new ServiceResponse();
     }
+
+    public static ServiceResponse ValidateCategory(AddCategoryRequest request)
+    {
+        string errorMessage = "";
+
+        if (String.IsNullOrWhiteSpace(request.Name))
+            errorMessage += "Name can't be empty!\n";
+
+        if (!Regex.Match(request.Color, "^[0-9a-fA-F]{6}$").Success)
+            errorMessage += "Color must be in a hex format!\n";
+
+        if (!String.IsNullOrEmpty(errorMessage))
+            return new ServiceResponse
+            {
+                IsError = true,
+                ErrorStatusCode = ErrorStatusCodes.BadRequest,
+                ErrorMessage = errorMessage
+            };
+
+        return new ServiceResponse();
+    }
 }

@@ -1,8 +1,26 @@
+.mainContainer{
+    /* background-color: var(--foreground); */
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.75rem;
+    align-items: center;
+    gap: 3rem;
+}
+
 .categoryComponent{
     max-width: 50rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 8rem;
+}
+
+.buttonContainer{
+    max-width: 50rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8rem;
 }
 
 .categoryContainer{

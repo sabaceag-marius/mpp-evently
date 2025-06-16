@@ -69,7 +69,7 @@ export default function ColorPicker({id,value,onChange}){
                 format= "hex"
                 isAlphaHidden={true}
                 value={`#${value}`}
-                onChange={(e) => onChange(id, e)}
+                onChange={(e) => id !== undefined ? onChange(id, e) : onChange(e) } 
                 sx={sxStyle}
             />
         </>

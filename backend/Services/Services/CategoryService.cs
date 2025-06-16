@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
 using Services.DTOs;
+using Services.DTOs.Event;
 using Services.Interfaces;
 
 namespace Services.Services;
@@ -84,5 +85,27 @@ public class CategoryService : ICategoryService
         await _categoryRepository.UpdateAsyncRange(updatedCategories);
 
         return new ServiceResponse();
+    }
+
+    public async Task<ServiceResponse<CategoryResponse>> CreateCategory(AddCategoryRequest request, User user)
+    {
+        var category = request.ToCategory(user.Id);
+
+        category =  _categoryRepository.Add(category);
+
+        if (category == null)
+        {
+            return new ServiceResponse<CategoryResponse>
+            {
+                IsError = true,
+                ErrorMessage = "Couldn't add the category",
+                ErrorStatusCode = ErrorStatusCodes.BadRequest
+            };
+        }
+
+        return new ServiceResponse<CategoryResponse>
+        {
+            Value = category.ToResponse()
+        };
     }
 }

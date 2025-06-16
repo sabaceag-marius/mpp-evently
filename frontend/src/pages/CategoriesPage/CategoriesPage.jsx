@@ -3,12 +3,25 @@ import { MuiColorInput } from 'mui-color-input'
 import { getCategoriesAPI, updateCategoriesRangeAPI } from "../../services/categoriesService";
 import styles from "./CategoriesPage.module.css";
 import ColorPicker from "../../components/ColorPicker/ColorPicker";
+import { colors } from "@mui/material";
+import { CreateCategoryModal } from "../../components/CreateCategoryModal/CreateCategoryModal";
 
 export default function CategoriesPage({}){
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    function openModal() {
+        setIsModalOpen(true);
+    }
+
+    function closeModal() {
+        setIsModalOpen(false);
+    }
 
     const [categories, setCategories] = useState([]);
     
     useEffect(() =>{
+
 
         getCategoriesAPI().then(data => {      
             setCategories(data);
@@ -34,9 +47,16 @@ export default function CategoriesPage({}){
         return(
             <div key={category.id} className={styles.categoryComponent}>
                 <h3>{category.name}</h3>
+                
+
                 <ColorPicker id={category.id} value={category.color} onChange={handleChange} />
+                
             </div>
         )
+    }
+
+    function addCategory(category){
+        setCategories([...categories, category])
     }
 
     async function saveCategories(){
@@ -50,12 +70,24 @@ export default function CategoriesPage({}){
     const categoryComponents = categories.map(c => ToCategoryComponent(c))
 
     return(
-        <div className='main--container'>
+        <div className={styles.mainContainer}>
+            
+            <h2>Your categories</h2>
+
             <div className={styles.categoryContainer}>
                 {categoryComponents}
             </div>
 
-            <button className="primary--button" onClick={saveCategories}>Save</button>
+            <div className={styles.buttonContainer}>
+                <button className="primary--button" onClick={openModal}>Add</button>
+                <button className="primary--button" onClick={saveCategories}>Save</button>
+            </div>
+
+            <CreateCategoryModal 
+                isOpen={isModalOpen}
+                closeModal={closeModal}
+                submitHandler={addCategory}
+            />
         </div>
     )
 
