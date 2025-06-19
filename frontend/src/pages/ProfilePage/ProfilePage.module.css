@@ -10,9 +10,31 @@
 }
 
 .form{
-    display: flex;
+    /* display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 2rem;
-    margin: .25rem 0;
+    margin: .25rem 0; */
+
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.form button{
+    align-self: center;
+}
+
+.message{
+    align-self: center;
+}
+
+.mainContainer{
+    /* background-color: var(--foreground); */
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.75rem;
+    align-items: center;
+    gap: 3rem;
 }

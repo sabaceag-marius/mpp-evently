@@ -10,7 +10,7 @@
 }
 
 .events--calendar--view .fc{
-   
+   background-color: var(--input--background--dark);
     height: 100% !important; /* Forces FullCalendar to fill container */
     width: 100% !important; /* Prevents width collapse */
     margin: 0 auto;
@@ -21,6 +21,7 @@
   min-height: 100px !important; /* Set your desired fixed height */
   height: 100px !important;
 }
+
 
 /* Remove the natural height calculation */
 .fc-daygrid-day {
@@ -117,4 +118,57 @@
 .fc-daygrid-day-number {
   font-weight: bold;
   font-size: 1.1em;
+}
+
+.fc .fc-timegrid-slot-minor {
+    border-top-style: none;
+}
+
+/* Center hour labels in the timeline column */
+.fc .fc-timegrid-axis-frame {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 100% !important;
+}
+
+.fc .fc-timegrid-axis-cushion, .fc .fc-timegrid-slot-label-cushion {
+    padding: 0px 4px;
+    margin-top: 1rem;
+}
+
+/* For WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+  background-color: var(--foreground);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--foreground);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--secondary-content);
+  border-radius: 6px;
+  border: 3px solid var(--foreground);
+}
+
+::-webkit-scrollbar-button {
+  background-color: var(--foreground);
+  color: var(--foreground);
+  display: none; /* arrows are often not customizable, so hiding them */
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var( --secondary-content) var(--input--background);
+}
+
+/* This completely removes the arrows */
+::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }

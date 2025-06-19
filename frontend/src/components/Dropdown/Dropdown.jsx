@@ -21,7 +21,14 @@ function Dropdown({optionsArray, optionLabelsArray, label, labelId, changeHandle
 		},
 		[`& .${outlinedInputClasses.notchedOutline}`]: {
 			border: "none"
-		}
+		},
+    // Add these to maintain border radius when focused
+    [`&.${selectClasses.focused} .${selectClasses.select}`]: {
+        borderRadius: ".75rem",
+    },
+    [`&.${selectClasses.focused} .${outlinedInputClasses.notchedOutline}`]: {
+        borderRadius: ".75rem",
+    }
     }
 
     const MenuProps = {
