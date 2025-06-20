@@ -19,7 +19,8 @@ public static class EventMapper
             EndDate = e.EndDate,
             StartDate = e.StartDate,
             CategoryName = e.Category.Name,
-            CategoryColor = e.Category.Color
+            CategoryColor = e.Category.Color,
+            CategoryId = e.CategoryId
         };
     }
 
@@ -27,9 +28,11 @@ public static class EventMapper
     {
         Specification<Event> specification = new EventSpecificationUser(userId);
 
-        specification = specification.And(new EventSpecificationStartDate(filterRequest.StartDate));
+        specification =
+            specification.And(new EventSpecificationInDateRange(filterRequest.StartDate, filterRequest.EndDate));
+        //specification = specification.And(new EventSpecificationStartDate(filterRequest.StartDate));
 
-        specification = specification.And(new EventSpecificationEndDate(filterRequest.EndDate));
+        //specification = specification.And(new EventSpecificationEndDate(filterRequest.EndDate));
 
         Specification<Event> categorySpecification = new NoneSpecification<Event>();
 

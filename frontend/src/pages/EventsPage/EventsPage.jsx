@@ -2,26 +2,19 @@ import React, { useCallback, useContext, useEffect, useRef, useState } from 'rea
 import './EventsPage.css';
 import EventCard from '../../components/EventCard/EventCard';
 import CreateEventModal from '../../components/CreateEventModal/CreateEventModal';
-import { useEventQuery } from '../../services/eventsService';
-import moment from 'moment';
+import { updateEvent, useEventQuery } from '../../services/eventsService';
 import CheckboxInput from '../../components/Checkbox/Checkbox';
-import { toDateTimeInputString, toDateInputString, getMoment } from '../../utils/momentUtils';
+import { toDateTimeInputString, toDateInputString, getMoment, currentMoment, toTimeInputString } from '../../utils/momentUtils';
 import { arraysEqual } from '../../utils/arrayUtils';
-import PageSelector from '../../components/PageSelector/PageSelector';
-import { categoryData } from '../../services/eventsChartsService';
 import Dropdown from '../../components/Dropdown/Dropdown';
 import DateInput from '../../components/DateInput/DateInput';
-import { useQueryData } from '../../contexts/EventQueryContext';
 import { useOfflineSupport } from '../../contexts/OfflineSupportContext';
 import { getCategoriesAPI } from '../../services/categoriesService';
 
+import CalendarView from '../../components/CalendarView/CalendarView';
+
 function EventsPage() {
-
     // region Filters
-    // const categories = ['Work', 'School', 'Personal'];
-
-
-    // const [categories,setCategories] = useState([]);
 
     const DEFAULT_QUERY_DATA = {
         dateMoment : getMoment(),
@@ -146,8 +139,15 @@ function EventsPage() {
     // region CreateModal
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    function openModal() {
+    function openModal(timeIntervals_) {
+
+        setTimeIntervals(timeIntervals_ === undefined ? {
+            startTime: "00:00",
+            endTime: "00:00"
+        }: timeIntervals_);
+
         setIsModalOpen(true)
+
     }
 
     function closeModal() {
@@ -155,10 +155,26 @@ function EventsPage() {
     }
     // endregion
     
+// region Calendar View
+
+    const [calendarView,setCalendarView] = useState(true);
+
+    const [timeIntervals, setTimeIntervals] = useState({
+        startTime: "00:00",
+        endTime: "00:00"
+    })
+
+    function toggleView(){
+
+        setCalendarView(prev => !prev);
+    }
+
+    // endregion
+
     // region Events
 
     const [currentPage, setCurrentPage] = useState(1);
-    const {events, hasMore, loading, resetQuery} = useEventQuery(queryData, currentPage, setCurrentPage);
+    const {events, hasMore, loading, resetQuery, updateStoredEvents} = useEventQuery(queryData, currentPage, setCurrentPage, calendarView);
 
     const observer = useRef();
 
@@ -180,13 +196,11 @@ function EventsPage() {
 
     // endregion
 
-    // const [events, setEvents] = useState([]);
-    // const eventsElements = events.map(e => <EventCard event={e} key={e.id} />);
+    
+
     const eventsElements = events.map((e, index) => Math.floor(events.length / 3 * 2) === index ?  
         <EventCard ref = {eventElementRef} event={e} key={e.id} /> 
         :  <EventCard event={e} key={e.id} /> );
-       
-    const {isOffline} = useOfflineSupport();
 
     return (
     <>
@@ -194,8 +208,13 @@ function EventsPage() {
 
             <div className='subheader'>
 
-                <button className='primary--button' onClick={openModal}>Add +</button>
+                <button className='primary--button' onClick={() => openModal()}>Add +</button>
                 <button onClick={setTodayDate} className='outline--button'>Today</button>
+
+                <button
+                    className = {`toggle--button material-symbols-outlined`}
+                    onClick={toggleView}> {calendarView ? "list" : "calendar_month"}
+                </button>
 
 
                 <div className='date--selector'>
@@ -217,17 +236,19 @@ function EventsPage() {
 
                     <form className='filter--form'>
 
-                        <label htmlFor='dateMoment'>Date</label>
+                        <fieldset className='filter--fieldset'>
+                             <label className='label' htmlFor='dateMoment'>Date</label>
 
-                        <DateInput
-                            id="dateMoment"
-                            onChange={onChangeDateQuery}
-                            value={queryData.dateMoment}
-                            name="dateMoment"
-                        />
+                            <DateInput
+                                id="dateMoment"
+                                onChange={onChangeDateQuery}
+                                value={queryData.dateMoment}
+                                name="dateMoment"
+                            />
+                        </fieldset>
 
                         <fieldset className='filter--fieldset'>
-                            <label>Categories</label>
+                            <label className='label'>Categories</label>
                             
                             <CheckboxInput id='all' label='All' isChecked={arraysEqual(queryData.categories,categories.map(c => c.id))} checkHandler={checkboxAllHandler}/>
                             {checkboxElements}
@@ -237,19 +258,21 @@ function EventsPage() {
                 
                 <div className='events--section'>
                     {
-                        events.length == 0 ? <p>There are no events!</p> : 
+                        calendarView ?
+                        <CalendarView 
+                            events={events}
+                            queryData={queryData}
+                            setQueryData={setQueryData}
+                            isModalOpen={isModalOpen}
+                            openModal={openModal}
+                            updateStoredEvents={updateStoredEvents}
+                        />
+                        :
+                        events.length == 0 ? <p>There are no events!</p> :
                         <>
                             <div className='events--list--view'>
                                 {eventsElements}
                             </div>
-
-                            {/* <PageSelector pageCount={pageCount} currentPage={currentPage} setCurrentPage={setCurrentPage}/> */}
-
-                            {/* <div className='charts--section'>
-                                <CategoryChart data={events} />
-                                <EventsCountChart data={events} />
-                                <CategoryHoursChart data={events} />
-                            </div> */}
                         </>
                     }
                     
@@ -263,7 +286,9 @@ function EventsPage() {
             closeModal={closeModal} 
             submitHandler={()=>{resetQuery()}} 
             categories={categories}
-            currentMoment={queryData.dateMoment}
+            dateMoment={queryData.dateMoment}
+            startTime={timeIntervals.startTime}
+            endTime={timeIntervals.endTime}
         />
     </>
   )

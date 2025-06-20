@@ -56,4 +56,18 @@ public class CategoryRepository : ICategoryRepository
     {
         return await _dbContext.Categories.Where(c => c.UserId == userId).ToListAsync();
     }
+
+    public async Task<IEnumerable<Category>> GetCategoryRangeNoTracking(List<Guid> ids)
+    {
+        return await _dbContext.Categories.AsNoTracking().Where(c => ids.Any(id => id == c.Id)).ToListAsync();
+    }
+
+    public async Task<IEnumerable<Category>> UpdateAsyncRange(IEnumerable<Category> categories)
+    {
+        _dbContext.Categories.UpdateRange(categories);
+
+        await _dbContext.SaveChangesAsync();
+
+        return categories;
+    }
 }

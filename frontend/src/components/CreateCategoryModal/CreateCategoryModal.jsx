@@ -1,32 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
-import style from './CreateEventModal.module.css';
+import style from './CreateCategoryModal.module.css';
 import moment from 'moment';
 import { addEvent } from '../../services/eventsService';
 import { getTimeOptions, toDateTimeString, toDateTimeInputString } from '../../utils/momentUtils';
 import Dropdown from '../Dropdown/Dropdown';
 import DateInput from '../DateInput/DateInput';
+import ColorPicker from '../ColorPicker/ColorPicker';
+import { addCategoryAPI } from '../../services/categoriesService';
 
-function CreateEventModal({isOpen,closeModal,submitHandler,categories,dateMoment, startTime, endTime}) {
+export function CreateCategoryModal({isOpen,closeModal,submitHandler}) {
   
   const DEFAULT_FORM_DATA = {
     name : "",
-    description : "",
-    startDate : dateMoment,
-    startTime: startTime,
-    endDate : dateMoment,
-    endTime: endTime,
-    categoryName: "",
-    userName : "Mark"
+    color : "1234af"
   }
 
   const [formData,setFormData] = useState(DEFAULT_FORM_DATA);
 
   const [errors,setErrors] = useState([]);
-
-useEffect(() => {
-    setFormData(DEFAULT_FORM_DATA);
-  }, [startTime, endTime]); // Reset on time changes
 
   function handleFormChange(event){
 
@@ -38,11 +30,11 @@ useEffect(() => {
     }));
   }
 
-  function handleDateChange(name,value){
+  function handleColorChange(value){
     
     setFormData(prev =>({
       ...prev,
-      [name]:value
+      color:value.substring(1)
     }));
   }
 
@@ -51,14 +43,11 @@ useEffect(() => {
     e.preventDefault();
     setErrors([]);
     
-    const event = {
-      ...formData,
-      categoryId: formData.categoryName,
-      startDate: toDateTimeString(formData.startDate,formData.startTime),
-      endDate: toDateTimeString(formData.endDate,formData.endTime)
+    const category = {
+      ...formData
     }
 
-    const result = await addEvent(event);
+    const result = await addCategoryAPI(category);
 
     if(result.errorCode !== undefined){
       setErrors(result.errorMessages);
@@ -68,7 +57,7 @@ useEffect(() => {
     setFormData(DEFAULT_FORM_DATA);
     setErrors([]);
 
-    submitHandler();
+    submitHandler(result);
     closeModal();
 
   }
@@ -97,7 +86,7 @@ useEffect(() => {
         // filter: " blur(50%)"
     }
   }
-  
+
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "unset";
   }, [isOpen]);
@@ -117,7 +106,7 @@ useEffect(() => {
       <div className={style.modalContent}>
         
 		<div className={style.modalHeader}>
-			<h2>Create event</h2>
+			<h2>Create category</h2>
 			<button
 				className = {`${style.closeButton} transparent--button material-symbols-outlined`}
 				onClick={onClose}>close
@@ -138,67 +127,8 @@ useEffect(() => {
 			</div>
 
 			<div className={style.inputGroup}>
-				<label htmlFor="description">Description</label>
-				<textarea
-					id="description"
-					name="description"
-					onChange={handleFormChange}
-					value={formData.description}
-				/>
-			</div>
-
-			<div className={style.inputGroup}>
-				<label htmlFor="startDate">Start Date</label>
-				<div className={style.dateTimeGroup}>
-
-          <DateInput 
-            id="startDate"
-            onChange={handleDateChange}
-            value={formData.startDate}
-            name="startDate"
-          />
-          <Dropdown 
-            optionsArray={getTimeOptions()}
-            changeHandler={handleFormChange}
-            inputName="startTime"
-            currentValue={formData.startTime}
-          />
-				</div>
-			</div>
-			
-			<div className={style.inputGroup}>
-				<label htmlFor="endDate">End Date</label>
-				<div className={style.dateTimeGroup}>
-          <DateInput 
-            id="endDate"
-            onChange={handleDateChange}
-            value={formData.endDate}
-            name="endDate"
-          />
-
-          <Dropdown 
-            optionsArray={getTimeOptions()}
-            changeHandler={handleFormChange}
-            inputName="endTime"
-            currentValue={formData.endTime}
-          />
-
-				</div>
-			</div>
-
-      
-			<div className={style.inputGroup}>
-				<label htmlFor="categoryName">Category</label>
-				{/* {categoryDropdown} */}
-        <Dropdown 
-          optionsArray={categories.map(c => c.id)} 
-          optionLabelsArray={categories.map(c => c.name)} 
-          label="Category" 
-          labelId="Category"
-          changeHandler={handleFormChange}
-          inputName="categoryName"
-          currentValue={formData.categoryName}
-        />
+				<label htmlFor="color">Color</label>
+          <ColorPicker value={formData.color} onChange={handleColorChange} />
 			</div>
 
 			{errorsElements}
@@ -209,5 +139,3 @@ useEffect(() => {
     </Modal>
   )
 }
-
-export default CreateEventModal;

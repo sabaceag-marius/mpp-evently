@@ -81,6 +81,16 @@ public class EventRepository : IEventRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Event>> GetAllFilteredEventsAsync(Specification<Event> filters)
+    {
+        return await _dbContext.Events
+            .Where(filters.Expr)
+            .OrderBy(e => e.StartDate)
+            .Include(e => e.Category)
+            .Include(e => e.User)
+            .ToListAsync();
+    }
+
     public async Task<int> GetFilteredEventsCountAsync(Specification<Event> filters)
     {
         return await _dbContext.Events
