@@ -9,6 +9,7 @@ import AuthentificatedRoute from './AuthentificatedRoute';
 import UnauthentificatedRoute from './UnauthentificatedRoute';
 import ProfilePage from '../pages/ProfilePage/ProfilePage';
 import CategoriesPage from '../pages/CategoriesPage/CategoriesPage';
+import LandingPage from '../pages/LandingPage/LandingPage';
 
 export const router = createBrowserRouter([
     {
@@ -16,6 +17,7 @@ export const router = createBrowserRouter([
         element: <App/>,
         errorElement: <ErrorPage/>,
         children: [
+            {path: "/", element: <UnauthentificatedRoute redirectPage='/events'><LandingPage /></UnauthentificatedRoute>},
             {path: "/events", element:<AuthentificatedRoute redirectPage='/login'><EventsPage /></AuthentificatedRoute>},
             {path: "/categories", element:<AuthentificatedRoute redirectPage='/login'><CategoriesPage /></AuthentificatedRoute>},
             {path: "/profile", element:<AuthentificatedRoute redirectPage='/login'><ProfilePage /></AuthentificatedRoute>},
