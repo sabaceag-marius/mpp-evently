@@ -14,14 +14,14 @@ function Navbar() {
  return (
     <header>
         <div className='main--header'>
-          <Link to='/events'><h1 className='logo'>Evently</h1></Link>
+          <Link to='/'><h1 className='logo'>Evently</h1></Link>
 
           <nav className='navbar'>
             {
               isLoggedIn() ?
                 <>
                   <Link to='/events'>Events</Link>
-                  <Link to='/events'>Groups</Link>
+                  <Link to='/groups'>Groups</Link>
                   <Link to='/categories'>Categories</Link>
                   <Link to='/profile'>Profile</Link>
                   <Link to='/login'onClick={() => {logoutUser();}}>Log out</Link>

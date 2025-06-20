@@ -68,7 +68,7 @@ useEffect(() => {
     setFormData(DEFAULT_FORM_DATA);
     setErrors([]);
 
-    submitHandler();
+    submitHandler(event);
     closeModal();
 
   }

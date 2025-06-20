@@ -85,7 +85,7 @@ export function useEventQuery(query, pageNumber, setPageNumber, calendarView){
         });
     }
 
-    return {loading, events, hasMore, resetQuery, updateStoredEvents}
+    return {loading, events, hasMore, resetQuery, updateStoredEvents, setEvents}
 }
 
 export const getEvent = async (id) => {
