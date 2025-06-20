@@ -34,14 +34,14 @@ export default function ProfilePage({}){
         setSaveMessage(result.errorMessage || result);
     }
 
-    const messageComponent = <p style={{"color" : isError ? "var(--error)" : "var(--success)" }}>{saveMessage}</p>
+    const messageComponent = <p className={style.message} style={{"color" : isError ? "var(--error)" : "var(--success)" }}>{saveMessage}</p>
 
     return(
-        <>
-            <h1>Profile page</h1>
 
-            {messageComponent}
-            <h2>User settings</h2>
+        <div className={style.mainContainer}>
+            
+            <h2>Profile page</h2>
+
             <form className={style.form} onSubmit={onSubmit}>
                 <div className={style.inputGroup}>
                     <label>Username</label>
@@ -60,7 +60,25 @@ export default function ProfilePage({}){
                 </div>
 
                 <button className={`${style.submitButton} primary--button`}>Save changes</button>
+            
+                {messageComponent}
+
             </form>
-        </>
+
+            {/* <div className={styles.categoryContainer}>
+                {categoryComponents}
+            </div>
+
+            <div className={styles.buttonContainer}>
+                <button className="primary--button" onClick={openModal}>Add</button>
+                <button className="primary--button" onClick={saveCategories}>Save</button>
+            </div>
+
+            <CreateCategoryModal 
+                isOpen={isModalOpen}
+                closeModal={closeModal}
+                submitHandler={addCategory}
+            /> */}
+        </div>
     )
 }

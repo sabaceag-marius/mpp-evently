@@ -13,9 +13,12 @@
 
   --input--background: #404040;
   --input--background--light: #4f4f4f;
+  --input--background--dark: #282828;
   --success: #36c936 ;
   --warning : #d1b838 ;
   --error: #c93636 ;
+
+  --fc-today-bg-color: #2b93a188;
 }
 
 * {
@@ -162,3 +165,4 @@ a{
 fieldset{
   border: none;
 }
+

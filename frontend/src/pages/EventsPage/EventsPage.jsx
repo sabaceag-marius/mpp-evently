@@ -236,17 +236,19 @@ function EventsPage() {
 
                     <form className='filter--form'>
 
-                        <label htmlFor='dateMoment'>Date</label>
+                        <fieldset className='filter--fieldset'>
+                             <label className='label' htmlFor='dateMoment'>Date</label>
 
-                        <DateInput
-                            id="dateMoment"
-                            onChange={onChangeDateQuery}
-                            value={queryData.dateMoment}
-                            name="dateMoment"
-                        />
+                            <DateInput
+                                id="dateMoment"
+                                onChange={onChangeDateQuery}
+                                value={queryData.dateMoment}
+                                name="dateMoment"
+                            />
+                        </fieldset>
 
                         <fieldset className='filter--fieldset'>
-                            <label>Categories</label>
+                            <label className='label'>Categories</label>
                             
                             <CheckboxInput id='all' label='All' isChecked={arraysEqual(queryData.categories,categories.map(c => c.id))} checkHandler={checkboxAllHandler}/>
                             {checkboxElements}

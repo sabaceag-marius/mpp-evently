@@ -97,7 +97,7 @@ useEffect(() => {
         // filter: " blur(50%)"
     }
   }
-
+  
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "unset";
   }, [isOpen]);

@@ -100,6 +100,19 @@ export default function CalendarView({events, queryData, setQueryData, isModalOp
                 select={handleDateSelect}
                 eventClick={handleEventClick}
                 eventChange={handleEventResize}
+                eventTimeFormat={{
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false, // This forces 24-hour format
+                    meridiem: false // Optional, hides AM/PM
+                }}
+                slotLabelFormat={{
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false, // 24-hour format
+                    meridiem: false // Optional
+                }}
+                moreLinkClick={'disabled'}
             />
         </div>
     )
