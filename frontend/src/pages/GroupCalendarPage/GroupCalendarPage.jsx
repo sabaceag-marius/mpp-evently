@@ -12,9 +12,6 @@ import { getCategoriesAPI } from '../../services/categoriesService';
 
 import CalendarView from '../../components/CalendarView/CalendarView';
 import { useParams } from 'react-router';
-import { useWebSocket } from '../../sockets/useWebSockets';
-import { useStableWebSocket } from '../../sockets/useStableWebSocket';
-import { useRobustWebSocket } from '../../sockets/useRobustWebSocket';
 
 export default function GroupCalendarPage() {
 
@@ -37,34 +34,34 @@ export default function GroupCalendarPage() {
     };
 
     function handleAddEvent(newEvent){
-        // Send to server
-        sendMessage({
-            action: 'add-event',
-            groupId,
-            event: newEvent
-        });
+        
+        // sendMessage({
+        //     action: 'add-event',
+        //     groupId,
+        //     event: newEvent
+        // });
     }
 
-    const { sendMessage } = useRobustWebSocket(
-        `wss://localhost:2000/ws`,
-        handleSocketMessage
-    );
+    // const { sendMessage } = useRobustWebSocket(
+    //     `wss://localhost:2000/ws`,
+    //     handleSocketMessage
+    // );
   
-    useEffect(() => {
-    // Join group when component mounts
-    sendMessage({
-      action: 'join-group',
-      groupId
-    });
+//     useEffect(() => {
+//     // Join group when component mounts
+//     sendMessage({
+//       action: 'join-group',
+//       groupId
+//     });
     
-    return () => {
-      // Leave group when component unmounts
-      sendMessage({
-        action: 'leave-group',
-        groupId
-      });
-    };
-  }, [groupId, sendMessage]);
+//     return () => {
+//       // Leave group when component unmounts
+//       sendMessage({
+//         action: 'leave-group',
+//         groupId
+//       });
+//     };
+//   }, [groupId, sendMessage]);
 
     // region Filters
 

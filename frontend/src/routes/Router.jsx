@@ -11,6 +11,7 @@ import ProfilePage from '../pages/ProfilePage/ProfilePage';
 import CategoriesPage from '../pages/CategoriesPage/CategoriesPage';
 import LandingPage from '../pages/LandingPage/LandingPage';
 import GroupCalendarPage from '../pages/GroupCalendarPage/GroupCalendarPage';
+import GroupsPage from '../pages/GroupsPage/GroupsPage';
 
 export const router = createBrowserRouter([
     {
@@ -20,7 +21,9 @@ export const router = createBrowserRouter([
         children: [
             {path: "/", element: <UnauthentificatedRoute redirectPage='/events'><LandingPage /></UnauthentificatedRoute>},
             {path: "/events", element:<AuthentificatedRoute redirectPage='/login'><EventsPage /></AuthentificatedRoute>},
+            {path: "/groups", element:<AuthentificatedRoute redirectPage='/login'><GroupsPage /></AuthentificatedRoute>},
             {path: "/groups/:id", element:<AuthentificatedRoute redirectPage='/login'><GroupCalendarPage /></AuthentificatedRoute>},
+            // {path: "/groups/:id", element:<AuthentificatedRoute redirectPage='/login'><GroupCalendarPage /></AuthentificatedRoute>},
             {path: "/categories", element:<AuthentificatedRoute redirectPage='/login'><CategoriesPage /></AuthentificatedRoute>},
             {path: "/profile", element:<AuthentificatedRoute redirectPage='/login'><ProfilePage /></AuthentificatedRoute>},
             {path: "/events/:id", element:<AuthentificatedRoute redirectPage='/login'><EventDetailsPage /></AuthentificatedRoute>},

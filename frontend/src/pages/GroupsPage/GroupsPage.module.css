@@ -1,0 +1,23 @@
+.subheader{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 2.5rem;
+}
+
+.mainContainer{
+    display: flex;
+    flex-direction: column;
+}
+
+.groupContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+.addButton{
+    
+}
