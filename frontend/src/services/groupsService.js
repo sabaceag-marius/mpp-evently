@@ -65,3 +65,18 @@ export const joinGroupAPI = async (id) => {
         }
     }
 }
+
+export const leaveGroupAPI = async (id) => {
+    try{
+        const response = await axios.post(api+'/groups/leave/'+id);
+        return response.data;
+    }
+    catch(error){
+        console.log(error);
+
+        return {
+            errorCode: error.response.status,
+            errorMessages: error.response.data.split('\n')
+        }
+    }
+}

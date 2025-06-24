@@ -151,6 +151,38 @@ public class GroupController : ControllerBase
         return Ok();
     }
 
+    [HttpPost("leave/{id}")]
+    [Authorize]
+    public async Task<IActionResult> LeaveGroup([FromRoute] Guid id)
+    {
+        var username = User.FindFirstValue(ClaimTypes.GivenName);
+
+        var userResponse = await _userService.GetUserByNameAsync(username);
+
+        // This shouldn't happen since we have the 'Authorize' attribute
+        if (userResponse.IsError)
+        {
+            return new ObjectResult(userResponse.ErrorMessage)
+            {
+                StatusCode = userResponse.ErrorStatusCode.ToStatusCode()
+            };
+        }
+
+        var user = userResponse.Value;
+
+        var response = await _groupService.LeaveGroup(id, user);
+
+        if (response.IsError)
+        {
+            return new ObjectResult(response.ErrorMessage)
+            {
+                StatusCode = response.ErrorStatusCode.ToStatusCode()
+            };
+        }
+
+        return Ok();
+    }
+
     [HttpPost]
     [Authorize]
     public async Task<IActionResult> CreateGroup([FromBody] GroupCreateRequest request)

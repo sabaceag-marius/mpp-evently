@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router";
-import { getGroupAPI } from "../../services/groupsService";
+import { Link, useNavigate, useParams } from "react-router";
+import { getGroupAPI, leaveGroupAPI } from "../../services/groupsService";
 import style from './GroupDetailsPage.module.css';
 
 export default function GroupDetailsPage(){
@@ -8,16 +8,18 @@ export default function GroupDetailsPage(){
     const id = useParams().id;
     const [group, setGroup] = useState(null);
 
+    const navigate = useNavigate();
+
     useEffect(() =>{
         getGroupAPI(id).then(data => setGroup(data));
     },[]);
 
-    const addMoreUsers = () => {
-        setGroup(prev => ({
-            ...prev,
-            usernames : ['user1', 'user2', 'user3','user1', 'user2', 'user3','user1', 'user2', 'user3']   
-        }))
+    const leaveGroup = async () => {
+        await leaveGroupAPI(id);
+
+        navigate('/groups');
     }
+
     const [displayMode, setDisplayMode] = useState("main");
 
     const getDisplayContent = () =>{
@@ -72,7 +74,7 @@ export default function GroupDetailsPage(){
                         {copiedMessage}
                         <div className={style.footer}> 
                             <Link to={`/groups/${group.id}`} className="primary--button">Enter</Link>
-                            <button className="secondary--button" onClick={addMoreUsers}>Leave</button>
+                            <button className="secondary--button" onClick={leaveGroup}>Leave</button>
                             <button className="transparent--button material-symbols-outlined" onClick={copyLink}>Share</button>
                             
                         </div>

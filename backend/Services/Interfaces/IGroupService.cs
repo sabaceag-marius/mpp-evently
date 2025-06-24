@@ -14,4 +14,5 @@ public interface IGroupService
     public Task<ServiceResponse> JoinGroup(Guid id, User user);
 
     public Task<ServiceResponse<GroupResponse>> CreateGroup(GroupCreateRequest request, User user);
+    public Task<ServiceResponse> LeaveGroup(Guid id, User user);
 }

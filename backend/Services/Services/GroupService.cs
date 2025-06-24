@@ -119,4 +119,35 @@ public class GroupService : IGroupService
             Value = group.ToResponse()
         };
     }
+
+    public async Task<ServiceResponse> LeaveGroup(Guid id, User user)
+    {
+        Group group = await _groupRepository.GetByIdNoTracking(id);
+
+        if (group.Id == Guid.Empty)
+        {
+            return new ServiceResponse
+            {
+                IsError = true,
+                ErrorStatusCode = ErrorStatusCodes.NotFound,
+                ErrorMessage = "Group was not found"
+            };
+        }
+
+        if (group.Users.All(u => u.Id != user.Id))
+        {
+            return new ServiceResponse
+            {
+                IsError = true,
+                ErrorStatusCode = ErrorStatusCodes.Unauthorized,
+                ErrorMessage = "You aren't in this group"
+            };
+        }
+
+        group.Users.RemoveAll(u => u.Id == user.Id);
+
+        await _groupRepository.UpdateAsync(group);
+
+        return new ServiceResponse();
+    }
 }
