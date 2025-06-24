@@ -8,6 +8,16 @@ public class GroupCreateRequest
     public String Description { get; set; } = String.Empty;
 }
 
+public class FilterGroupEventRequest
+{
+    public required DateTime StartDate { get; set; }
+    public required DateTime EndDate { get; set; }
+    public required int PageNumber { get; set; }
+    public required int PageSize { get; set; }
+    public required bool FetchAllEvents { get; set; }
+}
+
+
 public class GroupResponse
 {
     public Guid Id { get; set; }

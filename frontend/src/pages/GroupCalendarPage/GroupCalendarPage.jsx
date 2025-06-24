@@ -17,58 +17,12 @@ export default function GroupCalendarPage() {
 
     const groupId = useParams().id;
 
-    // region Sockets
-
-    const handleSocketMessage = (message) => {
-        switch (message.action) {
-        case 'add-event':
-            setEvents(prev => [...prev, message.event]);
-            break;
-        case 'update-event':
-            setEvents(prev => prev.map(e => e.id === message.event.id ? message.event : e));
-            break;
-        case 'event-deleted':
-            setEvents(prev => prev.filter(e => e.id !== message.eventId));
-            break;
-        }
-    };
-
-    function handleAddEvent(newEvent){
-        
-        // sendMessage({
-        //     action: 'add-event',
-        //     groupId,
-        //     event: newEvent
-        // });
-    }
-
-    // const { sendMessage } = useRobustWebSocket(
-    //     `wss://localhost:2000/ws`,
-    //     handleSocketMessage
-    // );
-  
-//     useEffect(() => {
-//     // Join group when component mounts
-//     sendMessage({
-//       action: 'join-group',
-//       groupId
-//     });
-    
-//     return () => {
-//       // Leave group when component unmounts
-//       sendMessage({
-//         action: 'leave-group',
-//         groupId
-//       });
-//     };
-//   }, [groupId, sendMessage]);
-
     // region Filters
 
     const DEFAULT_QUERY_DATA = {
         dateMoment : getMoment(),
-        dateInterval : "Day",
-        categories : []
+        dateInterval : "Month",
+        // categories : []
     }
 
     const [queryData, setQueryData] = useState(DEFAULT_QUERY_DATA);
@@ -221,7 +175,7 @@ export default function GroupCalendarPage() {
     // region Events
 
     const [currentPage, setCurrentPage] = useState(1);
-    const {events, setEvents, hasMore, loading, resetQuery, updateStoredEvents} = useEventQuery(queryData, currentPage, setCurrentPage, calendarView);
+    const {events, setEvents, hasMore, loading, resetQuery, updateStoredEvents} = useEventQuery(queryData, currentPage, setCurrentPage, calendarView, groupId);
 
     const observer = useRef();
 
@@ -294,12 +248,6 @@ export default function GroupCalendarPage() {
                             />
                         </fieldset>
 
-                        {/* <fieldset className='filter--fieldset'>
-                            <label className='label'>Categories</label>
-                            
-                            <CheckboxInput id='all' label='All' isChecked={arraysEqual(queryData.categories,categories.map(c => c.id))} checkHandler={checkboxAllHandler}/>
-                            {checkboxElements}
-                        </fieldset> */}
                     </form>
                 </div>
                 
@@ -331,11 +279,12 @@ export default function GroupCalendarPage() {
         <CreateEventModal 
             isOpen={isModalOpen} 
             closeModal={closeModal} 
-            submitHandler={(event)=>{handleAddEvent(event); resetQuery()}} 
+            submitHandler={()=>{resetQuery()}} 
             categories={categories}
             dateMoment={queryData.dateMoment}
             startTime={timeIntervals.startTime}
             endTime={timeIntervals.endTime}
+            groupId={groupId}
         />
     </>
   )

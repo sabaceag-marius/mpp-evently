@@ -3,16 +3,19 @@ using Domain.Interfaces;
 using Services.DTOs;
 using Services.DTOs.Event;
 using Services.Interfaces;
+using Services.Mapper;
 
 namespace Services.Services;
 
 public class GroupService : IGroupService
 {
     private readonly IGroupRepository _groupRepository;
+    private readonly IEventRepository _eventRepository;
 
-    public GroupService(IGroupRepository groupRepository)
+    public GroupService(IGroupRepository groupRepository, IEventRepository eventRepository)
     {
         _groupRepository = groupRepository;
+        _eventRepository = eventRepository;
     }
     public async Task<ServiceResponse<IEnumerable<GroupResponse>>> GetUserGroups(Guid userId)
     {
@@ -149,5 +152,68 @@ public class GroupService : IGroupService
         await _groupRepository.UpdateAsync(group);
 
         return new ServiceResponse();
+    }
+
+    public async Task<ServiceResponse<IEnumerable<string>>> GetGroupUsers(Guid id, Guid userId)
+    {
+        Group group = await _groupRepository.GetByIdAsync(id);
+
+        if (group.Id == Guid.Empty || group.Users.All(user => user.Id != userId))
+        {
+            return new ServiceResponse<IEnumerable<string>>
+            {
+                IsError = true,
+                ErrorStatusCode = ErrorStatusCodes.NotFound,
+                ErrorMessage = "Group was not found"
+            };
+        }
+
+        return new ServiceResponse<IEnumerable<string>>
+        {
+            Value = group.Users.Select(user => user.UserName)
+        };
+    }
+
+    public async Task<ServiceResponse<QueryEventResponse>> GetFilteredGroupEvents(FilterGroupEventRequest filterRequest, Guid groupId, Guid userId)
+    {
+        Group group = await _groupRepository.GetByIdAsync(groupId);
+
+        if (group.Id == Guid.Empty || group.Users.All(user => user.Id != userId))
+        {
+            return new ServiceResponse<QueryEventResponse>
+            {
+                IsError = true,
+                ErrorStatusCode = ErrorStatusCodes.NotFound,
+                ErrorMessage = "Group was not found"
+            };
+        }
+
+        var specification = filterRequest.ToSpecification(groupId);
+
+        IEnumerable<Event> events;
+        int count = -1;
+
+        if (filterRequest.FetchAllEvents)
+        {
+            events = await _eventRepository.GetAllFilteredEventsAsync(specification);
+        }
+        else
+        {
+            events = await
+                _eventRepository.GetFilteredEventsAsync(specification, filterRequest.PageNumber, filterRequest.PageSize);
+
+            count = await _eventRepository.GetFilteredEventsCountAsync(specification);
+        }
+
+        var result = new QueryEventResponse
+        {
+            Events = events.Select(e => e.ToResponse()),
+            Count = count
+        };
+
+        return new ServiceResponse<QueryEventResponse>
+        {
+            Value = result
+        };
     }
 }

@@ -20,6 +20,9 @@ public class Event()
     [ForeignKey("Category")]
     public required Guid CategoryId { get; set; } = Guid.Empty;
 
+    [ForeignKey("Group")]
+    public Guid? GroupId { get; set; }
+
     public required string Description { get; set; } = "";
 
     public required DateTime StartDate { get; set; } = DateTime.Now;
@@ -29,4 +32,6 @@ public class Event()
     public Category Category { get; set; }
 
     public User User { get; set; }
+
+    public Group? Group { get; set; }
 }

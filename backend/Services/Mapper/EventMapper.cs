@@ -2,6 +2,7 @@
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Specifications.Events;
+using Services.DTOs;
 using Services.DTOs.Event;
 
 namespace Services.Mapper;
@@ -46,6 +47,16 @@ public static class EventMapper
         return specification;
     }
 
+    public static Specification<Event> ToSpecification(this FilterGroupEventRequest filterRequest, Guid groupId)
+    {
+        Specification<Event> specification = new EventSpecificationGroup(groupId);
+
+        specification =
+            specification.And(new EventSpecificationInDateRange(filterRequest.StartDate, filterRequest.EndDate));
+
+        return specification;
+    }
+
     public static Event ToEvent(this EventCreateRequest request, Guid userId)
     {
         return new Event
@@ -57,6 +68,7 @@ public static class EventMapper
             EndDate = request.EndDate,
             CategoryId = request.CategoryId,
             UserId = userId,
+            GroupId = request.GroupId,
         };
     }
 

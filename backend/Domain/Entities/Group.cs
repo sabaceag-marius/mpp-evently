@@ -13,6 +13,5 @@ public class Group()
     public required String Description { get; set; } = String.Empty;
 
     public List<User> Users { get; set; }
-    //public List<Event> Events { get; set; }
 
 }

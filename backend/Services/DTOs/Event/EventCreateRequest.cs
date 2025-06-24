@@ -13,4 +13,5 @@ public class EventCreateRequest
 
     public DateTime EndDate { get; set; } = DateTime.Now;
     public Guid CategoryId { get; set; }
+    public Guid? GroupId { get; set; }
 }

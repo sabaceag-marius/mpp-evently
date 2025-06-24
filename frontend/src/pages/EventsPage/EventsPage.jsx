@@ -18,7 +18,7 @@ function EventsPage() {
 
     const DEFAULT_QUERY_DATA = {
         dateMoment : getMoment(),
-        dateInterval : "Day",
+        dateInterval : "Month",
         categories : []
     }
 
@@ -174,7 +174,7 @@ function EventsPage() {
     // region Events
 
     const [currentPage, setCurrentPage] = useState(1);
-    const {events, hasMore, loading, resetQuery, updateStoredEvents} = useEventQuery(queryData, currentPage, setCurrentPage, calendarView);
+    const {events, hasMore, loading, resetQuery, updateStoredEvents} = useEventQuery(queryData, currentPage, setCurrentPage, calendarView, undefined);
 
     const observer = useRef();
 
@@ -289,6 +289,7 @@ function EventsPage() {
             dateMoment={queryData.dateMoment}
             startTime={timeIntervals.startTime}
             endTime={timeIntervals.endTime}
+            groupId={null}
         />
     </>
   )

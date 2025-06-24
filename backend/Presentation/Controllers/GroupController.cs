@@ -6,6 +6,7 @@ using Services.DTOs;
 using Services.Interfaces;
 using Services.Services;
 using Services.Validator;
+using Services.DTOs.Event;
 
 namespace Presentation.Controllers;
 
@@ -235,5 +236,81 @@ public class GroupController : ControllerBase
         }
 
         return CreatedAtAction(nameof(GetGroup), new { id = response.Value.Id }, response.Value);
+    }
+
+    [HttpGet("users/{id}")]
+    [Authorize]
+    public async Task<IActionResult> GetGroupUsers([FromRoute] Guid id)
+    {
+        var username = User.FindFirstValue(ClaimTypes.GivenName);
+
+        var userResponse = await _userService.GetUserByNameAsync(username);
+
+        // This shouldn't happen since we have the 'Authorize' attribute
+        if (userResponse.IsError)
+        {
+            return new ObjectResult(userResponse.ErrorMessage)
+            {
+                StatusCode = userResponse.ErrorStatusCode.ToStatusCode()
+            };
+        }
+
+        var user = userResponse.Value;
+
+        var response = await _groupService.GetGroupInvite(id, user.Id);
+
+        if (response.IsError)
+        {
+            return new ObjectResult(response.ErrorMessage)
+            {
+                StatusCode = response.ErrorStatusCode.ToStatusCode()
+            };
+        }
+
+        return Ok(response.Value);
+    }
+
+    [Authorize]
+    [HttpGet("events/{id}")]
+    public async Task<IActionResult> GetFilteredGroupEvents([FromRoute] Guid id, [FromQuery] FilterGroupEventRequest filterRequest)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errorMessage = ModelState.Values
+                .SelectMany(x => x.Errors)
+                .Select(x => x.ErrorMessage)
+                .Aggregate("", (current, next) => current + "\n" + next);
+            return new ObjectResult(new { errorMessage = errorMessage })
+            {
+                StatusCode = ErrorStatusCodes.BadRequest.ToStatusCode(),
+            };
+        }
+
+        var username = User.FindFirstValue(ClaimTypes.GivenName);
+
+        var userResponse = await _userService.GetUserByNameAsync(username);
+
+        // This shouldn't happen since we have the 'Authorize' attribute
+        if (userResponse.IsError)
+        {
+            return new ObjectResult(userResponse.ErrorMessage)
+            {
+                StatusCode = userResponse.ErrorStatusCode.ToStatusCode()
+            };
+        }
+
+        var user = userResponse.Value;
+
+        var response = await _groupService.GetFilteredGroupEvents(filterRequest, id, user.Id);
+
+        if (response.IsError)
+        {
+            return new ObjectResult(response.ErrorMessage)
+            {
+                StatusCode = response.ErrorStatusCode.ToStatusCode()
+            };
+        }
+
+        return Ok(response.Value);
     }
 }

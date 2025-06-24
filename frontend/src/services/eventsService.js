@@ -13,8 +13,9 @@ const api = process.env.REACT_APP_API_URL;
 const PAGE_SIZE = 15;
 
 
-export function useEventQuery(query, pageNumber, setPageNumber, calendarView){
+export function useEventQuery(query, pageNumber, setPageNumber, calendarView, groupId){
 
+    const groupMode = groupId !== undefined
     const [loading, setLoading] = useState(true);
     const [events, setEvents] = useState([]);
     const [hasMore, setHasMore] = useState(false);
@@ -45,10 +46,12 @@ export function useEventQuery(query, pageNumber, setPageNumber, calendarView){
 
         setLoading(true);
 
-        const queryRequest = setQuery(query,pageNumber,calendarView);
+        const queryRequest = setQuery(query,pageNumber,calendarView, groupMode);
         let cancel;
 
-        axios.get(api+"/events",{
+        const url = groupMode ? `/groups/events/${groupId}` : '/events'
+
+        axios.get(api+url,{
             params: queryRequest,
             paramsSerializer: {
                 indexes: null, // no brackets at all
@@ -184,7 +187,7 @@ export function validateEvent(event){
     return errors;
 }
 
-function setQuery(queryData, currentPage, fetchAllEvents ){
+function setQuery(queryData, currentPage, fetchAllEvents,groupMode ){
 
     const startTimeInterval = queryData.dateMoment.clone().startOf(queryData.dateInterval);
     const endTimeInterval = queryData.dateMoment.clone().endOf(queryData.dateInterval);
@@ -193,10 +196,13 @@ function setQuery(queryData, currentPage, fetchAllEvents ){
 
         startDate: toDateTimeInputString(startTimeInterval),
         endDate: toDateTimeInputString(endTimeInterval),
-        categoryIds: queryData.categories.length > 0 ? queryData.categories : null,
+        categoryIds: [],
         pageNumber: currentPage,
         pageSize: PAGE_SIZE,
         fetchAllEvents : fetchAllEvents 
     }
+
+    if(!groupMode)
+        queryRequest.categoryIds = queryData.categories.length > 0 ? queryData.categories : null
     return queryRequest;
 }

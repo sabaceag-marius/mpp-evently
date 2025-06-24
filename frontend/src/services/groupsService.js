@@ -80,3 +80,13 @@ export const leaveGroupAPI = async (id) => {
         }
     }
 }
+
+export const getGroupUsersAPI = async (id) => {
+    try{
+        const response = await axios.get(api+"/groups/users/"+id);
+        return response.data;
+    }
+    catch (error){
+        console.log(error);
+    }
+}

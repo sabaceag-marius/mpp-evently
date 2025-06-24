@@ -1,6 +1,5 @@
 USE [Evently];
 
--- drop table groupuser, groupevent, groups
 CREATE TABLE [Groups](
 	Id UNIQUEIDENTIFIER PRIMARY KEY NONCLUSTERED,
 	Name VARCHAR(100) NOT NULL,
@@ -15,14 +14,6 @@ CREATE TABLE [GroupUser](
 
 	PRIMARY KEY (GroupsId, UsersId)
 )
-
-CREATE TABLE [GroupEvent](
-	GroupsId UNIQUEIDENTIFIER NOT NULL REFERENCES [Groups],
-	EventsId UNIQUEIDENTIFIER NOT NULL REFERENCES [Events],
-
-	PRIMARY KEY (GroupsId, EventsId)
-)
-USE [Evently];
 
 DECLARE @user1Id UNIQUEIDENTIFIER;
 DECLARE @user2Id UNIQUEIDENTIFIER;
@@ -54,3 +45,6 @@ INSERT INTO [GroupUser] (GroupsId,UsersId) VALUES
 (@group2Id,@user2Id),
 (@group3Id,@user1Id),
 (@group3Id,@user2Id)
+
+ALTER TABLE [Events]
+ADD GroupId UNIQUEIDENTIFIER REFERENCES [Groups] NULL
