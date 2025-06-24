@@ -175,7 +175,7 @@ export default function GroupCalendarPage() {
     // region Events
 
     const [currentPage, setCurrentPage] = useState(1);
-    const {events, setEvents, hasMore, loading, resetQuery, updateStoredEvents} = useEventQuery(queryData, currentPage, setCurrentPage, calendarView, groupId);
+    const {events, setEvents, hasMore, loading, resetQuery, updateStoredEvents} = useEventQuery(queryData, currentPage, setCurrentPage, calendarView, groupId, true);
 
     const observer = useRef();
 

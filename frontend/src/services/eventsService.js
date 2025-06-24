@@ -13,7 +13,7 @@ const api = process.env.REACT_APP_API_URL;
 const PAGE_SIZE = 15;
 
 
-export function useEventQuery(query, pageNumber, setPageNumber, calendarView, groupId){
+export function useEventQuery(query, pageNumber, setPageNumber, calendarView, groupId, alwaysReset){
 
     const groupMode = groupId !== undefined
     const [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ export function useEventQuery(query, pageNumber, setPageNumber, calendarView, gr
         // Update this only if we go from the list view to the calendar view
         // and we didnt fetch all events
 
-        if(calendarView && hasMore) resetQuery();
+        if(calendarView && hasMore || alwaysReset) resetQuery();
     },[calendarView]);
 
     useEffect(() =>{
