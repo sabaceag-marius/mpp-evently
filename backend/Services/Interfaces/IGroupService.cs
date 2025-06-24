@@ -9,7 +9,7 @@ public interface IGroupService
 
     public Task<ServiceResponse<GroupResponse>> GetGroup(Guid id, Guid userId);
 
-    public Task<ServiceResponse<GroupResponse>> GetGroupInvite(Guid id, Guid userId);
+    public Task<ServiceResponse<GroupInviteResponse>> GetGroupInvite(Guid id, Guid userId);
 
     public Task<ServiceResponse> JoinGroup(Guid id, User user);
 

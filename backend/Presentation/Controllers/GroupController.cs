@@ -182,15 +182,15 @@ public class GroupController : ControllerBase
 
         var user = userResponse.Value;
 
-        //var validate = EventValidator.ValidateEvent(eventRequest);
+        var validate = GroupValidator.ValidateGroup(request);
 
-        //if (validate.IsError)
-        //{
-        //    return new ObjectResult(validate.ErrorMessage)
-        //    {
-        //        StatusCode = validate.ErrorStatusCode.ToStatusCode()
-        //    };
-        //}
+        if (validate.IsError)
+        {
+            return new ObjectResult(validate.ErrorMessage)
+            {
+                StatusCode = validate.ErrorStatusCode.ToStatusCode()
+            };
+        }
 
         var response = await _groupService.CreateGroup(request, user);
 

@@ -7,7 +7,7 @@ import { getTimeOptions, toDateTimeString, toDateTimeInputString } from '../../u
 import Dropdown from '../Dropdown/Dropdown';
 import DateInput from '../DateInput/DateInput';
 
-function CreateEventModal({isOpen,closeModal,submitHandler,categories,dateMoment, startTime, endTime}) {
+function CreateEventModal({isOpen,closeModal,submitHandler,categories,dateMoment,startTime,endTime}) {
   
   const DEFAULT_FORM_DATA = {
     name : "",

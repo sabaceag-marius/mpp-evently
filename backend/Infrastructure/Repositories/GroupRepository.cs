@@ -31,6 +31,12 @@ public class GroupRepository : IGroupRepository
 
     public Group? Add(Group t)
     {
+        // Attach existing users to prevent duplicate inserts
+        foreach (var user in t.Users.Where(u => u.Id != Guid.Empty))
+        {
+            _dbContext.Users.Attach(user);
+        }
+
         _dbContext.Add(t);
 
         _dbContext.SaveChanges();
@@ -38,9 +44,26 @@ public class GroupRepository : IGroupRepository
         return t;
     }
 
-    public async Task<Group?> UpdateAsync(Group t)
+    public async Task<Group?> UpdateAsync(Group group)
     {
-        throw new NotImplementedException();
+        // Load the existing group with its users
+        var existingGroup = await _dbContext.Groups
+            .Include(g => g.Users)
+            .FirstOrDefaultAsync(g => g.Id == group.Id);
+
+        if (existingGroup == null) return new Group();
+
+        // Update scalar properties
+        existingGroup.Name = group.Name;
+        existingGroup.Description = group.Description;
+
+        // Update users by replacing the collection
+        existingGroup.Users = await _dbContext.Users
+            .Where(u => group.Users.Select(x => x.Id).Contains(u.Id))
+            .ToListAsync();
+
+        await _dbContext.SaveChangesAsync();
+        return existingGroup;
     }
 
     public async Task DeleteAsync(Group t)

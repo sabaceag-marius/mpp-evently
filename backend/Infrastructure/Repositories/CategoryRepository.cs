@@ -37,13 +37,13 @@ public class CategoryRepository : ICategoryRepository
         return e;
     }
 
-    public async Task<Category?> UpdateAsync(Category c)
+    public async Task<Category?> UpdateAsync(Category group)
     {
-        _dbContext.Categories.Update(c);
+        _dbContext.Categories.Update(group);
 
         await _dbContext.SaveChangesAsync();
 
-        return c;
+        return group;
     }
 
     public async Task DeleteAsync(Category c)

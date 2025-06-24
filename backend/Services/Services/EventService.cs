@@ -84,10 +84,10 @@ public class EventService : IEventService
         };
     }
 
-    public async Task<ServiceResponse<EventResponse>> CreateEvent(CreateEventRequest eventRequest, User user)
+    public async Task<ServiceResponse<EventResponse>> CreateEvent(EventCreateRequest request, User user)
     {
 
-        Category? category = await _categoryRepository.GetByIdAsync(eventRequest.CategoryId);
+        Category? category = await _categoryRepository.GetByIdAsync(request.CategoryId);
 
         if (category == null || category.Id == Guid.Empty)
         {
@@ -99,7 +99,7 @@ public class EventService : IEventService
             };
         }
 
-        var eventObj = eventRequest.ToEvent(user.Id);
+        var eventObj = request.ToEvent(user.Id);
 
         eventObj = _eventRepository.Add(eventObj);
 
@@ -122,10 +122,10 @@ public class EventService : IEventService
         };
     }
 
-    public async Task<ServiceResponse<EventResponse>> UpdateEvent(Guid eventId, UpdateEventRequest eventRequest,
+    public async Task<ServiceResponse<EventResponse>> UpdateEvent(Guid eventId, EventUpdateRequest request,
         User user)
     {
-        Category category = await _categoryRepository.GetByIdAsync(eventRequest.CategoryId);
+        Category category = await _categoryRepository.GetByIdAsync(request.CategoryId);
 
         if (category.Id == Guid.Empty)
         {
@@ -148,7 +148,7 @@ public class EventService : IEventService
                 ErrorMessage = "Event was not found"
             };
         }
-        var eventObj = eventRequest.ToEvent(user.Id);
+        var eventObj = request.ToEvent(user.Id);
 
         try
         {

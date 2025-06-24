@@ -10,7 +10,7 @@ public interface IRepository<T>
 
     public T? Add(T t);
 
-    public Task<T?> UpdateAsync(T t);
+    public Task<T?> UpdateAsync(T group);
 
     public Task DeleteAsync(T t);
 

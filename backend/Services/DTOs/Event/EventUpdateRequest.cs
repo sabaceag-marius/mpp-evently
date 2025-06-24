@@ -1,10 +1,8 @@
-﻿using Domain.Enums;
+﻿namespace Services.DTOs.Event;
 
-namespace Services.DTOs.Event;
-
-public class CreateEventRequest
+public class EventUpdateRequest
 {
-    public Guid? Id {get; set;}
+    public Guid Id { get; set; } = Guid.Empty;
     public string Name { get; set; } = "";
 
     public string Description { get; set; } = "";
@@ -12,5 +10,7 @@ public class CreateEventRequest
     public DateTime StartDate { get; set; } = DateTime.Now;
 
     public DateTime EndDate { get; set; } = DateTime.Now;
+
     public Guid CategoryId { get; set; }
+
 }

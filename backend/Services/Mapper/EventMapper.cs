@@ -46,30 +46,30 @@ public static class EventMapper
         return specification;
     }
 
-    public static Event ToEvent(this CreateEventRequest eventRequest, Guid userId)
+    public static Event ToEvent(this EventCreateRequest request, Guid userId)
     {
         return new Event
         {
-            Id = eventRequest.Id ?? Guid.NewGuid(),
-            Name = eventRequest.Name,
-            Description = eventRequest.Description,
-            StartDate = eventRequest.StartDate,
-            EndDate = eventRequest.EndDate,
-            CategoryId = eventRequest.CategoryId,
+            Id = request.Id ?? Guid.NewGuid(),
+            Name = request.Name,
+            Description = request.Description,
+            StartDate = request.StartDate,
+            EndDate = request.EndDate,
+            CategoryId = request.CategoryId,
             UserId = userId,
         };
     }
 
-    public static Event ToEvent(this UpdateEventRequest eventRequest, Guid userId)
+    public static Event ToEvent(this EventUpdateRequest request, Guid userId)
     {
         return new Event
         {
-            Id = eventRequest.Id,
-            Name = eventRequest.Name,
-            Description = eventRequest.Description,
-            StartDate = eventRequest.StartDate,
-            EndDate = eventRequest.EndDate,
-            CategoryId = eventRequest.CategoryId,
+            Id = request.Id,
+            Name = request.Name,
+            Description = request.Description,
+            StartDate = request.StartDate,
+            EndDate = request.EndDate,
+            CategoryId = request.CategoryId,
             UserId = userId,
         };
     }

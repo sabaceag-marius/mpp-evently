@@ -41,11 +41,11 @@ public class EventMemoryRepository : IEventRepository
         return e;
     }
 
-    public async Task<Event?> UpdateAsync(Event e)
+    public async Task<Event?> UpdateAsync(Event group)
     {
-        data[e.Id] = e;
+        data[group.Id] = group;
 
-        return e;
+        return group;
     }
 
     public async Task DeleteAsync(Event e)

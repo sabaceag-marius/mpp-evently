@@ -2,7 +2,6 @@
 
 namespace Services.DTOs;
 
-//todo VALIDATOR
 public class GroupCreateRequest
 {
     public required String Name { get; set; } = String.Empty;
@@ -18,6 +17,13 @@ public class GroupResponse
 
     public IEnumerable<String> Usernames { get; set; }
 
+}
+
+public class GroupInviteResponse
+{
+    public bool InGroup { get; set; }
+
+    public GroupResponse Group { get; set; }
 }
 
 public static class GroupExtensions

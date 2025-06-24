@@ -43,13 +43,13 @@ public class GroupService : IGroupService
         };
     }
 
-    public async Task<ServiceResponse<GroupResponse>> GetGroupInvite(Guid id, Guid userId)
+    public async Task<ServiceResponse<GroupInviteResponse>> GetGroupInvite(Guid id, Guid userId)
     {
         Group group = await _groupRepository.GetByIdAsync(id);
 
         if (group.Id == Guid.Empty)
         {
-            return new ServiceResponse<GroupResponse>
+            return new ServiceResponse<GroupInviteResponse>
             {
                 IsError = true,
                 ErrorStatusCode = ErrorStatusCodes.NotFound,
@@ -57,19 +57,13 @@ public class GroupService : IGroupService
             };
         }
 
-        if (group.Users.Any(user => user.Id == userId))
+        return new ServiceResponse<GroupInviteResponse>
         {
-            return new ServiceResponse<GroupResponse>
+            Value = new GroupInviteResponse
             {
-                IsError = true,
-                ErrorStatusCode = ErrorStatusCodes.Unauthorized,
-                ErrorMessage = "You already joined this group"
-            };
-        }
-
-        return new ServiceResponse<GroupResponse>
-        {
-            Value = group.ToResponse()
+                Group = group.ToResponse(),
+                InGroup = group.Users.Any(user => user.Id == userId)
+            }
         };
     }
 
