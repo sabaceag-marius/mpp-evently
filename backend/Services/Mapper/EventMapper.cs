@@ -21,7 +21,8 @@ public static class EventMapper
             StartDate = e.StartDate,
             CategoryName = e.Category.Name,
             CategoryColor = e.Category.Color,
-            CategoryId = e.CategoryId
+            CategoryId = e.CategoryId,
+            GroupId = e.GroupId,
         };
     }
 
@@ -47,12 +48,21 @@ public static class EventMapper
         return specification;
     }
 
-    public static Specification<Event> ToSpecification(this FilterGroupEventRequest filterRequest, Guid groupId)
+    public static Specification<Event> ToSpecification(this FilterGroupEventRequest filterRequest, Guid groupId, IEnumerable<Guid> userIds)
     {
         Specification<Event> specification = new EventSpecificationGroup(groupId);
 
         specification =
             specification.And(new EventSpecificationInDateRange(filterRequest.StartDate, filterRequest.EndDate));
+
+        Specification<Event> usersSpecification = new NoneSpecification<Event>();
+
+        foreach (var userId in userIds)
+        {
+            usersSpecification = usersSpecification.Or(new EventSpecificationUser(userId));
+        }
+
+        specification = specification.And(usersSpecification);
 
         return specification;
     }
@@ -83,6 +93,7 @@ public static class EventMapper
             EndDate = request.EndDate,
             CategoryId = request.CategoryId,
             UserId = userId,
+            GroupId = request.GroupId,
         };
     }
 }

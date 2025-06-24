@@ -33,6 +33,7 @@ public class UserAuthResponse
 {
     public required bool Succeeded { get; set; }
     public required string Token { get; set; }
+    public required string Username { get; set; }
 }
 
 public class UserProfileResponse

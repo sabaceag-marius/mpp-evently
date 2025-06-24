@@ -188,7 +188,7 @@ public class GroupService : IGroupService
             };
         }
 
-        var specification = filterRequest.ToSpecification(groupId);
+        var specification = filterRequest.ToSpecification(groupId, group.Users.Select(u => u.Id));
 
         IEnumerable<Event> events;
         int count = -1;

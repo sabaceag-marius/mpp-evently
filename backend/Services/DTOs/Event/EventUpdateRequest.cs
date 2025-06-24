@@ -13,4 +13,6 @@ public class EventUpdateRequest
 
     public Guid CategoryId { get; set; }
 
+    public Guid? GroupId { get; set; }
+
 }

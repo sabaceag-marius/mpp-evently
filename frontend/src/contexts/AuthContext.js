@@ -9,17 +9,23 @@ const UserContext = createContext(null);
 export const UserProvider = ({children}) => {
     const navigate = useNavigate();
     const [token, setToken] = useState(null);
+    const [username, setUsername] = useState(null);
     const [isReady, setIsReady] = useState(false);
     const [loggedStatus,setLoggedStatus] = useState(false);
     useEffect(() => {
 
         const token = localStorage.getItem("token");
-
+        const username = localStorage.getItem("username");
         if (token) {
 
             setToken(token);
             axios.defaults.headers.common["Authorization"] = "Bearer " + token;
         }
+
+        if(username){
+            setUsername(username);
+        }
+
         setIsReady(true);
     }, [loggedStatus]);
 
@@ -35,8 +41,11 @@ export const UserProvider = ({children}) => {
         // Store in local storage
 
         localStorage.setItem('token', result?.token);
+        localStorage.setItem('username',result?.username);
+
 
         setToken(result?.token);
+        setUsername(result?.username);
         setLoggedStatus(true);
 
         navigate('/events');
@@ -52,9 +61,11 @@ export const UserProvider = ({children}) => {
         // Store in local storage
 
         localStorage.setItem('token',result?.token);
+        localStorage.setItem('username',result?.username);
 
 
         setToken(result?.token);
+        setUsername(result?.username);
         setLoggedStatus(true);
 
         navigate('/events');
@@ -71,9 +82,12 @@ export const UserProvider = ({children}) => {
         // Store in local storage
 
         localStorage.setItem('token',result?.token);
+        localStorage.setItem('username',result?.username);
 
 
         setToken(result?.token);
+        setUsername(result?.username);
+
         setLoggedStatus(true);
 
         navigate('/events');
@@ -86,8 +100,9 @@ export const UserProvider = ({children}) => {
 
     const logoutUser = () => {
         localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        localStorage.removeItem("username");
         setToken(null);
+        setUsername(null);
         axios.defaults.headers.common["Authorization"] = "";
         setLoggedStatus(false);
 
@@ -96,7 +111,7 @@ export const UserProvider = ({children}) => {
 
 
     return (
-        <UserContext.Provider value={{loginUser, registerUser, logoutUser, token, isLoggedIn, loginUser2FA}}>
+        <UserContext.Provider value={{loginUser, registerUser, logoutUser, token, isLoggedIn, loginUser2FA, username}}>
             {isReady ? children : null}
         </UserContext.Provider>
     )

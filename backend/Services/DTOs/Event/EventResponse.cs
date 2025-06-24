@@ -23,4 +23,5 @@ public class EventResponse()
     public required string CategoryName { get; set; } = "";
     public required string CategoryColor { get; set; } = "";
 
+    public Guid? GroupId { get; set; }
 }

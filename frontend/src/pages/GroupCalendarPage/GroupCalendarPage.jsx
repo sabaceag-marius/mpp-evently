@@ -197,7 +197,7 @@ export default function GroupCalendarPage() {
 
     // endregion
 
-    
+    console.log(events);
 
     const eventsElements = events.map((e, index) => Math.floor(events.length / 3 * 2) === index ?  
         <EventCard ref = {eventElementRef} event={e} key={e.id} /> 
