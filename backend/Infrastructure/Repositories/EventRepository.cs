@@ -22,7 +22,7 @@ public class EventRepository : IEventRepository
             .Include(e => e.Category).ToListAsync();
     }
 
-    public async Task<Event?> GetByIdAsync(Guid id)
+    public async Task<Event> GetByIdAsync(Guid id)
     {
         var event_ = await _dbContext.Events
             .Include(e => e.User)

@@ -17,19 +17,25 @@ public class GroupRepository : IGroupRepository
         throw new NotImplementedException();
     }
 
-    public async Task<Group?> GetByIdAsync(Guid id)
+    public async Task<Group> GetByIdAsync(Guid id)
     {
-        throw new NotImplementedException();
+        return await _dbContext.Groups.Include(group => group.Users)
+            .FirstOrDefaultAsync(group => group.Id == id) ?? new Group();
     }
 
     public async Task<Group?> GetByIdNoTracking(Guid id)
     {
-        throw new NotImplementedException();
+        return await _dbContext.Groups.AsNoTracking().Include(group => group.Users)
+            .FirstOrDefaultAsync(group => group.Id == id) ?? new Group();
     }
 
     public Group? Add(Group t)
     {
-        throw new NotImplementedException();
+        _dbContext.Add(t);
+
+        _dbContext.SaveChanges();
+
+        return t;
     }
 
     public async Task<Group?> UpdateAsync(Group t)

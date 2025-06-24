@@ -12,6 +12,7 @@ import CategoriesPage from '../pages/CategoriesPage/CategoriesPage';
 import LandingPage from '../pages/LandingPage/LandingPage';
 import GroupCalendarPage from '../pages/GroupCalendarPage/GroupCalendarPage';
 import GroupsPage from '../pages/GroupsPage/GroupsPage';
+import GroupDetailsPage from '../pages/GroupDetailsPage/GroupDetailsPage';
 
 export const router = createBrowserRouter([
     {
@@ -23,7 +24,7 @@ export const router = createBrowserRouter([
             {path: "/events", element:<AuthentificatedRoute redirectPage='/login'><EventsPage /></AuthentificatedRoute>},
             {path: "/groups", element:<AuthentificatedRoute redirectPage='/login'><GroupsPage /></AuthentificatedRoute>},
             {path: "/groups/:id", element:<AuthentificatedRoute redirectPage='/login'><GroupCalendarPage /></AuthentificatedRoute>},
-            // {path: "/groups/:id", element:<AuthentificatedRoute redirectPage='/login'><GroupCalendarPage /></AuthentificatedRoute>},
+            {path: "/groups/details/:id", element:<AuthentificatedRoute redirectPage='/login'><GroupDetailsPage /></AuthentificatedRoute>},
             {path: "/categories", element:<AuthentificatedRoute redirectPage='/login'><CategoriesPage /></AuthentificatedRoute>},
             {path: "/profile", element:<AuthentificatedRoute redirectPage='/login'><ProfilePage /></AuthentificatedRoute>},
             {path: "/events/:id", element:<AuthentificatedRoute redirectPage='/login'><EventDetailsPage /></AuthentificatedRoute>},

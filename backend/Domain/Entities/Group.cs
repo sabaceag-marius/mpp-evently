@@ -1,17 +1,18 @@
-﻿using Infrastructure.Entities;
+﻿using System.Diagnostics.CodeAnalysis;
+using Infrastructure.Entities;
 
 namespace Domain.Entities;
 
-public class Group
+[method: SetsRequiredMembers]
+public class Group()
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.Empty;
 
     public required String Name { get; set; } = String.Empty;
     
     public required String Description { get; set; } = String.Empty;
 
     public List<User> Users { get; set; }
-    public List<Event> Events { get; set; }
-    public List<GroupUsers> GroupUsers { get; set; }
+    //public List<Event> Events { get; set; }
 
 }

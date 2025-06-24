@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { data, useNavigate, useParams } from 'react-router';
 import { deleteEvent, getEvent } from '../../services/eventsService';
 import UpdateEventModal from '../../components/UpdateEventModal/UpdateEventModal';
 import style from './EventDetails.module.css';
@@ -12,7 +12,8 @@ function EventDetailsPage() {
     
     useEffect(() =>{
         
-        getEvent(id).then(r => setEvent(r))
+        getEvent(id).then(r => setEvent(r));
+
     },[]);
 
     const navigate = useNavigate();

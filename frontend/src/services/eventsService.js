@@ -6,6 +6,7 @@ import { useState } from "react";
 import { restoreTextDirection } from "chart.js/helpers";
 import { useOfflineSupport } from "../contexts/OfflineSupportContext";
 import { Guid } from 'js-guid';
+import { data } from 'react-router';
 
 const api = process.env.REACT_APP_API_URL;
 

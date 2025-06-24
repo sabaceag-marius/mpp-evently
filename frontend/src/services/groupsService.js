@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = process.env.REACT_APP_API_URL;
 
-export async function getGroupsAPI(){
+export const getGroupsAPI = async() => {
 
     try{
         const response = await axios.get(api+'/groups');
@@ -12,4 +12,15 @@ export async function getGroupsAPI(){
         console.log(error);
     }
 
+}
+
+export const getGroupAPI = async (id) => {
+    
+    try{
+        const response = await axios.get(api+"/groups/"+id);
+        return response.data;
+    }
+    catch (error){
+        console.log(error);
+    }
 }

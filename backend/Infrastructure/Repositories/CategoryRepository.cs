@@ -18,9 +18,9 @@ public class CategoryRepository : ICategoryRepository
         return await _dbContext.Categories.ToListAsync();
     }
 
-    public async Task<Category?> GetByIdAsync(Guid id)
+    public async Task<Category> GetByIdAsync(Guid id)
     {
-        return await _dbContext.Categories.FirstOrDefaultAsync(e => e.Id == id);
+        return await _dbContext.Categories.FirstOrDefaultAsync(e => e.Id == id) ?? new Category();
     }
 
     public async Task<Category?> GetByIdNoTracking(Guid id)

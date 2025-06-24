@@ -2,6 +2,13 @@
 
 namespace Services.DTOs;
 
+//todo VALIDATOR
+public class GroupCreateRequest
+{
+    public required String Name { get; set; } = String.Empty;
+    public String Description { get; set; } = String.Empty;
+}
+
 public class GroupResponse
 {
     public Guid Id { get; set; }
@@ -23,6 +30,17 @@ public static class GroupExtensions
             Name = group.Name,
             Description = group.Description,
             Usernames = group.Users.Select(user => user.UserName),
+        };
+    }
+
+    public static Group ToGroup(this GroupCreateRequest request, User user)
+    {
+        return new Group
+        {
+            Id = Guid.NewGuid(),
+            Name = request.Name,
+            Description = request.Description,
+            Users = [user],
         };
     }
 }

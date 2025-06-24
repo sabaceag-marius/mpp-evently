@@ -1,12 +1,12 @@
 :root{
   --primary: #1FA7F1;
    --primary-light: #4fbaf4 ; 
-  /*--primary-dark: #2b93a1 ; */
+  --primary-dark: #2b93a1 ;
   --primary-content: #EEEEEE;
   --secondary-content: #CCCCCC;
-  /* --secondary: #c94736;
+  --secondary: #c94736;
   --secondary-light: #d46c5e;
-  --secondary-dark: #a1392b; */
+  --secondary-dark: #a1392b;
 
   --background: #1E1E1E;
   --foreground: #393939;
@@ -63,6 +63,25 @@ body{
   background-color: var(--primary-light);
   cursor: pointer;
 }
+
+.secondary--button{
+  
+  border-radius: 0.75rem;
+  padding: calc((8px + 1.171875vw)/2) calc((8px + 0.78125vw));
+  font-size: 1.125rem;
+  font-weight: 500;
+  transition: .2s ease-in;
+
+  border: none;
+  background-color: var(--secondary);
+  color: var(--secondary-content);
+}
+
+.secondary--button:hover{
+  background-color: var(--secondary-light);
+  cursor: pointer;
+}
+
 
 .outline--button{
 

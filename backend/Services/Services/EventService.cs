@@ -125,9 +125,9 @@ public class EventService : IEventService
     public async Task<ServiceResponse<EventResponse>> UpdateEvent(Guid eventId, UpdateEventRequest eventRequest,
         User user)
     {
-        Category? category = await _categoryRepository.GetByIdAsync(eventRequest.CategoryId);
+        Category category = await _categoryRepository.GetByIdAsync(eventRequest.CategoryId);
 
-        if (category == null || category.Id == Guid.Empty)
+        if (category.Id == Guid.Empty)
         {
             return new ServiceResponse<EventResponse>
             {

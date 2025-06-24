@@ -21,7 +21,7 @@ export default function GroupCard({group}){
     }
 
     return(
-        <div className={style.container}>
+        <Link to={`/groups/details/${group.id}`} className={style.container}>
             <div className={style.textSection}>
                 <h3>{group.name}</h3>
                 <p>{getDisplayUsers()}</p>
@@ -29,6 +29,6 @@ export default function GroupCard({group}){
 
             <Link to={`/groups/${group.id}`} className={`${style.joinButton} primary--button`}>Enter</Link>
             
-        </div>
+        </Link>
     )
 }

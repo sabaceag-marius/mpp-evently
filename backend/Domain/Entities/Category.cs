@@ -1,8 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Domain.Entities;
 
-public class Category
+[method: SetsRequiredMembers]
+public class Category()
 {
     public Guid Id { get; set; } = Guid.Empty;
 

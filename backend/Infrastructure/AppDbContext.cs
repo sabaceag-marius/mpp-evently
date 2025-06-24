@@ -14,8 +14,8 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     public DbSet<Event> Events { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Group> Groups { get; set; }
-    public DbSet<GroupEvents> GroupEvents { get; set; }
-    public DbSet<GroupUsers> GroupUsers { get; set; }
+    //public DbSet<GroupEvents> GroupEvents { get; set; }
+    //public DbSet<GroupUsers> GroupUsers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
