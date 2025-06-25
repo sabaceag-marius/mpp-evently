@@ -4,11 +4,14 @@ import { getGroupsAPI } from '../../services/groupsService';
 import GroupCard from '../../components/GroupCard/GroupCard';
 import CreateGroupModal from '../../components/CreateGroupModal/CreateGroupModal';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import { useNavigate } from 'react-router';
 
 export default function GroupsPage({}){
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     
+    const navigate = useNavigate();
+
     const openModal = () => {
         setIsModalOpen(true)
     }
@@ -46,7 +49,7 @@ export default function GroupsPage({}){
             <CreateGroupModal  
                 isOpen={isModalOpen}
                 closeModal={closeModal} 
-             submitHandler={()=>{}} 
+             submitHandler={(group)=>{navigate(`/groups/${group.id}`)}} 
             />
         </>
 
