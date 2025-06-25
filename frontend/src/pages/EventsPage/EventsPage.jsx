@@ -12,6 +12,7 @@ import { useOfflineSupport } from '../../contexts/OfflineSupportContext';
 import { getCategoriesAPI } from '../../services/categoriesService';
 
 import CalendarView from '../../components/CalendarView/CalendarView';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 
 function EventsPage() {
     // region Filters
@@ -24,7 +25,7 @@ function EventsPage() {
 
     const [queryData, setQueryData] = useState(DEFAULT_QUERY_DATA);
     const [categories, setCategories] = useState([]);
-
+    const [isLoading, setIsLoading] = useState(true);
     useEffect(() =>{
 
         getCategoriesAPI().then(data => {
@@ -35,6 +36,8 @@ function EventsPage() {
         
         setCategories(data);
         })
+
+        setIsLoading(false);
         
     }, []);
 
@@ -250,8 +253,12 @@ function EventsPage() {
                         <fieldset className='filter--fieldset'>
                             <label className='label'>Categories</label>
                             
-                            <CheckboxInput id='all' label='All' isChecked={arraysEqual(queryData.categories,categories.map(c => c.id))} checkHandler={checkboxAllHandler}/>
-                            {checkboxElements}
+                            { isLoading ? <LoadingSpinner isLoading={isLoading} /> :
+                                <>
+                                    <CheckboxInput id='all' label='All' isChecked={arraysEqual(queryData.categories,categories.map(c => c.id))} checkHandler={checkboxAllHandler}/>
+                                    {checkboxElements}
+                                </>
+                            }
                         </fieldset>
                     </form>
                 </div>

@@ -187,3 +187,6 @@ fieldset{
   border: none;
 }
 
+.spinner{
+  align-self: center;
+}

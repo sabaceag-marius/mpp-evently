@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { getGroupAPI, leaveGroupAPI } from "../../services/groupsService";
 import style from './GroupDetailsPage.module.css';
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 export default function GroupDetailsPage(){
 
@@ -10,8 +11,10 @@ export default function GroupDetailsPage(){
 
     const navigate = useNavigate();
 
+    const [isLoading, setIsLoading] = useState(true);
     useEffect(() =>{
         getGroupAPI(id).then(data => setGroup(data));
+        setIsLoading(false);
     },[]);
 
     const leaveGroup = async () => {
@@ -55,7 +58,7 @@ export default function GroupDetailsPage(){
     return(
 
         <div className='center'>
-            { group &&
+            { !group || isLoading ? <LoadingSpinner isLoading={isLoading} /> :
 
                 <div className={style.container}>
                     <div className={style.section}>
