@@ -1,7 +1,10 @@
-﻿using Domain.Entities;
+﻿using Azure.Core;
+using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Services.DTOs.Event;
+using Services.Hub;
 using Services.Interfaces;
 using Services.Mapper;
 
@@ -11,11 +14,13 @@ public class EventService : IEventService
 {
     private readonly IEventRepository _eventRepository;
     private readonly ICategoryRepository _categoryRepository;
+    private readonly IHubContext<GroupEventsHub> _hubContext;
 
-    public EventService(IEventRepository eventRepository, ICategoryRepository categoryRepository)
+    public EventService(IEventRepository eventRepository, ICategoryRepository categoryRepository, IHubContext<GroupEventsHub> hubContext)
     {
         _eventRepository = eventRepository;
         _categoryRepository = categoryRepository;
+        _hubContext = hubContext;
     }
     public async Task<ServiceResponse<IEnumerable<EventResponse>>> GetAllEvents()
     {
@@ -116,6 +121,11 @@ public class EventService : IEventService
         eventObj.Category = category;
         eventObj.User = user;
 
+        if (request.GroupId != null)
+        {
+            await _hubContext.Clients.All.SendAsync("PingUpdateEvents", request.GroupId.Value);
+        }
+
         return new ServiceResponse<EventResponse>
         {
             Value = eventObj.ToResponse()
@@ -167,6 +177,12 @@ public class EventService : IEventService
         eventObj.Category = category;
         eventObj.User = user;
 
+        if (request.GroupId != null)
+        {
+            await _hubContext.Clients.All.SendAsync("PingUpdateEvents", request.GroupId.Value);
+
+        }
+
         return new ServiceResponse<EventResponse>
         {
             Value = eventObj.ToResponse()
@@ -176,6 +192,8 @@ public class EventService : IEventService
     public async Task<ServiceResponse> DeleteEvent(Guid eventId, Guid userId)
     {
         var e = await _eventRepository.GetByIdNoTracking(eventId);
+
+        Guid? groupId = e.GroupId;
 
         if (e.Id == Guid.Empty || e.UserId != userId)
         {
@@ -188,6 +206,12 @@ public class EventService : IEventService
         }
 
         await _eventRepository.DeleteAsync(e);
+
+        if (groupId != null)
+        {
+            await _hubContext.Clients.All.SendAsync("PingUpdateEvents", groupId.Value);
+
+        }
 
         return new ServiceResponse();
     }

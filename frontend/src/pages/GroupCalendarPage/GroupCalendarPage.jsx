@@ -13,6 +13,8 @@ import { getCategoriesAPI } from '../../services/categoriesService';
 import CalendarView from '../../components/CalendarView/CalendarView';
 import { useParams } from 'react-router';
 
+import * as signalR from '@microsoft/signalr'
+
 export default function GroupCalendarPage() {
 
     const groupId = useParams().id;
@@ -28,6 +30,15 @@ export default function GroupCalendarPage() {
     const [queryData, setQueryData] = useState(DEFAULT_QUERY_DATA);
     const [categories, setCategories] = useState([]);
 
+    const [connection, setConnection] = useState(null);
+
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const [calendarView,setCalendarView] = useState(true);
+
+    const {events, setEvents, hasMore, loading, resetQuery, updateStoredEvents} = useEventQuery(queryData, currentPage, setCurrentPage, calendarView, groupId, true);
+
+
     useEffect(() =>{
 
         getCategoriesAPI().then(data => {
@@ -38,8 +49,32 @@ export default function GroupCalendarPage() {
         
         setCategories(data);
         })
+        const newConnection = new signalR.HubConnectionBuilder()
+            .withUrl(`${process.env.REACT_APP_API_URL}/grouphub`,{
+                skipNegotiation: true,
+                transport: signalR.HttpTransportType.WebSockets,
+            })
+            .withAutomaticReconnect()
+            .build();
+        
+        setConnection(newConnection);
         
     }, []);
+
+    useEffect(() =>{
+        if(connection){
+
+            connection.start().then(() =>{
+                connection.on('PingUpdateEvents', id => {
+                    if(id !== groupId) return;
+
+                    resetQuery();
+                })
+            })
+            .catch(e => console.log('Connection failed: ', e))
+
+        }
+    },[connection])
     
     function getDate(){
         return queryData.dateInterval === 'Day' ? queryData.dateMoment.utc().format('Do MMMM YYYY') 
@@ -158,7 +193,6 @@ export default function GroupCalendarPage() {
     
 // region Calendar View
 
-    const [calendarView,setCalendarView] = useState(true);
 
     const [timeIntervals, setTimeIntervals] = useState({
         startTime: "00:00",
@@ -174,8 +208,6 @@ export default function GroupCalendarPage() {
 
     // region Events
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const {events, setEvents, hasMore, loading, resetQuery, updateStoredEvents} = useEventQuery(queryData, currentPage, setCurrentPage, calendarView, groupId, true);
 
     const observer = useRef();
 
@@ -196,8 +228,6 @@ export default function GroupCalendarPage() {
     },[loading,hasMore]);
 
     // endregion
-
-    console.log(events);
 
     const eventsElements = events.map((e, index) => Math.floor(events.length / 3 * 2) === index ?  
         <EventCard ref = {eventElementRef} event={e} key={e.id} /> 

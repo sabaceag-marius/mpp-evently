@@ -22,6 +22,9 @@ export default function GroupsPage({}){
     const [groups, setGroups] = useState(null)
 
     const[isLoading, setIsLoading] = useState(true);
+
+    const [connection, setConnection] = useState(null);
+
     useEffect(()=>{
 
         getGroupsAPI().then(data => setGroups(data));
@@ -29,6 +32,8 @@ export default function GroupsPage({}){
     },[])
 
     const groupComponents = groups ? groups.map(group => <GroupCard key={group.id} group={group}/>) : <></>
+
+    
 
     return(
 
