@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Services.Hub;
 using Services.Interfaces;
 using Services.Services;
 
@@ -110,11 +111,15 @@ builder.Services.AddAuthentication(options =>
 //DI
 
 builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddTransient<IEmailSender,EmailSender>();
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -139,6 +144,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-
+app.MapHub<GroupEventsHub>("/api/grouphub");
 
 app.Run();

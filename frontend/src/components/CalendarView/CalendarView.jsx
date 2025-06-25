@@ -9,11 +9,14 @@ import { toCalendarViewEvent, toUpdateEventRequest } from '../../utils/calendarV
 import { getMoment } from "../../utils/momentUtils";
 
 import './CalendarView.css';
+import { useAuth } from "../../contexts/AuthContext";
 
 export default function CalendarView({events, queryData, setQueryData, isModalOpen, 
     openModal, updateStoredEvents}){
-
+    
     const navigate = useNavigate();
+
+    const {username} = useAuth();
 
     const viewMap = {
         Month: "dayGridMonth",
@@ -62,13 +65,14 @@ export default function CalendarView({events, queryData, setQueryData, isModalOp
     }
 
     function handleEventClick(eventClickInfo){
-        navigate(`/events/${eventClickInfo.event.id}`);   
+        if(eventClickInfo.event.extendedProps.username === username)
+            navigate(`/events/${eventClickInfo.event.id}`);   
     }
 
     async function handleEventResize(eventResizeInfo){
 
         const event = toUpdateEventRequest(eventResizeInfo.event);
-        console.log(event);
+        console.log(event,eventResizeInfo.event);
         await updateEvent(event.id, event);
 
         // setEventsUpdated(true);
@@ -76,7 +80,7 @@ export default function CalendarView({events, queryData, setQueryData, isModalOp
         updateStoredEvents(event.id, eventResizeInfo.event.start, eventResizeInfo.event.end);
     }
 
-    const calendarViewEvents = events.map(e => toCalendarViewEvent(e, queryData.dateMoment, queryData.dateInterval))
+    const calendarViewEvents = events.map(e => toCalendarViewEvent(e, queryData.dateMoment, queryData.dateInterval, username))
 
     return(
 
@@ -113,6 +117,12 @@ export default function CalendarView({events, queryData, setQueryData, isModalOp
                     meridiem: false // Optional
                 }}
                 moreLinkClick={'disabled'}
+                eventStartEditable={(event) => event.extendedProps.username === username}
+                eventDurationEditable={(event) => event.extendedProps.username === username}
+
+                eventClassNames={(arg) => {
+                    return arg.event.extendedProps.username === username ? 'editable-event' : 'non-editable-event';
+                }}
             />
         </div>
     )

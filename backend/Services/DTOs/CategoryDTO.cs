@@ -2,14 +2,14 @@
 
 namespace Services.DTOs;
 
-public class UpdateCategoryRequest
+public class CategoryUpdateRequest
 {
     public required Guid Id { get; set; } = Guid.Empty;
     public required string Name { get; set; } = "";
     public required string Color { get; set; } = "";
 }
 
-public class AddCategoryRequest
+public class CategoryAddRequest
 {
     public required string Name { get; set; } = "";
     public required string Color { get; set; } = "";
@@ -34,7 +34,7 @@ public static class CategoryExtensions
         };
     }
 
-    public static Category ToCategory(this UpdateCategoryRequest request, Guid userId)
+    public static Category ToCategory(this CategoryUpdateRequest request, Guid userId)
     {
         return new Category
         {
@@ -45,7 +45,7 @@ public static class CategoryExtensions
         };
     }
 
-    public static Category ToCategory(this AddCategoryRequest request, Guid userId)
+    public static Category ToCategory(this CategoryAddRequest request, Guid userId)
     {
         return new Category
         {

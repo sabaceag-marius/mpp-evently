@@ -5,6 +5,7 @@ import styles from "./CategoriesPage.module.css";
 import ColorPicker from "../../components/ColorPicker/ColorPicker";
 import { colors } from "@mui/material";
 import { CreateCategoryModal } from "../../components/CreateCategoryModal/CreateCategoryModal";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 export default function CategoriesPage({}){
 
@@ -20,12 +21,17 @@ export default function CategoriesPage({}){
 
     const [categories, setCategories] = useState([]);
     
+    const [isLoading, setIsLoading] = useState(true);
+
+
     useEffect(() =>{
 
 
         getCategoriesAPI().then(data => {      
             setCategories(data);
         })
+
+        setIsLoading(false);
         
     }, []);
 
@@ -74,9 +80,11 @@ export default function CategoriesPage({}){
             
             <h2>Your categories</h2>
 
-            <div className={styles.categoryContainer}>
-                {categoryComponents}
-            </div>
+            { isLoading ? <LoadingSpinner isLoading={isLoading} /> :
+                <div className={styles.categoryContainer}>
+                    {categoryComponents}
+                </div>
+            }
 
             <div className={styles.buttonContainer}>
                 <button className="primary--button" onClick={openModal}>Add</button>

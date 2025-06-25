@@ -1,7 +1,10 @@
 ﻿using Domain.Entities;
+using Infrastructure.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure;
 
@@ -10,6 +13,9 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
     public DbSet<Event> Events { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<Group> Groups { get; set; }
+    //public DbSet<GroupEvents> GroupEvents { get; set; }
+    //public DbSet<GroupUsers> GroupUsers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -28,9 +34,6 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
                 NormalizedName = "USER"
             }
         };
-
-        builder.Entity<IdentityRole>().HasData(roles);
-
     }
 
     public AppDbContext(DbContextOptions<AppDbContext> context) : base(context)

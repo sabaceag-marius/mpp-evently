@@ -151,7 +151,7 @@ namespace Presentation.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateEvent([FromBody] CreateEventRequest eventRequest)
+        public async Task<IActionResult> CreateEvent([FromBody] EventCreateRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -180,7 +180,7 @@ namespace Presentation.Controllers
 
             var user = userResponse.Value;
 
-            var validate = EventValidator.ValidateEvent(eventRequest);
+            var validate = EventValidator.ValidateEvent(request);
 
             if (validate.IsError)
             {
@@ -190,7 +190,7 @@ namespace Presentation.Controllers
                 };
             }
 
-            var response = await _eventService.CreateEvent(eventRequest, user);
+            var response = await _eventService.CreateEvent(request, user);
 
             if (response.IsError)
             {
@@ -252,7 +252,7 @@ namespace Presentation.Controllers
         [Authorize]
         [HttpPut]
         [Route("{id}")]
-        public async Task<IActionResult> UpdateEvent([FromRoute] Guid id, [FromBody] UpdateEventRequest eventRequest)
+        public async Task<IActionResult> UpdateEvent([FromRoute] Guid id, [FromBody] EventUpdateRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -281,7 +281,7 @@ namespace Presentation.Controllers
 
             var user = userResponse.Value;
 
-            var validate = EventValidator.ValidateEvent(id, eventRequest);
+            var validate = EventValidator.ValidateEvent(id, request);
 
             if (validate.IsError)
             {
@@ -291,7 +291,7 @@ namespace Presentation.Controllers
                 };
             }
 
-            var response = await _eventService.UpdateEvent(id,eventRequest, user);
+            var response = await _eventService.UpdateEvent(id,request, user);
 
             if (response.IsError)
             {

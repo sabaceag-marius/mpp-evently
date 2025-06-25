@@ -5,7 +5,7 @@ namespace Services.Validator;
 
 public static class CategoryValidator
 {
-    public static ServiceResponse ValidateCategory(UpdateCategoryRequest request)
+    public static ServiceResponse ValidateCategory(CategoryUpdateRequest request)
     {
         string errorMessage = "";
 
@@ -29,7 +29,7 @@ public static class CategoryValidator
         return new ServiceResponse();
     }
 
-    public static ServiceResponse ValidateCategory(AddCategoryRequest request)
+    public static ServiceResponse ValidateCategory(CategoryAddRequest request)
     {
         string errorMessage = "";
 

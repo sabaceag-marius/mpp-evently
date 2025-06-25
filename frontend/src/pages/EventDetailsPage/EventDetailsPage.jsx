@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { data, useNavigate, useParams } from 'react-router';
 import { deleteEvent, getEvent } from '../../services/eventsService';
 import UpdateEventModal from '../../components/UpdateEventModal/UpdateEventModal';
 import style from './EventDetails.module.css';
 import { getMoment } from '../../utils/momentUtils';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 
 function EventDetailsPage() {
 
     const id = useParams().id;
     const [event,setEvent] = useState(null);
     
+        const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() =>{
         
-        getEvent(id).then(r => setEvent(r))
+        getEvent(id).then(r => setEvent(r));
+
+        setIsLoading(false);
+
     },[]);
 
     const navigate = useNavigate();
@@ -59,7 +65,7 @@ function EventDetailsPage() {
 
     return (
         <div className='center'>
-            { event &&
+            { !event || isLoading ? <LoadingSpinner isLoading={isLoading} />  :
 
                 <div style={borderStyle} className={style.container}>
                     <div>
@@ -72,7 +78,7 @@ function EventDetailsPage() {
 
                     <div className={style.buttonContainer}> 
 
-                        <button className='primary--button'
+                        <button className='secondary--button'
                         onClick={OnDeleteEvent}>Delete</button>
 
                         <button onClick={openUpdateModal} className='primary--button'>Edit</button>
