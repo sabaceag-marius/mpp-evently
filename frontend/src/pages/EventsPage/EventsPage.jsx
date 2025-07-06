@@ -12,19 +12,20 @@ import { useOfflineSupport } from '../../contexts/OfflineSupportContext';
 import { getCategoriesAPI } from '../../services/categoriesService';
 
 import CalendarView from '../../components/CalendarView/CalendarView';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 
 function EventsPage() {
     // region Filters
 
     const DEFAULT_QUERY_DATA = {
         dateMoment : getMoment(),
-        dateInterval : "Day",
+        dateInterval : "Month",
         categories : []
     }
 
     const [queryData, setQueryData] = useState(DEFAULT_QUERY_DATA);
     const [categories, setCategories] = useState([]);
-
+    const [isLoading, setIsLoading] = useState(true);
     useEffect(() =>{
 
         getCategoriesAPI().then(data => {
@@ -35,6 +36,8 @@ function EventsPage() {
         
         setCategories(data);
         })
+
+        setIsLoading(false);
         
     }, []);
 
@@ -174,7 +177,7 @@ function EventsPage() {
     // region Events
 
     const [currentPage, setCurrentPage] = useState(1);
-    const {events, hasMore, loading, resetQuery, updateStoredEvents} = useEventQuery(queryData, currentPage, setCurrentPage, calendarView);
+    const {events, hasMore, loading, resetQuery, updateStoredEvents} = useEventQuery(queryData, currentPage, setCurrentPage, calendarView, undefined);
 
     const observer = useRef();
 
@@ -250,8 +253,12 @@ function EventsPage() {
                         <fieldset className='filter--fieldset'>
                             <label className='label'>Categories</label>
                             
-                            <CheckboxInput id='all' label='All' isChecked={arraysEqual(queryData.categories,categories.map(c => c.id))} checkHandler={checkboxAllHandler}/>
-                            {checkboxElements}
+                            { isLoading ? <LoadingSpinner isLoading={isLoading} /> :
+                                <>
+                                    <CheckboxInput id='all' label='All' isChecked={arraysEqual(queryData.categories,categories.map(c => c.id))} checkHandler={checkboxAllHandler}/>
+                                    {checkboxElements}
+                                </>
+                            }
                         </fieldset>
                     </form>
                 </div>
@@ -289,6 +296,7 @@ function EventsPage() {
             dateMoment={queryData.dateMoment}
             startTime={timeIntervals.startTime}
             endTime={timeIntervals.endTime}
+            groupId={null}
         />
     </>
   )

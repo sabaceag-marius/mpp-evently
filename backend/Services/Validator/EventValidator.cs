@@ -5,18 +5,18 @@ namespace Services.Validator;
 
 public static class EventValidator
 {
-    public static ServiceResponse ValidateEvent(CreateEventRequest eventRequest)
+    public static ServiceResponse ValidateEvent(EventCreateRequest request)
     {
         string errorMessage = "";
 
-        if (String.IsNullOrWhiteSpace(eventRequest.Name))
+        if (String.IsNullOrWhiteSpace(request.Name))
             errorMessage += "Name can't be empty!\n";
 
-        if (eventRequest.StartDate >= eventRequest.EndDate)
+        if (request.StartDate >= request.EndDate)
             errorMessage += "End date can't be before the start date!\n";
 
-        //if (String.IsNullOrWhiteSpace(eventRequest.CategoryName)
-        //    || eventRequest.CategoryName.ToCategoryType() == CategoryType.None)
+        //if (String.IsNullOrWhiteSpace(request.CategoryName)
+        //    || request.CategoryName.ToCategoryType() == CategoryType.None)
 
         //    errorMessage += "CategoryDTO name is not valid!\n";
 
@@ -31,17 +31,17 @@ public static class EventValidator
         return new ServiceResponse();
     }
 
-    public static ServiceResponse ValidateEvent(Guid id, UpdateEventRequest eventRequest)
+    public static ServiceResponse ValidateEvent(Guid id, EventUpdateRequest request)
     {
         string errorMessage = "";
 
-        if (eventRequest.Id == Guid.Empty || id != eventRequest.Id)
+        if (request.Id == Guid.Empty || id != request.Id)
             errorMessage += "Id is not valid!\n";
 
-        if (String.IsNullOrWhiteSpace(eventRequest.Name))
+        if (String.IsNullOrWhiteSpace(request.Name))
             errorMessage += "Name can't be empty!\n";
 
-        if (eventRequest.StartDate >= eventRequest.EndDate)
+        if (request.StartDate >= request.EndDate)
             errorMessage += "End date can't be before the start date!\n";
 
         if (!String.IsNullOrEmpty(errorMessage))

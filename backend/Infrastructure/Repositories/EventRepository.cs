@@ -22,7 +22,7 @@ public class EventRepository : IEventRepository
             .Include(e => e.Category).ToListAsync();
     }
 
-    public async Task<Event?> GetByIdAsync(Guid id)
+    public async Task<Event> GetByIdAsync(Guid id)
     {
         var event_ = await _dbContext.Events
             .Include(e => e.User)
@@ -54,13 +54,13 @@ public class EventRepository : IEventRepository
         return e;
     }
 
-    public async Task<Event?> UpdateAsync(Event e)
+    public async Task<Event?> UpdateAsync(Event group)
     {
-        _dbContext.Events.Update(e);
+        _dbContext.Events.Update(group);
 
         await _dbContext.SaveChangesAsync();
 
-        return e;
+        return group;
     }
 
     public async Task DeleteAsync(Event e)

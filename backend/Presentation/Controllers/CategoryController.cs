@@ -99,7 +99,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCategory( AddCategoryRequest request)
+        public async Task<IActionResult> CreateCategory( CategoryAddRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -152,7 +152,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPut("range")]
-        public async Task<IActionResult> UpdateUserCategories(IEnumerable<UpdateCategoryRequest> requests)
+        public async Task<IActionResult> UpdateUserCategories(IEnumerable<CategoryUpdateRequest> requests)
         {
             if (!ModelState.IsValid)
             {

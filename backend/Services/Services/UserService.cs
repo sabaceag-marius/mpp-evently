@@ -64,7 +64,8 @@ public class UserService : IUserService
             Value = new UserAuthResponse
             {
                 Token = CreateToken(user),
-                Succeeded = false
+                Succeeded = false,
+                Username = user.UserName
             }
         };
     }
@@ -121,7 +122,8 @@ public class UserService : IUserService
                 Value = new UserAuthResponse
                 {
                     Token = "",
-                    Succeeded = false
+                    Succeeded = false,
+                    Username = ""
                 }
             };
         }
@@ -131,7 +133,8 @@ public class UserService : IUserService
             Value = new UserAuthResponse
             {
                 Token = CreateToken(user),
-                Succeeded = true
+                Succeeded = true,
+                Username = user.UserName,
             }
         };
     }
@@ -167,7 +170,8 @@ public class UserService : IUserService
             Value = new UserAuthResponse
             {
                 Token = CreateToken(user),
-                Succeeded = true
+                Succeeded = true,
+                Username = user.UserName,
             }
         };
     }

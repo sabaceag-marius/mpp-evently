@@ -65,7 +65,7 @@ public class CategoryService : ICategoryService
         return new ServiceResponse();
     }
 
-    public async Task<ServiceResponse> UpdateUserCategories(IEnumerable<UpdateCategoryRequest> request, User user)
+    public async Task<ServiceResponse> UpdateUserCategories(IEnumerable<CategoryUpdateRequest> request, User user)
     {
         var categories = 
             await _categoryRepository.GetCategoryRangeNoTracking(request.Select(c => c.Id).ToList());
@@ -87,7 +87,7 @@ public class CategoryService : ICategoryService
         return new ServiceResponse();
     }
 
-    public async Task<ServiceResponse<CategoryResponse>> CreateCategory(AddCategoryRequest request, User user)
+    public async Task<ServiceResponse<CategoryResponse>> CreateCategory(CategoryAddRequest request, User user)
     {
         var category = request.ToCategory(user.Id);
 

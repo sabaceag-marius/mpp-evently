@@ -18,9 +18,9 @@ public class CategoryRepository : ICategoryRepository
         return await _dbContext.Categories.ToListAsync();
     }
 
-    public async Task<Category?> GetByIdAsync(Guid id)
+    public async Task<Category> GetByIdAsync(Guid id)
     {
-        return await _dbContext.Categories.FirstOrDefaultAsync(e => e.Id == id);
+        return await _dbContext.Categories.FirstOrDefaultAsync(e => e.Id == id) ?? new Category();
     }
 
     public async Task<Category?> GetByIdNoTracking(Guid id)
@@ -37,13 +37,13 @@ public class CategoryRepository : ICategoryRepository
         return e;
     }
 
-    public async Task<Category?> UpdateAsync(Category c)
+    public async Task<Category?> UpdateAsync(Category group)
     {
-        _dbContext.Categories.Update(c);
+        _dbContext.Categories.Update(group);
 
         await _dbContext.SaveChangesAsync();
 
-        return c;
+        return group;
     }
 
     public async Task DeleteAsync(Category c)
